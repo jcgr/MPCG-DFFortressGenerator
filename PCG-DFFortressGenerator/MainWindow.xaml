@@ -17,7 +17,10 @@
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Center" Height="280" Stroke="Black" VerticalAlignment="Center" Width="458"/>
             <TextBox HorizontalAlignment="Center" Height="23" Margin="140,9,198,248" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="120" Name="tbNumberOfDwarves"/>
             <TextBlock HorizontalAlignment="Center" Margin="10,10,323,247" TextWrapping="Wrap" Text="Number of dwarves:" VerticalAlignment="Center" Height="23" Width="125"/>
-            <Button Content="Generate Fortress" HorizontalAlignment="Center" Margin="333,242,10,10" VerticalAlignment="Center" Width="115" Height="28"/>
+            <Button Content="Generate Fortress" HorizontalAlignment="Center" Margin="333,242,10,10" VerticalAlignment="Center" Width="115" Height="28" Name="btnGenerateFortress" Click="BtnGenerateFortress_OnClick"/>
+            <TextBox HorizontalAlignment="Center" Height="23" Margin="140,37,289,220" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="29" Name="tbMapSizeX" TextChanged="TbMapSizeX_OnTextChanged"/>
+            <TextBox HorizontalAlignment="Center" Height="23" Margin="140,65,289,192" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="29" Name="tbMapSizeY" TextChanged="TbMapSizeY_OnTextChanged"/>
+            <TextBox HorizontalAlignment="Center" Height="23" Margin="140,93,289,164" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="29" Name="tbMapSizeZ" TextChanged="TbMapSizeZ_OnTextChanged"/>
         </Grid>
     </Grid>
 </Window>
