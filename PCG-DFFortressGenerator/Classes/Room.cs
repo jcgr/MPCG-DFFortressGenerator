@@ -7,6 +7,6 @@ namespace PCG_DFFortressGenerator.Classes
         private int minHeight, minWidth, maxHeight, maxWidth, minSize, maxSize;
 
         // Make sure it is only one character due to the map being ASCII for now.
-        public String RoomName { get; private set; }
+        public String RoomName { get; protected set; }
     }
 }

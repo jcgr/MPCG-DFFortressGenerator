@@ -35,7 +35,7 @@ namespace PCG_DFFortressGenerator
             int y = Convert.ToInt32(tbMapSizeY.Text);
             int z = Convert.ToInt32(tbMapSizeZ.Text);
             Map map = new Map(x, y, z);
-            Console.WriteLine(map.ToString());
+//            Console.WriteLine(map.ToString());
         }
 
         private void TbMapSizeX_OnTextChanged(object sender, TextChangedEventArgs e)

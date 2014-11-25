@@ -55,6 +55,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\LayoutGenerator.cs" />
     <Compile Include="Classes\Map.cs" />
+    <Compile Include="Classes\Pathfinding.cs" />
     <Compile Include="Classes\Room.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -64,6 +65,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classes\Rooms\Bedroom.cs" />
+    <Compile Include="Classes\Rooms\Entrance.cs" />
     <Compile Include="Classes\Tile.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
