@@ -113,10 +113,10 @@ namespace PCG_DFFortressGenerator.Classes
         /// <param name="z">The z-coordinate of the tile.</param>
         /// <param name="tileStatus">The status of the tile.</param>
         /// <param name="room">The roomtype of the tile.</param>
-        private void SetTile(int x, int y, int z, Tile.TileType tileStatus, Room room)
+        private void SetTile(int x, int y, int z, Tile.TileType tileStatus, Area room)
         {
             MapData[x, y, z].TileStatus = tileStatus;
-            MapData[x, y, z].RoomType = room;
+            MapData[x, y, z].AreaType = room;
         }
     }
 

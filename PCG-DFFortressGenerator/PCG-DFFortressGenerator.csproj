@@ -56,7 +56,7 @@
     <Compile Include="Classes\LayoutGenerator.cs" />
     <Compile Include="Classes\Map.cs" />
     <Compile Include="Classes\Pathfinding.cs" />
-    <Compile Include="Classes\Room.cs" />
+    <Compile Include="Classes\Area.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -65,9 +65,35 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classes\Rooms\Barracks.cs" />
     <Compile Include="Classes\Rooms\Bedroom.cs" />
+    <Compile Include="Classes\Rooms\DiningRoom.cs" />
     <Compile Include="Classes\Rooms\Entrance.cs" />
+    <Compile Include="Classes\Rooms\Farm.cs" />
+    <Compile Include="Classes\Rooms\Office.cs" />
+    <Compile Include="Classes\Stockpiles\BarBlock.cs" />
+    <Compile Include="Classes\Stockpiles\Cloth.cs" />
+    <Compile Include="Classes\Stockpiles\FinishedGoods.cs" />
+    <Compile Include="Classes\Stockpiles\Food.cs" />
+    <Compile Include="Classes\Stockpiles\Furniture.cs" />
+    <Compile Include="Classes\Stockpiles\Leather.cs" />
+    <Compile Include="Classes\Stockpiles\Refuse.cs" />
+    <Compile Include="Classes\Stockpiles\Stockpile.cs" />
+    <Compile Include="Classes\Stockpiles\Stone.cs" />
+    <Compile Include="Classes\Stockpiles\Weaponry.cs" />
+    <Compile Include="Classes\Stockpiles\Wood.cs" />
     <Compile Include="Classes\Tile.cs" />
+    <Compile Include="Classes\Workshops\Brewery.cs" />
+    <Compile Include="Classes\Workshops\Carpenter.cs" />
+    <Compile Include="Classes\Workshops\Craftdwarf.cs" />
+    <Compile Include="Classes\Workshops\Fishery.cs" />
+    <Compile Include="Classes\Workshops\GlassFurnace.cs" />
+    <Compile Include="Classes\Workshops\Kitchen.cs" />
+    <Compile Include="Classes\Workshops\Mason.cs" />
+    <Compile Include="Classes\Workshops\Metalsmith.cs" />
+    <Compile Include="Classes\Workshops\Smelter.cs" />
+    <Compile Include="Classes\Workshops\WoodFurnace.cs" />
+    <Compile Include="Classes\Workshops\Workshop.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

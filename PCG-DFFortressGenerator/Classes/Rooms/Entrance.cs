@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PCG_DFFortressGenerator.Classes.Rooms
+﻿namespace PCG_DFFortressGenerator.Classes.Rooms
 {
-    class Entrance : Room
+    /// <summary>
+    /// A class that represents the entrance to the fortress.
+    /// </summary>
+    class Entrance : Area
     {
         public Entrance()
         {
-            RoomName = "E";
+            AreaName = "@";
+            MinSize = 2;
+            MaxSize = 3;
         }
     }
 }

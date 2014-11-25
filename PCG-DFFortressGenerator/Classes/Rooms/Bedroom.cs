@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PCG_DFFortressGenerator.Classes.Rooms
+﻿namespace PCG_DFFortressGenerator.Classes.Rooms
 {
-    class Bedroom : Room
+    /// <summary>
+    /// A class that represents a bedroom.
+    /// </summary>
+    class Bedroom : Area
     {
         public Bedroom()
         {
-            RoomName = "b";
+            AreaName = "b";
+            MinSize = 4;
+            MaxSize = 6;
         }
     }
 }

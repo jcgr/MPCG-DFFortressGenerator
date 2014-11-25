@@ -26,17 +26,17 @@
         /// <summary>
         /// The type of room that the tile contains (null if it is not a specific type of room)
         /// </summary>
-        public Room RoomType { get; set; }
+        public Area AreaType { get; set; }
 
         /// <summary>
         /// The position of the tile.
         /// </summary>
         public Position Position { get; set; }
 
-        public Tile(TileType tileStatus, Room roomType, Position position)
+        public Tile(TileType tileStatus, Area areaType, Position position)
         {
             TileStatus = tileStatus;
-            RoomType = roomType;
+            AreaType = areaType;
             Position = position;
         }
 
@@ -62,13 +62,10 @@
             switch (TileStatus)
             {
                 case TileType.NotDug:
-                    return "X";
-
-                case TileType.Dug:
                     return " ";
 
-                case TileType.Room:
-                    return RoomType.RoomName;
+                case TileType.Dug:
+                    return ".";
 
                 case TileType.StairUp:
                     return "^";
@@ -79,8 +76,11 @@
                 case TileType.StairUpDown:
                     return "|";
 
+                case TileType.Room:
+                    return AreaType.AreaName;
+
                 default:
-                    return "X";
+                    return " ";
             }
         }
 
