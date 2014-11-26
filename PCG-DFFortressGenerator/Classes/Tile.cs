@@ -62,10 +62,10 @@
             switch (TileStatus)
             {
                 case TileType.NotDug:
-                    return " ";
+                    return ".";
 
                 case TileType.Dug:
-                    return ".";
+                    return " ";
 
                 case TileType.StairUp:
                     return "^";

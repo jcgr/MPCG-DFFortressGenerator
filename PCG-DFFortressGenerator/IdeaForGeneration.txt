@@ -1,0 +1,9 @@
+DF:
+	1. Generate room (prioritize rooms)
+	2. Generate path to room
+	3. Repeat 1-2 until enough of floor is filled
+	4. Go to next floor and repeat 1-3
+
+Evolution ideas:
+	1. Generate rooms, then switch what the rooms contain.
+	2. Generate layout, choose some rooms to keep for next round and generate the rest.

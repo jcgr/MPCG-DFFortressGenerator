@@ -31,6 +31,8 @@ namespace PCG_DFFortressGenerator.Classes
             MinSize = 0;
             MaxSize = 10000;
             AreaName = "ø";
+
+            // TODO: Add list of tiles that make up the room
         }
     }
 }
