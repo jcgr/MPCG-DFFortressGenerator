@@ -31,29 +31,17 @@ namespace PCG_DFFortressGenerator
         private void BtnGenerateFortress_OnClick(object sender, RoutedEventArgs e)
         {
             // Needs check for whether value is number or not.
-            int x = Convert.ToInt32(tbMapSizeX.Text);
-            int y = Convert.ToInt32(tbMapSizeY.Text);
-            int z = Convert.ToInt32(tbMapSizeZ.Text);
+            int x = Convert.ToInt32(cbMapSizeX.Text);
+            int y = Convert.ToInt32(cbMapSizeY.Text);
+            int z = Convert.ToInt32(cbMapSizeZ.Text);
             Map map = new Map(x, y, z);
 //            Console.WriteLine(map.ToString());
         }
 
-        private void TbMapSizeX_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void TbNumberOfDwarves_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            tbMapSizeX.Text = new String(tbMapSizeX.Text.Where(c => Char.IsDigit(c)).ToArray());
-            tbMapSizeX.SelectionStart = tbMapSizeX.Text.Length;
-        }
-
-        private void TbMapSizeY_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            tbMapSizeY.Text = new String(tbMapSizeY.Text.Where(c => Char.IsDigit(c)).ToArray());
-            tbMapSizeY.SelectionStart = tbMapSizeY.Text.Length;
-        }
-
-        private void TbMapSizeZ_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            tbMapSizeZ.Text = new String(tbMapSizeZ.Text.Where(c => Char.IsDigit(c)).ToArray());
-            tbMapSizeZ.SelectionStart = tbMapSizeZ.Text.Length;
+            tbNumberOfDwarves.Text = new String(tbNumberOfDwarves.Text.Where(c => Char.IsDigit(c)).ToArray());
+            tbNumberOfDwarves.SelectionStart = tbNumberOfDwarves.Text.Length;
         }
     }
 }

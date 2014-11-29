@@ -7,7 +7,7 @@
     {
         public Stockpile()
         {
-            MinSize = 10;
+            MinSize = 9;
             MaxSize = 10000;
 
             MinHeight = 3;

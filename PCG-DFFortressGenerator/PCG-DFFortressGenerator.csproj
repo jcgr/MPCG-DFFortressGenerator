@@ -77,7 +77,6 @@
     <Compile Include="Classes\Stockpiles\Food.cs" />
     <Compile Include="Classes\Stockpiles\Furniture.cs" />
     <Compile Include="Classes\Stockpiles\Leather.cs" />
-    <Compile Include="Classes\Stockpiles\Refuse.cs" />
     <Compile Include="Classes\Stockpiles\Stockpile.cs" />
     <Compile Include="Classes\Stockpiles\Stone.cs" />
     <Compile Include="Classes\Stockpiles\Weaponry.cs" />
@@ -87,7 +86,6 @@
     <Compile Include="Classes\Workshops\Carpenter.cs" />
     <Compile Include="Classes\Workshops\Craftdwarf.cs" />
     <Compile Include="Classes\Workshops\Fishery.cs" />
-    <Compile Include="Classes\Workshops\GlassFurnace.cs" />
     <Compile Include="Classes\Workshops\Kitchen.cs" />
     <Compile Include="Classes\Workshops\Mason.cs" />
     <Compile Include="Classes\Workshops\Metalsmith.cs" />

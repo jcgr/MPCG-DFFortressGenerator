@@ -1,8 +1,9 @@
-﻿<Window x:Class="PCG_DFFortressGenerator.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="PCG_DFFortressGenerator.MainWindow"
         Title="MainWindow"
-        Name="MyMainWindow"
+        x:Name="MyMainWindow"
         Width="500"
         Height="400"
         MinWidth="1152"
@@ -10,17 +11,142 @@
         MaxWidth="1152"
         MaxHeight="720">
     <Grid HorizontalAlignment="Center" Height="685" Margin="0,2,-4,2" VerticalAlignment="Center" Width="1148">
-        <Grid HorizontalAlignment="Center" Height="665" Margin="10,10,473,10" VerticalAlignment="Center" Width="665">
-            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="665" Stroke="Black" VerticalAlignment="Top" Width="665"/>
+        <Grid HorizontalAlignment="Center" Height="665" Margin="10,10,288,10" VerticalAlignment="Center" Width="850">
+            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="665" Stroke="Black" VerticalAlignment="Top" Width="850" Panel.ZIndex="-2"/>
+            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="645" Margin="10,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="645" Panel.ZIndex="-1"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" FontFamily="Consolas" Height="645" Width="645" Name="tbMapDisplay"/>
         </Grid>
-        <Grid HorizontalAlignment="Center" Height="280" Margin="680,10,10,395" VerticalAlignment="Center" Width="458">
-            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Center" Height="280" Stroke="Black" VerticalAlignment="Center" Width="458"/>
-            <TextBox HorizontalAlignment="Center" Height="23" Margin="140,9,198,248" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="120" Name="tbNumberOfDwarves"/>
-            <TextBlock HorizontalAlignment="Center" Margin="10,10,323,247" TextWrapping="Wrap" Text="Number of dwarves:" VerticalAlignment="Center" Height="23" Width="125"/>
-            <Button Content="Generate Fortress" HorizontalAlignment="Center" Margin="333,242,10,10" VerticalAlignment="Center" Width="115" Height="28" Name="btnGenerateFortress" Click="BtnGenerateFortress_OnClick"/>
-            <TextBox HorizontalAlignment="Center" Height="23" Margin="140,37,289,220" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="29" Name="tbMapSizeX" TextChanged="TbMapSizeX_OnTextChanged"/>
-            <TextBox HorizontalAlignment="Center" Height="23" Margin="140,65,289,192" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="29" Name="tbMapSizeY" TextChanged="TbMapSizeY_OnTextChanged"/>
-            <TextBox HorizontalAlignment="Center" Height="23" Margin="140,93,289,164" TextWrapping="Wrap" Text="0" VerticalAlignment="Center" Width="29" Name="tbMapSizeZ" TextChanged="TbMapSizeZ_OnTextChanged"/>
+        <Grid HorizontalAlignment="Left" Margin="865,10,0,0" VerticalAlignment="Top" Width="273" Height="665">
+            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="665" Stroke="Black" VerticalAlignment="Top" Width="273" Panel.ZIndex="-2"/>
+            <Button Content="Generate Fortress" HorizontalAlignment="Left" Margin="70,445,0,0" VerticalAlignment="Top" Width="115" Height="28" x:Name="btnGenerateFortress" Click="BtnGenerateFortress_OnClick"/>
+
+            <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Fortress Dimensions" VerticalAlignment="Top" Width="122" FontWeight="Bold"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,34,0,0" TextWrapping="Wrap" Text="X:" VerticalAlignment="Top" Height="17" Width="15"/>
+            <TextBlock HorizontalAlignment="Left" Margin="100,34,0,0" TextWrapping="Wrap" Text="Y:" VerticalAlignment="Top" Height="17" Width="15"/>
+            <TextBlock HorizontalAlignment="Left" Margin="189,34,0,0" TextWrapping="Wrap" Text="Z:" VerticalAlignment="Top" Height="17" Width="15"/>
+            <ComboBox HorizontalAlignment="Left" Margin="30,31,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="9" Name="cbMapSizeX">
+                <System:Int32>10</System:Int32>
+                <System:Int32>20</System:Int32>
+                <System:Int32>30</System:Int32>
+                <System:Int32>40</System:Int32>
+                <System:Int32>50</System:Int32>
+                <System:Int32>60</System:Int32>
+                <System:Int32>70</System:Int32>
+                <System:Int32>80</System:Int32>
+                <System:Int32>90</System:Int32>
+                <System:Int32>100</System:Int32>
+                <System:Int32>110</System:Int32>
+                <System:Int32>120</System:Int32>
+                <System:Int32>130</System:Int32>
+                <System:Int32>140</System:Int32>
+                <System:Int32>150</System:Int32>
+                <System:Int32>160</System:Int32>
+                <System:Int32>170</System:Int32>
+                <System:Int32>180</System:Int32>
+                <System:Int32>190</System:Int32>
+                <System:Int32>200</System:Int32>
+            </ComboBox>
+            <ComboBox HorizontalAlignment="Left" Margin="120,31,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="9" Name="cbMapSizeY">
+                <System:Int32>10</System:Int32>
+                <System:Int32>20</System:Int32>
+                <System:Int32>30</System:Int32>
+                <System:Int32>40</System:Int32>
+                <System:Int32>50</System:Int32>
+                <System:Int32>60</System:Int32>
+                <System:Int32>70</System:Int32>
+                <System:Int32>80</System:Int32>
+                <System:Int32>90</System:Int32>
+                <System:Int32>100</System:Int32>
+                <System:Int32>110</System:Int32>
+                <System:Int32>120</System:Int32>
+                <System:Int32>130</System:Int32>
+                <System:Int32>140</System:Int32>
+                <System:Int32>150</System:Int32>
+                <System:Int32>160</System:Int32>
+                <System:Int32>170</System:Int32>
+                <System:Int32>180</System:Int32>
+                <System:Int32>190</System:Int32>
+                <System:Int32>200</System:Int32>
+            </ComboBox>
+            <ComboBox HorizontalAlignment="Left" Margin="209,31,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="3" Name="cbMapSizeZ">
+                <System:Int32>1</System:Int32>
+                <System:Int32>2</System:Int32>
+                <System:Int32>3</System:Int32>
+                <System:Int32>4</System:Int32>
+                <System:Int32>5</System:Int32>
+                <System:Int32>6</System:Int32>
+                <System:Int32>7</System:Int32>
+                <System:Int32>8</System:Int32>
+                <System:Int32>9</System:Int32>
+                <System:Int32>10</System:Int32>
+                <System:Int32>11</System:Int32>
+                <System:Int32>12</System:Int32>
+                <System:Int32>13</System:Int32>
+                <System:Int32>14</System:Int32>
+                <System:Int32>15</System:Int32>
+                <System:Int32>16</System:Int32>
+                <System:Int32>17</System:Int32>
+                <System:Int32>18</System:Int32>
+                <System:Int32>19</System:Int32>
+                <System:Int32>20</System:Int32>
+            </ComboBox>
+
+            <TextBlock HorizontalAlignment="Left" Margin="10,65,0,0" TextWrapping="Wrap" Text="Number of dwarves:" VerticalAlignment="Top" Height="22" Width="125" FontWeight="Bold"/>
+            <ComboBox HorizontalAlignment="Left" Margin="209,62,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="4" Name="cbNumberOfDwarves">
+                <System:Int32>10</System:Int32>
+                <System:Int32>20</System:Int32>
+                <System:Int32>30</System:Int32>
+                <System:Int32>40</System:Int32>
+                <System:Int32>50</System:Int32>
+                <System:Int32>60</System:Int32>
+                <System:Int32>70</System:Int32>
+                <System:Int32>80</System:Int32>
+                <System:Int32>90</System:Int32>
+                <System:Int32>100</System:Int32>
+                <System:Int32>110</System:Int32>
+                <System:Int32>120</System:Int32>
+                <System:Int32>130</System:Int32>
+                <System:Int32>140</System:Int32>
+                <System:Int32>150</System:Int32>
+                <System:Int32>160</System:Int32>
+                <System:Int32>170</System:Int32>
+                <System:Int32>180</System:Int32>
+                <System:Int32>190</System:Int32>
+                <System:Int32>200</System:Int32>
+            </ComboBox>
+
+            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="84" Margin="5,91,0,0" Stroke="Black" VerticalAlignment="Top" Width="263" Panel.ZIndex="-1"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,91,0,0" TextWrapping="Wrap" Text="Rooms" VerticalAlignment="Top" Height="23" Width="75" FontWeight="Bold"/>
+            <CheckBox Content="Entrance (@)" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" Width="119" IsChecked="True" IsEnabled="False"/>
+            <CheckBox Content="Dining Room (d)" HorizontalAlignment="Left" Margin="149,134,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Bedroom (b)" HorizontalAlignment="Left" Margin="149,114,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Office (o)" HorizontalAlignment="Left" Margin="149,154,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Farm (f)" HorizontalAlignment="Left" Margin="10,154,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Barracks (r)" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" Width="119"/>
+
+            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="127" Margin="5,181,0,0" Stroke="Black" VerticalAlignment="Top" Width="263" Panel.ZIndex="-1"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,181,0,0" TextWrapping="Wrap" Text="Workshops" VerticalAlignment="Top" Height="23" Width="75" FontWeight="Bold"/>
+            <CheckBox Content="Brewery (q)" HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Carpenter's (c)" HorizontalAlignment="Left" Margin="149,204,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Craftdwarf's (¤)" HorizontalAlignment="Left" Margin="10,224,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Fishery (#)" HorizontalAlignment="Left" Margin="149,224,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Kitchen (k)" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Mason's (m)" HorizontalAlignment="Left" Margin="149,244,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Metalsmith's (h)" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Smelter (s)" HorizontalAlignment="Left" Margin="149,264,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Wood Furnce (u)" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top" Width="119"/>
+
+            <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="126" Margin="5,314,0,0" Stroke="Black" VerticalAlignment="Top" Width="263" Panel.ZIndex="-1"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,314,0,0" TextWrapping="Wrap" Text="Stockpiles" VerticalAlignment="Top" Height="23" Width="75" FontWeight="Bold"/>
+            <CheckBox Content="Bar/Block (B)" HorizontalAlignment="Left" Margin="10,337,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Cloth (C)" HorizontalAlignment="Left" Margin="149,337,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Finished Goods (G)" HorizontalAlignment="Left" Margin="10,357,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Food (O)" HorizontalAlignment="Left" Margin="149,357,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Furniture (U)" HorizontalAlignment="Left" Margin="10,377,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Leather (L)" HorizontalAlignment="Left" Margin="149,377,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Stone (S)" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Weaponry (W)" HorizontalAlignment="Left" Margin="149,397,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Wood (T)" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top" Width="119"/>
         </Grid>
     </Grid>
 </Window>
