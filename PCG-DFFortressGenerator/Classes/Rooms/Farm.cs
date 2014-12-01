@@ -8,11 +8,11 @@
         public Farm()
         {
             AreaName = "f";
-            MinSize = 6;
-            MaxSize = 20;
-
-            MinWidth = 2;
-            MinHeight = 2;
+//            MinSize = 6;
+//            MaxSize = 20;
+//
+//            MinWidth = 2;
+//            MinHeight = 2;
         }
     }
 }

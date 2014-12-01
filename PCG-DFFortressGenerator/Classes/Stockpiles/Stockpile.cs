@@ -7,11 +7,11 @@
     {
         public Stockpile()
         {
-            MinSize = 9;
-            MaxSize = 10000;
-
-            MinHeight = 3;
-            MinWidth = 3;
+//            MinSize = 9;
+//            MaxSize = 10000;
+//
+//            MinHeight = 3;
+//            MinWidth = 3;
         }
     }
 }

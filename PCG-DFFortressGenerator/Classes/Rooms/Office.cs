@@ -8,11 +8,11 @@
         public Office()
         {
             AreaName = "o";
-            MinSize = 10;
-            MaxSize = 50;
-
-            MinHeight = 4;
-            MinWidth = 4;
+//            MinSize = 10;
+//            MaxSize = 50;
+//
+//            MinHeight = 4;
+//            MinWidth = 4;
         }
     }
 }

@@ -99,7 +99,7 @@ namespace PCG_DFFortressGenerator.Classes
                 {
                     if (x == 0 && y == 0) continue;
                     if (OpenTile(map, new Position(tempX + x, tempY + y, tempZ)))
-                        neighbours.Add(map.MapData[tempX + x, tempY + y, tempZ]);
+                        neighbours.Add(map.MapLayers[tempZ].MapTiles[tempX + x, tempY + y]);
                 }
             }
 
@@ -107,13 +107,13 @@ namespace PCG_DFFortressGenerator.Classes
             if (tile.TileStatus == Tile.TileType.StairUp
                 || tile.TileStatus == Tile.TileType.StairUpDown)
                 if (OpenTile(map, new Position(tempX, tempY, tempZ + 1)))
-                    neighbours.Add(map.MapData[tempX, tempY, tempZ + 1]);
+                    neighbours.Add(map.MapLayers[tempZ + 1].MapTiles[tempX, tempY]);
 
             // If this tile has a stair going down, add the tile below as a neighbour.
             if (tile.TileStatus == Tile.TileType.StairDown
                 || tile.TileStatus == Tile.TileType.StairUpDown)
                 if (OpenTile(map, new Position(tempX, tempY, tempZ - 1)))
-                    neighbours.Add(map.MapData[tempX, tempY, tempZ - 1]);
+                    neighbours.Add(map.MapLayers[tempZ - 1].MapTiles[tempX, tempY]);
 
             return neighbours;
         }
@@ -128,7 +128,7 @@ namespace PCG_DFFortressGenerator.Classes
         {
             if (!WithinMap(map, pos))
                 return false;
-            if (map.MapData[pos.X, pos.Y, pos.Z].TileStatus == Tile.TileType.NotDug)
+            if (map.MapLayers[pos.Z].MapTiles[pos.X, pos.Y].TileStatus == Tile.TileType.NotDug)
                 return false;
             return true;
         }
@@ -141,11 +141,11 @@ namespace PCG_DFFortressGenerator.Classes
         /// <returns>True if the position is inside the bounds of the map; False otherwise.</returns>
         private static bool WithinMap(Map map, Position pos)
         {
-            if (pos.X < 0 || pos.X > map.MapData.GetLength(0))
+            if (pos.X < 0 || pos.X > map.X)
                 return false;
-            if (pos.Y < 0 || pos.Y > map.MapData.GetLength(1))
+            if (pos.Y < 0 || pos.Y > map.Y)
                 return false;
-            if (pos.Z < 0 || pos.Z > map.MapData.GetLength(2))
+            if (pos.Z < 0 || pos.Z > map.Z)
                 return false;
             return true;
         }

@@ -8,8 +8,8 @@
         public Entrance()
         {
             AreaName = "@";
-            MinSize = 2;
-            MaxSize = 3;
+//            MinSize = 2;
+//            MaxSize = 3;
         }
     }
 }

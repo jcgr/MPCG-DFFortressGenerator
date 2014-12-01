@@ -8,8 +8,8 @@
         public Bedroom()
         {
             AreaName = "b";
-            MinSize = 4;
-            MaxSize = 6;
+//            MinSize = 4;
+//            MaxSize = 6;
         }
     }
 }

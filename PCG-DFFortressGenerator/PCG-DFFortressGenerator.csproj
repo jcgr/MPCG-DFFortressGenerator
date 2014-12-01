@@ -82,6 +82,7 @@
     <Compile Include="Classes\Stockpiles\Weaponry.cs" />
     <Compile Include="Classes\Stockpiles\Wood.cs" />
     <Compile Include="Classes\Tile.cs" />
+    <Compile Include="Classes\TileLayer.cs" />
     <Compile Include="Classes\Workshops\Brewery.cs" />
     <Compile Include="Classes\Workshops\Carpenter.cs" />
     <Compile Include="Classes\Workshops\Craftdwarf.cs" />

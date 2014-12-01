@@ -8,12 +8,12 @@
     {
         public Workshop()
         {
-            MinSize = 9;
-            MaxSize = 9;
-            MinHeight = 3;
-            MaxHeight = 3;
-            MinWidth = 3;
-            MaxWidth = 3;
+//            MinSize = 9;
+//            MaxSize = 9;
+//            MinHeight = 3;
+//            MaxHeight = 3;
+//            MinWidth = 3;
+//            MaxWidth = 3;
         }
     }
 }

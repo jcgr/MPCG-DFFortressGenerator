@@ -9,8 +9,8 @@
         {
             AreaName = "D";
 
-            MinSize = 20;
-            MaxSize = 50;
+//            MinSize = 20;
+//            MaxSize = 50;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PCG_DFFortressGenerator.Classes
 {
@@ -15,24 +16,33 @@ namespace PCG_DFFortressGenerator.Classes
 
         public int MaxWidth { get; set; }
 
-        public int MinSize { get; set; }
+//        public int MinSize { get; set; }
+//
+//        public int MaxSize { get; set; }
 
-        public int MaxSize { get; set; }
+        public List<Tile> AreaTiles { get; private set; }
 
         // Make sure it is only one character due to the map being ASCII for now.
         public String AreaName { get; protected set; }
 
         public Area()
         {
-            MinHeight = 0;
-            MaxHeight = 100;
-            MinWidth = 0;
-            MaxWidth = 100;
-            MinSize = 0;
-            MaxSize = 10000;
+            MinHeight = 4;
+            MaxHeight = 4;
+            MinWidth = 4;
+            MaxWidth = 4;
+//            MinSize = 0;
+//            MaxSize = 10000;
             AreaName = "ø";
 
+            AreaTiles = new List<Tile>();
+
             // TODO: Add list of tiles that make up the room
+        }
+
+        public void AddTile(Tile tile)
+        {
+            AreaTiles.Add(tile);
         }
     }
 }

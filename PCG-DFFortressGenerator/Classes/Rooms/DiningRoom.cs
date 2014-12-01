@@ -9,11 +9,11 @@
         {
             AreaName = "d";
 
-            MinSize = 10;
-            MaxSize = 250;
-
-            MinHeight = 3;
-            MinWidth = 3;
+//            MinSize = 10;
+//            MaxSize = 250;
+//
+//            MinHeight = 3;
+//            MinWidth = 3;
         }
     }
 }

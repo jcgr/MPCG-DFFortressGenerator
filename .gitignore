@@ -22,9 +22,6 @@ $RECYCLE.BIN/
 *.suo
 *.user
 *.sln.docstates 
-*.exe
-*.pdb
-*.cache
 
 # Build results
 [Dd]ebug/
@@ -71,6 +68,9 @@ ipch/
 [Dd]ebug*/
 [Rr]elease*/
 Ankh.NoLoad
+*.exe
+*.pdb
+*.cache
 
 # =========================
 # LaTeX

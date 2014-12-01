@@ -34,14 +34,8 @@ namespace PCG_DFFortressGenerator
             int x = Convert.ToInt32(cbMapSizeX.Text);
             int y = Convert.ToInt32(cbMapSizeY.Text);
             int z = Convert.ToInt32(cbMapSizeZ.Text);
-            Map map = new Map(x, y, z);
+            Map map = new Map(x, y, z, this);
 //            Console.WriteLine(map.ToString());
-        }
-
-        private void TbNumberOfDwarves_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            tbNumberOfDwarves.Text = new String(tbNumberOfDwarves.Text.Where(c => Char.IsDigit(c)).ToArray());
-            tbNumberOfDwarves.SelectionStart = tbNumberOfDwarves.Text.Length;
         }
     }
 }

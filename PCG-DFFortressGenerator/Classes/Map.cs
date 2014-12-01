@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Text;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Media;
 using PCG_DFFortressGenerator.Classes.Rooms;
 
 namespace PCG_DFFortressGenerator.Classes
@@ -7,14 +9,35 @@ namespace PCG_DFFortressGenerator.Classes
     class Map
     {
         /// <summary>
-        /// The map in tiles
+        /// The layers of the map.
         /// </summary>
-        public Tile[, ,] MapData { get; private set; }
+        public TileLayer[] MapLayers { get; private set; }
+
+        /// <summary>
+        /// The size of the map on the x-axis
+        /// </summary>
+        public int X { get; private set; }
+
+        /// <summary>
+        /// The size of the map on the y-axis
+        /// </summary>
+        public int Y { get; private set; }
+
+        /// <summary>
+        /// The size of the map on the z-axis
+        /// </summary>
+        public int Z { get; private set; }
 
         /// <summary>
         /// The z-level being shown currently (used by ToString)
         /// </summary>
         public int CurrentZLevel { get; private set; }
+
+        public MainWindow Window { get; private set; }
+
+        public double WhitespaceX { get; private set; }
+
+        public double WhitespaceY { get; private set; }
 
         /// <summary>
         /// Initializes a map with the given dimensions.
@@ -22,16 +45,20 @@ namespace PCG_DFFortressGenerator.Classes
         /// <param name="x">The height of the map.</param>
         /// <param name="y">The width of the map.</param>
         /// <param name="z">The depth of the map.</param>
-        public Map(int x, int y, int z)
+        public Map(int x, int y, int z, MainWindow window)
         {
-            MapData = new Tile[x, y, z];
+            MapLayers = new TileLayer[z];
+            X = x;
+            Y = y;
+            Z = z;
             CurrentZLevel = 0;
+            Window = window;
+            WhitespaceX = 257.6 / 20d;
+            WhitespaceY = 120.933333333333 / 20d;
 
-            // Initializing every tile with a position.
-            for (var xx = 0; xx < x; xx++)
-                for (var yy = 0; yy < y; yy++)
-                    for (var zz = 0; zz < z; zz++)
-                        MapData[xx, yy, zz] = new Tile(new Position(xx, yy, zz));
+            // Initializing every layer of the map.
+            for (var zz = 0; zz < z; zz++)
+                MapLayers[zz] = new TileLayer(x, y, zz);
 
             TestMap();
         }
@@ -45,18 +72,7 @@ namespace PCG_DFFortressGenerator.Classes
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            var map = new StringBuilder();
-
-            for (var x = 0; x < MapData.GetLength(0); x++)
-            {
-                for (var y = 0; y < MapData.GetLength(1); y++)
-                {
-                    map.Append(MapData[x, y, CurrentZLevel]);
-                }
-                map.AppendLine();
-            }
-
-            return map.ToString();
+            return MapLayers[CurrentZLevel].ToString();
         }
 
         /// <summary>
@@ -64,35 +80,32 @@ namespace PCG_DFFortressGenerator.Classes
         /// </summary>
         private void TestMap()
         {
-            MapData = new Tile[20, 20, 5];
+            MapLayers = new TileLayer[5];
             CurrentZLevel = 4;
 
-            // Initializing every tile with a position.
-            for (var xx = 0; xx < 20; xx++)
-                for (var yy = 0; yy < 20; yy++)
-                    for (var zz = 0; zz < 5; zz++)
-                        MapData[xx, yy, zz] = new Tile(new Position(xx, yy, zz));
+            for (var zz = 0; zz < 5; zz++)
+                MapLayers[zz] = new TileLayer(20, 20, zz);
 
-            SetTile(9, 0, 4, Tile.TileType.Room, new Entrance());
-            SetTile(10, 0, 4, Tile.TileType.Room, new Entrance());
+            SetT(9, 0, 4, Tile.TileType.Room, new Entrance());
+            SetT(10, 0, 4, Tile.TileType.Room, new Entrance());
             for (var y = 1; y < 11; y++)
             {
-                SetTile(9, y, 4, Tile.TileType.Dug, null);
-                SetTile(10, y, 4, Tile.TileType.Dug, null);
+                SetT(9, y, 4, Tile.TileType.Dug, null);
+                SetT(10, y, 4, Tile.TileType.Dug, null);
             }
 
-            SetTile(9, 11, 4, Tile.TileType.StairDown, null);
-            SetTile(10, 11, 4, Tile.TileType.StairDown, null);
+            SetT(9, 11, 4, Tile.TileType.StairDown, null);
+            SetT(10, 11, 4, Tile.TileType.StairDown, null);
 
-            SetTile(9, 11, 3, Tile.TileType.StairUp, null);
-            SetTile(10, 11, 3, Tile.TileType.StairUp, null);
+            SetT(9, 11, 3, Tile.TileType.StairUp, null);
+            SetT(10, 11, 3, Tile.TileType.StairUp, null);
             for (var y = 5; y < 11; y++)
             {
-                SetTile(9, y, 3, Tile.TileType.Dug, null);
-                SetTile(10, y, 3, Tile.TileType.Dug, null);
+                SetT(9, y, 3, Tile.TileType.Dug, null);
+                SetT(10, y, 3, Tile.TileType.Dug, null);
             }
-            SetTile(9, 4, 3, Tile.TileType.Room, new Bedroom());
-            SetTile(10, 4, 3, Tile.TileType.Room, new Bedroom());
+            SetT(9, 4, 3, Tile.TileType.Room, new Bedroom());
+            SetT(10, 4, 3, Tile.TileType.Room, new Bedroom());
 
             Console.WriteLine(@"----------------------------");
             Console.WriteLine(@"First level");
@@ -102,7 +115,25 @@ namespace PCG_DFFortressGenerator.Classes
             Console.WriteLine(@"Second level");
             Console.WriteLine(ToString());
             Console.WriteLine(@"----------------------------");
-            Pathfinding.DijsktraFindDistanceTo(this, MapData[9, 0, 4], MapData[10, 4, 3]);
+            Console.WriteLine(Pathfinding.DijsktraFindDistanceTo(this, MapLayers[4].MapTiles[9, 0], MapLayers[3].MapTiles[10, 4]));
+            Console.WriteLine(@"----------------------------");
+
+            Window.tbMapDisplay.Text = this.ToString();
+            Console.WriteLine(MeasureString(ToString()).Height + " of " + Window.tbMapDisplay.Height);
+            Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
+        }
+
+        public Size MeasureString(string candidate)
+        {
+            var formattedText = new FormattedText(
+                candidate,
+                CultureInfo.CurrentUICulture,
+                FlowDirection.LeftToRight,
+                new Typeface(Window.tbMapDisplay.FontFamily, Window.tbMapDisplay.FontStyle, Window.tbMapDisplay.FontWeight, Window.tbMapDisplay.FontStretch),
+                Window.tbMapDisplay.FontSize,
+                Brushes.Black);
+
+            return new Size(formattedText.Width, formattedText.Height);
         }
 
         /// <summary>
@@ -113,10 +144,9 @@ namespace PCG_DFFortressGenerator.Classes
         /// <param name="z">The z-coordinate of the tile.</param>
         /// <param name="tileStatus">The status of the tile.</param>
         /// <param name="room">The roomtype of the tile.</param>
-        private void SetTile(int x, int y, int z, Tile.TileType tileStatus, Area room)
+        private void SetT(int x, int y, int z, Tile.TileType tileStatus, Area room)
         {
-            MapData[x, y, z].TileStatus = tileStatus;
-            MapData[x, y, z].AreaType = room;
+            MapLayers[z].SetTile(x, y, tileStatus, room);
         }
     }
 
