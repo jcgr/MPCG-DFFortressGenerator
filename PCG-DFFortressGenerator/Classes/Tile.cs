@@ -13,9 +13,7 @@
             NotDug,
             Dug,
             Room,
-            StairUp,
-            StairDown,
-            StairUpDown
+            Stairs
         };
 
         /// <summary>
@@ -72,13 +70,7 @@
                 case TileType.Dug:
                     return " ";
 
-                case TileType.StairUp:
-                    return "^";
-
-                case TileType.StairDown:
-                    return "v";
-
-                case TileType.StairUpDown:
+                case TileType.Stairs:
                     return "|";
 
                 case TileType.Room:

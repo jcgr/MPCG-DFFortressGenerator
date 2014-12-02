@@ -104,14 +104,12 @@ namespace PCG_DFFortressGenerator.Classes
             }
 
             // If this tile has a stair going up, add the tile above as a neighbour.
-            if (tile.TileStatus == Tile.TileType.StairUp
-                || tile.TileStatus == Tile.TileType.StairUpDown)
+            if (tile.TileStatus == Tile.TileType.Stairs)
                 if (OpenTile(map, new Position(tempX, tempY, tempZ + 1)))
                     neighbours.Add(map.MapLayers[tempZ + 1].MapTiles[tempX, tempY]);
 
             // If this tile has a stair going down, add the tile below as a neighbour.
-            if (tile.TileStatus == Tile.TileType.StairDown
-                || tile.TileStatus == Tile.TileType.StairUpDown)
+            if (tile.TileStatus == Tile.TileType.Stairs)
                 if (OpenTile(map, new Position(tempX, tempY, tempZ - 1)))
                     neighbours.Add(map.MapLayers[tempZ - 1].MapTiles[tempX, tempY]);
 

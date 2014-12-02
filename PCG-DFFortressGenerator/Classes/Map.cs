@@ -31,7 +31,7 @@ namespace PCG_DFFortressGenerator.Classes
         /// <summary>
         /// The z-level being shown currently (used by ToString)
         /// </summary>
-        public int CurrentZLevel { get; private set; }
+        public int CurrentZLevel { get; set; }
 
         public MainWindow Window { get; private set; }
 
@@ -94,11 +94,11 @@ namespace PCG_DFFortressGenerator.Classes
                 SetT(10, y, 4, Tile.TileType.Dug, null);
             }
 
-            SetT(9, 11, 4, Tile.TileType.StairDown, null);
-            SetT(10, 11, 4, Tile.TileType.StairDown, null);
+            SetT(9, 11, 4, Tile.TileType.Stairs, null);
+            SetT(10, 11, 4, Tile.TileType.Stairs, null);
 
-            SetT(9, 11, 3, Tile.TileType.StairUp, null);
-            SetT(10, 11, 3, Tile.TileType.StairUp, null);
+            SetT(9, 11, 3, Tile.TileType.Stairs, null);
+            SetT(10, 11, 3, Tile.TileType.Stairs, null);
             for (var y = 5; y < 11; y++)
             {
                 SetT(9, y, 3, Tile.TileType.Dug, null);

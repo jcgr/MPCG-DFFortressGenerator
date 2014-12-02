@@ -42,8 +42,8 @@ namespace PCG_DFFortressGenerator.Classes
 
             if (tile1 == 1)
                 tile2 = 2;
-            if (tile1 == layer.X - 1)
-                tile2 = layer.X - 2;
+            if (tile1 == layer.X - 2)
+                tile2 = layer.X - 3;
 
             if (tile2 == -1)
             {
@@ -58,11 +58,25 @@ namespace PCG_DFFortressGenerator.Classes
             }
             
             var entrance = new Entrance();
-            layer.SetTile(tile1, 0, Tile.TileType.Room, entrance);
-            layer.SetTile(tile2, 0, Tile.TileType.Room, entrance);
             entrance.AddTile(layer.MapTiles[tile1, 0]);
             entrance.AddTile(layer.MapTiles[tile2, 0]);
             layer.AddArea(entrance);
+
+            // TODO: This is test!
+            Console.WriteLine("---------------");
+            foreach (var areaTile in entrance.AreaTiles)
+            {
+                Console.WriteLine(areaTile);
+            }
+            Console.WriteLine("---------------");
+
+            layer.SetTile(tile1, 0, Tile.TileType.Room, entrance);
+            layer.SetTile(tile2, 0, Tile.TileType.Room, entrance);
+            foreach (var areaTile in entrance.AreaTiles)
+            {
+                Console.WriteLine(areaTile);
+            }
+            Console.WriteLine("---------------");
 
             return layer;
         }

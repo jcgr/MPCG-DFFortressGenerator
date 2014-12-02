@@ -20,6 +20,12 @@
                        
                        
                        guid Test" VerticalAlignment="Top" FontFamily="Consolas" Height="645" Width="645" Name="tbMapDisplay" LineHeight="6" TextAlignment="Center" FontSize="11"/>
+            <ComboBox HorizontalAlignment="Left" Margin="700,10,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" Name="cbZLevel" SelectionChanged="CbZLevel_OnSelectionChanged">
+                <System:Int32>1</System:Int32>
+                <System:Int32>2</System:Int32>
+                <System:Int32>3</System:Int32>
+                <System:Int32>4</System:Int32>
+            </ComboBox>
         </Grid>
         <Grid HorizontalAlignment="Left" Margin="865,10,0,0" VerticalAlignment="Top" Width="273" Height="665">
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="665" Stroke="Black" VerticalAlignment="Top" Width="273" Panel.ZIndex="-2"/>
@@ -29,7 +35,7 @@
             <TextBlock HorizontalAlignment="Left" Margin="10,34,0,0" TextWrapping="Wrap" Text="X:" VerticalAlignment="Top" Height="17" Width="15"/>
             <TextBlock HorizontalAlignment="Left" Margin="100,34,0,0" TextWrapping="Wrap" Text="Y:" VerticalAlignment="Top" Height="17" Width="15"/>
             <TextBlock HorizontalAlignment="Left" Margin="189,34,0,0" TextWrapping="Wrap" Text="Z:" VerticalAlignment="Top" Height="17" Width="15"/>
-            <ComboBox HorizontalAlignment="Left" Margin="30,31,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="9" Name="cbMapSizeX">
+            <ComboBox HorizontalAlignment="Left" Margin="30,31,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="1" Name="cbMapSizeX">
                 <System:Int32>10</System:Int32>
                 <System:Int32>20</System:Int32>
                 <System:Int32>30</System:Int32>
@@ -51,7 +57,7 @@
                 <System:Int32>190</System:Int32>
                 <System:Int32>200</System:Int32>
             </ComboBox>
-            <ComboBox HorizontalAlignment="Left" Margin="120,31,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="9" Name="cbMapSizeY">
+            <ComboBox HorizontalAlignment="Left" Margin="120,31,0,0" VerticalAlignment="Top" Width="48" SelectedIndex="1" Name="cbMapSizeY">
                 <System:Int32>10</System:Int32>
                 <System:Int32>20</System:Int32>
                 <System:Int32>30</System:Int32>
@@ -122,36 +128,36 @@
 
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="84" Margin="5,91,0,0" Stroke="Black" VerticalAlignment="Top" Width="263" Panel.ZIndex="-1"/>
             <TextBlock HorizontalAlignment="Left" Margin="10,91,0,0" TextWrapping="Wrap" Text="Rooms" VerticalAlignment="Top" Height="23" Width="75" FontWeight="Bold"/>
-            <CheckBox Content="Entrance (@)" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" Width="119" IsChecked="True" IsEnabled="False"/>
-            <CheckBox Content="Dining Room (d)" HorizontalAlignment="Left" Margin="149,134,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Bedroom (b)" HorizontalAlignment="Left" Margin="149,114,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Office (o)" HorizontalAlignment="Left" Margin="149,154,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Farm (f)" HorizontalAlignment="Left" Margin="10,154,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Barracks (r)" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Entrance (@)" Name="chkEntrance" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" Width="119" IsChecked="True" IsEnabled="False"/>
+            <CheckBox Content="Dining Room (d)" Name="chkDiningRoom" HorizontalAlignment="Left" Margin="149,134,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Bedroom (b)" Name="chkBedroom" HorizontalAlignment="Left" Margin="149,114,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Office (o)" Name="chkOffice" HorizontalAlignment="Left" Margin="149,154,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Farm (f)" Name="chkFarm" HorizontalAlignment="Left" Margin="10,154,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Barracks (r)" Name="chkBarracks" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" Width="119"/>
 
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="127" Margin="5,181,0,0" Stroke="Black" VerticalAlignment="Top" Width="263" Panel.ZIndex="-1"/>
             <TextBlock HorizontalAlignment="Left" Margin="10,181,0,0" TextWrapping="Wrap" Text="Workshops" VerticalAlignment="Top" Height="23" Width="75" FontWeight="Bold"/>
-            <CheckBox Content="Brewery (q)" HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Carpenter's (c)" HorizontalAlignment="Left" Margin="149,204,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Craftdwarf's (¤)" HorizontalAlignment="Left" Margin="10,224,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Fishery (#)" HorizontalAlignment="Left" Margin="149,224,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Kitchen (k)" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Mason's (m)" HorizontalAlignment="Left" Margin="149,244,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Metalsmith's (h)" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Smelter (s)" HorizontalAlignment="Left" Margin="149,264,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Wood Furnce (u)" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Brewery (q)" Name="chkBrewery" HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Carpenter's (c)" Name="chkCarpenters" HorizontalAlignment="Left" Margin="149,204,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Craftdwarf's (¤)" Name="chkCraftdwarfs" HorizontalAlignment="Left" Margin="10,224,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Fishery (#)" Name="chkFishery" HorizontalAlignment="Left" Margin="149,224,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Kitchen (k)" Name="chkKitchen" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Mason's (m)" Name="chkMasons" HorizontalAlignment="Left" Margin="149,244,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Metalsmith's (h)" Name="chkMetalsmiths" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Smelter (s)" Name="chkSmelter" HorizontalAlignment="Left" Margin="149,264,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Wood Furnce (u)" Name="chkWoodFurnace" HorizontalAlignment="Left" Margin="10,284,0,0" VerticalAlignment="Top" Width="119"/>
 
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="126" Margin="5,314,0,0" Stroke="Black" VerticalAlignment="Top" Width="263" Panel.ZIndex="-1"/>
             <TextBlock HorizontalAlignment="Left" Margin="10,314,0,0" TextWrapping="Wrap" Text="Stockpiles" VerticalAlignment="Top" Height="23" Width="75" FontWeight="Bold"/>
-            <CheckBox Content="Bar/Block (B)" HorizontalAlignment="Left" Margin="10,337,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Cloth (C)" HorizontalAlignment="Left" Margin="149,337,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Finished Goods (G)" HorizontalAlignment="Left" Margin="10,357,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Food (O)" HorizontalAlignment="Left" Margin="149,357,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Furniture (U)" HorizontalAlignment="Left" Margin="10,377,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Leather (L)" HorizontalAlignment="Left" Margin="149,377,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Stone (S)" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Weaponry (W)" HorizontalAlignment="Left" Margin="149,397,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Wood (T)" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Bar/Block (B)" Name="chkBarBlock" HorizontalAlignment="Left" Margin="10,337,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Cloth (C)" Name="chkCloth" HorizontalAlignment="Left" Margin="149,337,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Finished Goods (G)" Name="chkFinishedGoods" HorizontalAlignment="Left" Margin="10,357,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Food (O)" Name="chkFood" HorizontalAlignment="Left" Margin="149,357,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Furniture (U)" Name="chkFurniture" HorizontalAlignment="Left" Margin="10,377,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Leather (L)" Name="chkLeather" HorizontalAlignment="Left" Margin="149,377,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Stone (S)" Name="chkStone" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Weaponry (W)" Name="chkWeaponry" HorizontalAlignment="Left" Margin="149,397,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Wood (T)" Name="chkWood" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top" Width="119"/>
         </Grid>
     </Grid>
 </Window>
