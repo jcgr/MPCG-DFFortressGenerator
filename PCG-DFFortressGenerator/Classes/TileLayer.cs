@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
+using System.Windows.Documents;
 
 namespace PCG_DFFortressGenerator.Classes
 {
@@ -12,19 +14,28 @@ namespace PCG_DFFortressGenerator.Classes
         /// </summary>
         public Tile[,] MapTiles { get; set; }
 
+        public int X { get; private set; }
+
+        public int Y { get; private set; }
+
         /// <summary>
         /// The height at which the layer is in the map.
         /// </summary>
-        public int Height { get; private set; }
+        public int ZLevel { get; private set; }
+
+        public List<Area> LayerAreas { get; private set; }
 
         public TileLayer(int x, int y, int z)
         {
             MapTiles = new Tile[x, y];
-            Height = z;
+            ZLevel = z;
+            X = x;
+            Y = x;
+            LayerAreas = new List<Area>();
             
             for (var xx = 0; xx < x; xx++)
                 for (var yy = 0; yy < y; yy++)
-                    MapTiles[xx, yy] = new Tile(new Position(xx, yy, Height));
+                    MapTiles[xx, yy] = new Tile(new Position(xx, yy, ZLevel));
         }
 
         /// <summary>
@@ -38,6 +49,17 @@ namespace PCG_DFFortressGenerator.Classes
         {
             MapTiles[x, y].TileStatus = tileStatus;
             MapTiles[x, y].AreaType = room;
+        }
+
+        public void AddArea(Area area)
+        {
+            LayerAreas.Add(area);
+        }
+
+        public TileLayer Copy()
+        {
+            // TODO: Copy tiles
+            return null;
         }
 
         public override string ToString()

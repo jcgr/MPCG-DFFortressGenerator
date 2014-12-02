@@ -36,13 +36,17 @@ namespace PCG_DFFortressGenerator.Classes
             AreaName = "ø";
 
             AreaTiles = new List<Tile>();
-
-            // TODO: Add list of tiles that make up the room
         }
 
         public void AddTile(Tile tile)
         {
             AreaTiles.Add(tile);
+        }
+
+        public Area Copy()
+        {
+            // TODO: Copy self
+            return null;
         }
     }
 }

@@ -60,7 +60,7 @@ namespace PCG_DFFortressGenerator.Classes
             for (var zz = 0; zz < z; zz++)
                 MapLayers[zz] = new TileLayer(x, y, zz);
 
-            TestMap();
+//            TestMap();
         }
 
         /// <summary>
@@ -147,6 +147,12 @@ namespace PCG_DFFortressGenerator.Classes
         private void SetT(int x, int y, int z, Tile.TileType tileStatus, Area room)
         {
             MapLayers[z].SetTile(x, y, tileStatus, room);
+        }
+
+        public Map Copy()
+        {
+            // TODO: Copy tile layers
+            return null;
         }
     }
 

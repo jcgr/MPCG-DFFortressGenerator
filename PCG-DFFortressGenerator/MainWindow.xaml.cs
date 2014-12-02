@@ -35,7 +35,20 @@ namespace PCG_DFFortressGenerator
             int y = Convert.ToInt32(cbMapSizeY.Text);
             int z = Convert.ToInt32(cbMapSizeZ.Text);
             Map map = new Map(x, y, z, this);
+
+
+            LayoutGenerator lg = new LayoutGenerator(map, FindChosenRooms(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            Console.WriteLine(map.ToString());
 //            Console.WriteLine(map.ToString());
+        }
+
+        private List<Area> FindChosenRooms()
+        {
+            List<Area> chosenRooms = new List<Area>();
+
+//            if ()
+
+            return chosenRooms;
         }
     }
 }

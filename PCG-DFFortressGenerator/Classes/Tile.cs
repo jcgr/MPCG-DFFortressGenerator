@@ -50,6 +50,11 @@
         {
         }
 
+        public Tile Copy()
+        {
+            return null;
+        }
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
