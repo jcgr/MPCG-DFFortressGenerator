@@ -21,8 +21,8 @@ namespace PCG_DFFortressGenerator.Classes
             Random = new Random();
             NumberOfDwarves = numberOfDwarves;
             NumberOfRooms = CalculateNumberOfRooms();
-            
-            Map.MapLayers[Map.Z - 1] = GenerateEntrance(Map.MapLayers[Map.Z - 1]);
+
+            GenerateEntrance(Map.MapLayers[Map.Z - 1]);
             for (int z = Map.Z - 1; z > 0; z--)
             {
                 Map.MapLayers[z] = GenerateRooms(Map.MapLayers[z]);
@@ -35,7 +35,7 @@ namespace PCG_DFFortressGenerator.Classes
             return 1;
         }
 
-        private TileLayer GenerateEntrance(TileLayer layer)
+        private void GenerateEntrance(TileLayer layer)
         {
             var tile1 = Random.Next(layer.X - 2) + 1;
             var tile2 = -1;
@@ -77,8 +77,6 @@ namespace PCG_DFFortressGenerator.Classes
                 Console.WriteLine(areaTile);
             }
             Console.WriteLine("---------------");
-
-            return layer;
         }
 
         private TileLayer GenerateRooms(TileLayer tileLayer)
