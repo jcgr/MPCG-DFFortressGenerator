@@ -2,6 +2,8 @@
 
 namespace PCG_DFFortressGenerator.Classes
 {
+    using System;
+
     /// <summary>
     /// A static class used for pathfinding in the fortress.
     /// </summary>
@@ -14,11 +16,16 @@ namespace PCG_DFFortressGenerator.Classes
         /// <param name="start">The tile to start at.</param>
         /// <param name="end">The tile to end at.</param>
         /// <returns>The distance of the path. Returns -1 if there is no path.</returns>
-        public static int DijsktraFindDistanceTo(Map map, Tile start, Tile end)
+        public static int DijkstraFindDistanceTo(Map map, Tile start, Tile end)
         {
-            var path = DijsktraFindShortestPathTo(map, start, end);
+            var path = DijkstraFindShortestPathTo(map, start, end);
             if (path == null) return -1;
             return path.Count;
+        }
+
+        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile end)
+        {
+            return DijkstraFindShortestPathToOpenArea(map, start, end);
         }
 
         /// <summary>
@@ -28,14 +35,14 @@ namespace PCG_DFFortressGenerator.Classes
         /// <param name="start">The tile to start at.</param>
         /// <param name="end">The tile to end at.</param>
         /// <returns>A linked list with the tiles that make up the path. Returns null if there is no path.</returns>
-        private static LinkedList<Tile> DijsktraFindShortestPathTo(Map map, Tile start, Tile end)
+        private static LinkedList<Tile> DijkstraFindShortestPathTo(Map map, Tile start, Tile end)
         {
             TileNode endTile = null;
 
             var vertices = new List<TileNode>();
             var visited = new List<Tile>();
 
-            var startTile = new TileNode {Tile = start};
+            var startTile = new TileNode { Tile = start };
             vertices.Add(startTile);
             visited.Add(start);
 
@@ -59,7 +66,7 @@ namespace PCG_DFFortressGenerator.Classes
                 {
                     if (visited.Contains(neighbour)) continue;
 
-                    var newPfTile = new TileNode {Tile = neighbour, ParentNode = tempTile};
+                    var newPfTile = new TileNode { Tile = neighbour, ParentNode = tempTile };
                     vertices.Add(newPfTile);
                     visited.Add(neighbour);
                 }
@@ -81,12 +88,80 @@ namespace PCG_DFFortressGenerator.Classes
         }
 
         /// <summary>
+        /// The dijsktra find shortest path to open area.
+        /// </summary>
+        /// <param name="map">
+        /// The map.
+        /// </param>
+        /// <param name="start">
+        /// The start.
+        /// </param>
+        /// <param name="end">
+        /// The end.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LinkedList"/>.
+        /// </returns>
+        private static LinkedList<Tile> DijkstraFindShortestPathToOpenArea(Map map, Tile start, Tile end)
+        {
+            TileNode endTile = null;
+
+            var vertices = new List<TileNode>();
+            var visited = new List<Tile>();
+
+            var startTile = new TileNode { Tile = start };
+            vertices.Add(startTile);
+            visited.Add(start);
+
+            // Find the path
+            while (vertices.Count > 0)
+            {
+                // Grab first element of the list
+                var tempTile = vertices[0];
+                vertices.RemoveAt(0);
+
+                // If it is the correct stair type, we're done
+                if (tempTile.Tile.Equals(end))
+                {
+                    endTile = tempTile;
+                    break;
+                }
+
+                // Find neighbours and add them to the list of vertices to check, if they haven't been visited already.
+                var neighbours = FindTilesForDigging(map, tempTile.Tile);
+                foreach (var neighbour in neighbours)
+                {
+                    if (visited.Contains(neighbour)) continue;
+
+                    var newPfTile = new TileNode { Tile = neighbour, ParentNode = tempTile };
+                    vertices.Add(newPfTile);
+                    visited.Add(neighbour);
+                }
+            }
+
+            // If we cannot reach the end tile, return null.
+            if (endTile == null)
+                return null;
+
+            // Recreate the path to the stairs.
+            var pathToStairs = new LinkedList<Tile>();
+            while (endTile != null)
+            {
+                pathToStairs.AddFirst(endTile.Tile);
+                endTile = endTile.ParentNode;
+            }
+
+            return pathToStairs;
+        }
+
+
+        /// <summary>
         /// Finds the neighbours to the tile on this level.
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="tile">The tile to find neighbours for.</param>
         /// <returns>A list of "legal" neighbours.</returns>
-        private static List<Tile> FindNeighbourTiles(Map map, Tile tile)
+        private static IEnumerable<Tile> FindNeighbourTiles(Map map, Tile tile)
         {
             var neighbours = new List<Tile>();
             var tempX = tile.Position.X;
@@ -117,6 +192,65 @@ namespace PCG_DFFortressGenerator.Classes
         }
 
         /// <summary>
+        /// Finds the neighbours to the tile on this level (which are not diagonal).
+        /// </summary>
+        /// <param name="map">The map in use.</param>
+        /// <param name="tile">The tile to find neighbours for.</param>
+        /// <returns>A list of "legal" neighbours.</returns>
+        private static List<Tile> FindTilesForDigging(Map map, Tile tile)
+        {
+            var neighbours = new List<Tile>();
+            var tempX = tile.Position.X;
+            var tempY = tile.Position.Y;
+            var tempZ = tile.Position.Z;
+
+            for (var x = -1; x <= 1; x += 2)
+            {
+                if (IsDiggableTile(map, new Position(tempX + x, tempY, tempZ)))
+                {
+                    neighbours.Add(map.MapLayers[tempZ].MapTiles[tempX + x, tempY]);
+                }
+            }
+
+            for (var y = -1; y <= 1; y += 2)
+            {
+                if (IsDiggableTile(map, new Position(tempX, tempY + y, tempZ)))
+                {
+                    neighbours.Add(map.MapLayers[tempZ].MapTiles[tempX, tempY + y]);
+                }
+            }
+
+            Console.WriteLine(neighbours.Count);
+
+            return neighbours;
+        }
+
+        /// <summary>
+        /// Checks if the given position is part of a room wall and within the bounds of the map.
+        /// </summary>
+        /// <param name="map">The map in use.</param>
+        /// <param name="pos">The position to check.</param>
+        /// <returns>True if the position is inside the bounds of the map and is a wall; False otherwise.</returns>
+        private static bool IsDiggableTile(Map map, Position pos)
+        {
+            Console.WriteLine(pos.X + ", " + pos.Y);
+
+            if (!WithinMap(map, pos))
+            {
+                Console.WriteLine("is not within map");
+                return false;
+            }
+
+            if (map.MapLayers[pos.Z].MapTiles[pos.X, pos.Y].TileStatus == Tile.TileType.RoomWall)
+            {
+                Console.WriteLine("is not diggable");
+                return false;
+            }
+            return true;
+        }
+
+
+        /// <summary>
         /// Checks if the given position is an open tile (ie. not a wall and within the bounds of the map).
         /// </summary>
         /// <param name="map">The map in use.</param>
@@ -139,11 +273,11 @@ namespace PCG_DFFortressGenerator.Classes
         /// <returns>True if the position is inside the bounds of the map; False otherwise.</returns>
         private static bool WithinMap(Map map, Position pos)
         {
-            if (pos.X < 0 || pos.X > map.X)
+            if (pos.X < 0 || pos.X >= map.X)
                 return false;
-            if (pos.Y < 0 || pos.Y > map.Y)
+            if (pos.Y < 0 || pos.Y >= map.Y)
                 return false;
-            if (pos.Z < 0 || pos.Z > map.Z)
+            if (pos.Z < 0 || pos.Z >= map.Z)
                 return false;
             return true;
         }
@@ -156,8 +290,8 @@ namespace PCG_DFFortressGenerator.Classes
             /// <summary>
             /// The F score of the node (A*)
             /// </summary>
-            public double FValue 
-            { 
+            public double FValue
+            {
                 get { return GValue + HValue; }
             }
 

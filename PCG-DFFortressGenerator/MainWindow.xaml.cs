@@ -47,8 +47,8 @@ namespace PCG_DFFortressGenerator
             }
             cbZLevel.SelectedIndex = z - 1;
             Console.WriteLine(Map.CurrentZLevel);
-
-            LayoutGenerator lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            Map.TestMap();
+            //LayoutGenerator lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
 
             tbMapDisplay.Text = Map.ToString();
             _mapGenerated = true;

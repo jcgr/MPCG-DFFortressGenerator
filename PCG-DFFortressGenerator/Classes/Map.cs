@@ -76,9 +76,10 @@ namespace PCG_DFFortressGenerator.Classes
         /// <summary>
         /// Creates a test map and does some basic pathfinding on it.
         /// </summary>
-        private void TestMap()
+        public void TestMap()
         {
             MapLayers = new TileLayer[5];
+            Z = 5;
             CurrentZLevel = 4;
 
             for (var zz = 0; zz < 5; zz++)
@@ -86,24 +87,24 @@ namespace PCG_DFFortressGenerator.Classes
 
             SetTile(9, 0, 4, Tile.TileType.Room, new Entrance());
             SetTile(10, 0, 4, Tile.TileType.Room, new Entrance());
-            for (var y = 1; y < 11; y++)
+            /*for (var y = 1; y < 11; y++)
             {
                 SetTile(9, y, 4, Tile.TileType.Dug, null);
                 SetTile(10, y, 4, Tile.TileType.Dug, null);
-            }
+            }*/
 
             SetTile(9, 11, 4, Tile.TileType.Stairs, null);
             SetTile(10, 11, 4, Tile.TileType.Stairs, null);
 
             SetTile(9, 11, 3, Tile.TileType.Stairs, null);
             SetTile(10, 11, 3, Tile.TileType.Stairs, null);
-            for (var y = 5; y < 11; y++)
+            /*for (var y = 5; y < 11; y++)
             {
                 SetTile(9, y, 3, Tile.TileType.Dug, null);
                 SetTile(10, y, 3, Tile.TileType.Dug, null);
-            }
-            SetTile(9, 4, 3, Tile.TileType.Room, new Bedroom());
-            SetTile(10, 4, 3, Tile.TileType.Room, new Bedroom());
+            }*/
+            SetTile(9, 4, 4, Tile.TileType.Room, new Bedroom());
+            SetTile(10, 4, 4, Tile.TileType.Room, new Bedroom());
 
             Console.WriteLine(@"----------------------------");
             Console.WriteLine(@"First level");
@@ -113,12 +114,11 @@ namespace PCG_DFFortressGenerator.Classes
             Console.WriteLine(@"Second level");
             Console.WriteLine(ToString());
             Console.WriteLine(@"----------------------------");
-            Console.WriteLine(Pathfinding.DijsktraFindDistanceTo(this, MapLayers[4].MapTiles[9, 0], MapLayers[3].MapTiles[10, 4]));
             Console.WriteLine(@"----------------------------");
 
-//            Window.tbMapDisplay.Text = this.ToString();
-//            Console.WriteLine(MeasureString(ToString()).Height + " of " + Window.tbMapDisplay.Height);
-//            Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
+            //Window.tbMapDisplay.Text = this.ToString();
+            //Console.WriteLine(MeasureString(ToString()).Height + " of " + Window.tbMapDisplay.Height);
+            //Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
         }
 
 //        public Size MeasureString(string candidate)
