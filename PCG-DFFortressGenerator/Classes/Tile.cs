@@ -69,6 +69,9 @@
                 case TileType.Room:
                     return AreaType.AreaName;
 
+                case TileType.RoomWall:
+                    return "=";
+
                 case TileType.Dug:
                     return " ";
 

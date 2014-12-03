@@ -26,11 +26,11 @@ namespace PCG_DFFortressGenerator.Classes
             NumberOfRooms = CalculateNumberOfRooms();
 
             GenerateEntrance(Map.MapLayers[Map.Z - 1]);
-            GenerateRooms(Map.MapLayers[Map.Z - 1]);
-//            for (int z = Map.Z - 1; z > 0; z--)
-//            {
-//                GenerateRooms(Map.MapLayers[z]);
-//            }
+//            GenerateRooms(Map.MapLayers[Map.Z - 1]);
+            for (int z = Map.Z - 1; z > 0; z--)
+            {
+                GenerateRooms(Map.MapLayers[z]);
+            }
 
         }
 
@@ -113,7 +113,7 @@ namespace PCG_DFFortressGenerator.Classes
             while (!done)
             {
                 GenerateRoomAndPath(tileLayer, openPositions);
-                done = IsLayerFinished(tileLayer);
+                done = IsLayerFinished(tileLayer, openPositions);
             }
         }
 
@@ -124,6 +124,7 @@ namespace PCG_DFFortressGenerator.Classes
 
             while (!generated)
             {
+                // Grab random start position
                 var startPosition = openPositions[Random.Next(openPositions.Count)];
                 var possibleCombinations = new List<Tuple<int, int>>
                 {
@@ -135,17 +136,20 @@ namespace PCG_DFFortressGenerator.Classes
 
                 for (int i = 0; i < 4; i++)
                 {
+                    // Choose random combination (up/down and left/right)
                     var combinationIndex = Random.Next(possibleCombinations.Count);
                     var combination = possibleCombinations[combinationIndex];
                     possibleCombinations.RemoveAt(combinationIndex);
 
+                    // Create positions to check for being open.
                     var checkX = startPosition.X + (combination.Item1 * 5);
                     var checkY = startPosition.Y + (combination.Item2 * 5);
 
                     if (tileLayer.WithinLayer(checkX, checkY))
                     {
-                        if (this.TilesOpenBetweeen(startPosition.X, startPosition.Y, checkX, checkY, tileLayer))
+                        if (this.TilesOpenBetween(startPosition.X, startPosition.Y, checkX, checkY, tileLayer))
                         {
+                            // Create area
                             tempArea = tileLayer.GenerateAndAddArea(
                                 startPosition.X + combination.Item1
                                 , startPosition.Y + combination.Item2
@@ -153,13 +157,28 @@ namespace PCG_DFFortressGenerator.Classes
                                 , checkY - combination.Item2
                                 , new Area());
 
+                            // remove positions from openPositions, as they are already in use.
                             foreach (var areaTile in tempArea.AreaTiles)
                             {
                                 var tempPosition = areaTile.Position;
                                 openPositions.Remove(tempPosition);
                             }
 
+                            // Build walls around room
+                            for (int xx = 0; Math.Abs(xx) <= Math.Abs(combination.Item1 * 5); xx++)
+                            {
+                                tileLayer.SetTile(startPosition.X + (combination.Item1 * xx), startPosition.Y, Tile.TileType.RoomWall, null);
+                                tileLayer.SetTile(startPosition.X + (combination.Item1 * xx), startPosition.Y + (combination.Item2 * 5), Tile.TileType.RoomWall, null);
+                            }
+
+                            for (int yy = 0; Math.Abs(yy) <= Math.Abs(combination.Item2 * 5); yy++)
+                            {
+                                tileLayer.SetTile(startPosition.X, startPosition.Y + (combination.Item2 * yy), Tile.TileType.RoomWall, null);
+                                tileLayer.SetTile(startPosition.X + (combination.Item1 * 5), startPosition.Y + (combination.Item2 * yy), Tile.TileType.RoomWall, null);
+                            }
+
                             NumberOfRooms--;
+                            generated = true;
 
                             break;
                         }
@@ -169,17 +188,23 @@ namespace PCG_DFFortressGenerator.Classes
                 if (openPositions.Contains(startPosition))
                     openPositions.Remove(startPosition);
 
-                Console.WriteLine(NumberOfRooms);
+                // TODO Path generation
 
-                if (NumberOfRooms <= 0)
-                    generated = true;
-
-                if (openPositions.Count <= tileLayer.X + tileLayer.Y)
+                if (possibleCombinations.Count <= 0)
                     generated = true;
             }
         }
 
-        private bool TilesOpenBetweeen(int startX, int startY, int endX, int endY, TileLayer tileLayer)
+        /// <summary>
+        /// Checks if the tiles between the given positions are "open" (not dug or part of a wall) on the given layer.
+        /// </summary>
+        /// <param name="startX">The start x-coordinate.</param>
+        /// <param name="startY">The start y-coordinate.</param>
+        /// <param name="endX">The start y-coordinate.</param>
+        /// <param name="endY">The end y-coordinate.</param>
+        /// <param name="tileLayer">The layer</param>
+        /// <returns>True if all tiles are open; false otherwise.</returns>
+        private bool TilesOpenBetween(int startX, int startY, int endX, int endY, TileLayer tileLayer)
         {
             var xDifference = endX - startX;
             var yDifference = endY - startY;
@@ -189,15 +214,20 @@ namespace PCG_DFFortressGenerator.Classes
             for (var x = 0; Math.Abs(x) <= Math.Abs(xDifference); x += xChange)
                 for (var y = 0; Math.Abs(y) <= Math.Abs(yDifference); y += yChange)
                     if (tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.NotDug
-                        || tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.RoomWall)
+                        && tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.RoomWall)
                         return false;
 
             return true;
         }
 
-        private bool IsLayerFinished(TileLayer tileLayer)
+        private bool IsLayerFinished(TileLayer tileLayer, List<Position> openPositions)
         {
-            return true;
+            if (NumberOfRooms <= 0)
+                return true;
+            if (openPositions.Count <= tileLayer.X + tileLayer.Y)
+                return true;
+
+            return false;
         }
 
         /// <summary>
