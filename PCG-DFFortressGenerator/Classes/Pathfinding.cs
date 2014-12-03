@@ -22,11 +22,6 @@
             return path.Count;
         }
 
-        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile end)
-        {
-            return DijkstraFindShortestPathToOpenArea(map, start, end);
-        }
-
         /// <summary>
         /// Finds the shortest path from the start til to the end tile (uses Dijkstra's algorithm)
         /// </summary>
@@ -84,6 +79,11 @@
             }
 
             return pathToStairs;
+        }
+
+        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile end)
+        {
+            return DijkstraFindShortestPathToOpenArea(map, start, end);
         }
 
         /// <summary>
@@ -219,7 +219,7 @@
                 }
             }
 
-            Console.WriteLine(neighbours.Count);
+//            Console.WriteLine(neighbours.Count);
 
             return neighbours;
         }
@@ -232,17 +232,17 @@
         /// <returns>True if the position is inside the bounds of the map and is a wall; False otherwise.</returns>
         private static bool IsDiggableTile(Map map, Position pos)
         {
-            Console.WriteLine(pos.X + ", " + pos.Y);
+//            Console.WriteLine(pos.X + ", " + pos.Y);
 
             if (!WithinMap(map, pos))
             {
-                Console.WriteLine("is not within map");
+//                Console.WriteLine("is not within map");
                 return false;
             }
 
             if (map.MapLayers[pos.Z].MapTiles[pos.X, pos.Y].TileStatus == Tile.TileType.RoomWall)
             {
-                Console.WriteLine("is not diggable");
+//                Console.WriteLine("is not diggable");
                 return false;
             }
             return true;
