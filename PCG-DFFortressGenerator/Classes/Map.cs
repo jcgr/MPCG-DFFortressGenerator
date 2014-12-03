@@ -1,11 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Media;
-using PCG_DFFortressGenerator.Classes.Rooms;
-
-namespace PCG_DFFortressGenerator.Classes
+﻿namespace PCG_DFFortressGenerator.Classes
 {
+    using System;
+
+    using PCG_DFFortressGenerator.Classes.Rooms;
+
     class Map
     {
         /// <summary>

@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace PCG_DFFortressGenerator.Classes
+﻿namespace PCG_DFFortressGenerator.Classes
 {
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A static class used for pathfinding in the fortress.
