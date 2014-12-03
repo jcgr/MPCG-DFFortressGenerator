@@ -26,11 +26,11 @@ namespace PCG_DFFortressGenerator.Classes
             NumberOfRooms = CalculateNumberOfRooms();
 
             GenerateEntrance(Map.MapLayers[Map.Z - 1]);
-//            GenerateRooms(Map.MapLayers[Map.Z - 1]);
-            for (int z = Map.Z - 1; z > 0; z--)
-            {
-                GenerateRooms(Map.MapLayers[z]);
-            }
+            GenerateRooms(Map.MapLayers[Map.Z - 1]);
+//            for (int z = Map.Z - 1; z > 0; z--)
+//            {
+//                GenerateRooms(Map.MapLayers[z]);
+//            }
 
         }
 
@@ -99,6 +99,7 @@ namespace PCG_DFFortressGenerator.Classes
 
 //            var newArea = barracks.Copy();
 //            Console.WriteLine(newArea.AreaTiles[0].TileStatus + " - " + newArea.AreaTiles.Count);
+//            Console.WriteLine(entrance);
         }
 
         private void GenerateRooms(TileLayer tileLayer)
@@ -121,6 +122,7 @@ namespace PCG_DFFortressGenerator.Classes
         {
             var generated = false;
             var tempArea = new Area();
+            var originalLayout = tileLayer.Copy();
 
             while (!generated)
             {
@@ -157,28 +159,71 @@ namespace PCG_DFFortressGenerator.Classes
                                 , checkY - combination.Item2
                                 , new Area());
 
-                            // remove positions from openPositions, as they are already in use.
-                            foreach (var areaTile in tempArea.AreaTiles)
-                            {
-                                var tempPosition = areaTile.Position;
-                                openPositions.Remove(tempPosition);
-                            }
+                            var wallTiles = new List<Tile>();
 
                             // Build walls around room
                             for (int xx = 0; Math.Abs(xx) <= Math.Abs(combination.Item1 * 5); xx++)
                             {
                                 tileLayer.SetTile(startPosition.X + (combination.Item1 * xx), startPosition.Y, Tile.TileType.RoomWall, null);
                                 tileLayer.SetTile(startPosition.X + (combination.Item1 * xx), startPosition.Y + (combination.Item2 * 5), Tile.TileType.RoomWall, null);
+                                
+                                if (xx == 0 || Math.Abs(xx) == Math.Abs(combination.Item1 * 5)) continue;
+                                wallTiles.Add(tileLayer.MapTiles[startPosition.X + (combination.Item1 * xx), startPosition.Y]);
+                                wallTiles.Add(tileLayer.MapTiles[startPosition.X + (combination.Item1 * xx), startPosition.Y + (combination.Item2 * 5)]);
                             }
 
                             for (int yy = 0; Math.Abs(yy) <= Math.Abs(combination.Item2 * 5); yy++)
                             {
                                 tileLayer.SetTile(startPosition.X, startPosition.Y + (combination.Item2 * yy), Tile.TileType.RoomWall, null);
                                 tileLayer.SetTile(startPosition.X + (combination.Item1 * 5), startPosition.Y + (combination.Item2 * yy), Tile.TileType.RoomWall, null);
+
+                                if (yy == 0 || Math.Abs(yy) == Math.Abs(combination.Item1 * 5)) continue;
+                                wallTiles.Add(tileLayer.MapTiles[startPosition.X, startPosition.Y + (combination.Item2 * yy)]);
+                                wallTiles.Add(tileLayer.MapTiles[startPosition.X + (combination.Item1 * 5), startPosition.Y + (combination.Item2 * yy)]);
                             }
+
+                            // Attempt to generate path
+                            var pathGenerated = false;
+                            while (!pathGenerated)
+                            {
+                                // If a path cannot be generated, set it back to the original layout.
+                                if (wallTiles.Count <= 0)
+                                {
+                                    tileLayer = originalLayout;
+                                    return;
+                                }
+
+//                                Console.WriteLine(wallTiles.Count);
+
+                                // Get random wall tile to attempt.
+                                var randomWallTileIndex = Random.Next(wallTiles.Count);
+                                var chosenWallTile = wallTiles[randomWallTileIndex];
+                                wallTiles.RemoveAt(randomWallTileIndex);
+
+                                var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
+                                    tileLayer.Entrance.AreaTiles[0]);
+                                
+                                if (path == null) continue;
+                                
+                                foreach (var pathTile in path)
+                                {
+
+                                    if (pathTile.TileStatus == Tile.TileType.Room) continue;
+                                    tileLayer.SetTile(pathTile.Position.X, pathTile.Position.Y, Tile.TileType.Dug,
+                                        null);
+                                    pathGenerated = true;
+//                                Console.WriteLine(pathTile.Position);
+                                }
+                            }
+
+                            // remove positions from openPositions, as they are already in use.
+                            foreach (var areaTile in tempArea.AreaTiles)
+                                openPositions.Remove(areaTile.Position);
 
                             NumberOfRooms--;
                             generated = true;
+
+//                            Console.WriteLine(NumberOfRooms);
 
                             break;
                         }
@@ -187,8 +232,6 @@ namespace PCG_DFFortressGenerator.Classes
 
                 if (openPositions.Contains(startPosition))
                     openPositions.Remove(startPosition);
-
-                // TODO Path generation
 
                 if (possibleCombinations.Count <= 0)
                     generated = true;

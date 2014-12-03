@@ -194,6 +194,11 @@ namespace PCG_DFFortressGenerator.Classes
             return new Position(X, Y, Z);
         }
 
+        public override string ToString()
+        {
+            return "(X: " + X + ", Y: " + Y + ", Z: " + Z + ")";
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
