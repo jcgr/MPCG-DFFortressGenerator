@@ -35,7 +35,7 @@ namespace PCG_DFFortressGenerator
             var x = Convert.ToInt32(cbMapSizeX.Text);
             var y = Convert.ToInt32(cbMapSizeY.Text);
             var z = Convert.ToInt32(cbMapSizeZ.Text);
-            Map = new Map(x, y, z, this) {CurrentZLevel = z - 1};
+            Map = new Map(x, y, z) {CurrentZLevel = z - 1};
 
             // Puts the correct level values into cbZLevels
             cbZLevel.Items.Clear();
@@ -49,15 +49,28 @@ namespace PCG_DFFortressGenerator
             Console.WriteLine(Map.CurrentZLevel);
 
             LayoutGenerator lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
-            Console.WriteLine(Map.ToString());
-
-            var tempList = FindChosenAreas();
-            Console.WriteLine(tempList.OfType<Stone>().Any());
-            Console.WriteLine(tempList.OfType<Barracks>().Any());
-            Console.WriteLine(tempList.OfType<Craftdwarf>().Any());
 
             tbMapDisplay.Text = Map.ToString();
             _mapGenerated = true;
+            Console.WriteLine(Map.ToString());
+
+//            var newMap = Map.Copy();
+//            newMap.CurrentZLevel = Map.CurrentZLevel;
+//            newMap.MapLayers[newMap.CurrentZLevel].GenerateAndAddArea(1, 1, 2, 2, new Bedroom());
+
+//            var barracks = newMap.MapLayers[newMap.CurrentZLevel].LayerAreas[1];
+//            Console.WriteLine("Barracks! " + barracks.GetType().Name);
+//            newMap.MapLayers[newMap.CurrentZLevel].ReplaceArea(1, new DiningRoom());
+//
+//            Console.WriteLine(Map.ToString());
+//
+//            var tempList = FindChosenAreas();
+//            Console.WriteLine(tempList.OfType<Stone>().Any());
+//            Console.WriteLine(tempList.OfType<Barracks>().Any());
+//            Console.WriteLine(tempList.OfType<Craftdwarf>().Any());
+//
+//            Console.WriteLine("NEW MAP INCOMING WITH " + newMap.MapLayers[newMap.CurrentZLevel].LayerAreas.Count);
+//            Console.WriteLine(newMap.ToString());
         }
 
         /// <summary>

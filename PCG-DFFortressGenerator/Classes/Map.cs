@@ -33,34 +33,32 @@ namespace PCG_DFFortressGenerator.Classes
         /// </summary>
         public int CurrentZLevel { get; set; }
 
-        public MainWindow Window { get; private set; }
-
-        public double WhitespaceX { get; private set; }
-
-        public double WhitespaceY { get; private set; }
-
         /// <summary>
         /// Initializes a map with the given dimensions.
         /// </summary>
         /// <param name="x">The height of the map.</param>
         /// <param name="y">The width of the map.</param>
         /// <param name="z">The depth of the map.</param>
-        public Map(int x, int y, int z, MainWindow window)
+        public Map(int x, int y, int z)
         {
             MapLayers = new TileLayer[z];
             X = x;
             Y = y;
             Z = z;
             CurrentZLevel = 0;
-            Window = window;
-            WhitespaceX = 257.6 / 20d;
-            WhitespaceY = 120.933333333333 / 20d;
+//            WhitespaceX = 257.6 / 20d;
+//            WhitespaceY = 120.933333333333 / 20d;
 
             // Initializing every layer of the map.
             for (var zz = 0; zz < z; zz++)
                 MapLayers[zz] = new TileLayer(x, y, zz);
 
 //            TestMap();
+        }
+
+        public void SetLayers(TileLayer[] layers)
+        {
+            MapLayers = layers;
         }
 
         /// <summary>
@@ -86,26 +84,26 @@ namespace PCG_DFFortressGenerator.Classes
             for (var zz = 0; zz < 5; zz++)
                 MapLayers[zz] = new TileLayer(20, 20, zz);
 
-            SetT(9, 0, 4, Tile.TileType.Room, new Entrance());
-            SetT(10, 0, 4, Tile.TileType.Room, new Entrance());
+            SetTile(9, 0, 4, Tile.TileType.Room, new Entrance());
+            SetTile(10, 0, 4, Tile.TileType.Room, new Entrance());
             for (var y = 1; y < 11; y++)
             {
-                SetT(9, y, 4, Tile.TileType.Dug, null);
-                SetT(10, y, 4, Tile.TileType.Dug, null);
+                SetTile(9, y, 4, Tile.TileType.Dug, null);
+                SetTile(10, y, 4, Tile.TileType.Dug, null);
             }
 
-            SetT(9, 11, 4, Tile.TileType.Stairs, null);
-            SetT(10, 11, 4, Tile.TileType.Stairs, null);
+            SetTile(9, 11, 4, Tile.TileType.Stairs, null);
+            SetTile(10, 11, 4, Tile.TileType.Stairs, null);
 
-            SetT(9, 11, 3, Tile.TileType.Stairs, null);
-            SetT(10, 11, 3, Tile.TileType.Stairs, null);
+            SetTile(9, 11, 3, Tile.TileType.Stairs, null);
+            SetTile(10, 11, 3, Tile.TileType.Stairs, null);
             for (var y = 5; y < 11; y++)
             {
-                SetT(9, y, 3, Tile.TileType.Dug, null);
-                SetT(10, y, 3, Tile.TileType.Dug, null);
+                SetTile(9, y, 3, Tile.TileType.Dug, null);
+                SetTile(10, y, 3, Tile.TileType.Dug, null);
             }
-            SetT(9, 4, 3, Tile.TileType.Room, new Bedroom());
-            SetT(10, 4, 3, Tile.TileType.Room, new Bedroom());
+            SetTile(9, 4, 3, Tile.TileType.Room, new Bedroom());
+            SetTile(10, 4, 3, Tile.TileType.Room, new Bedroom());
 
             Console.WriteLine(@"----------------------------");
             Console.WriteLine(@"First level");
@@ -118,23 +116,23 @@ namespace PCG_DFFortressGenerator.Classes
             Console.WriteLine(Pathfinding.DijsktraFindDistanceTo(this, MapLayers[4].MapTiles[9, 0], MapLayers[3].MapTiles[10, 4]));
             Console.WriteLine(@"----------------------------");
 
-            Window.tbMapDisplay.Text = this.ToString();
-            Console.WriteLine(MeasureString(ToString()).Height + " of " + Window.tbMapDisplay.Height);
-            Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
+//            Window.tbMapDisplay.Text = this.ToString();
+//            Console.WriteLine(MeasureString(ToString()).Height + " of " + Window.tbMapDisplay.Height);
+//            Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
         }
 
-        public Size MeasureString(string candidate)
-        {
-            var formattedText = new FormattedText(
-                candidate,
-                CultureInfo.CurrentUICulture,
-                FlowDirection.LeftToRight,
-                new Typeface(Window.tbMapDisplay.FontFamily, Window.tbMapDisplay.FontStyle, Window.tbMapDisplay.FontWeight, Window.tbMapDisplay.FontStretch),
-                Window.tbMapDisplay.FontSize,
-                Brushes.Black);
-
-            return new Size(formattedText.Width, formattedText.Height);
-        }
+//        public Size MeasureString(string candidate)
+//        {
+//            var formattedText = new FormattedText(
+//                candidate,
+//                CultureInfo.CurrentUICulture,
+//                FlowDirection.LeftToRight,
+//                new Typeface(Window.tbMapDisplay.FontFamily, Window.tbMapDisplay.FontStyle, Window.tbMapDisplay.FontWeight, Window.tbMapDisplay.FontStretch),
+//                Window.tbMapDisplay.FontSize,
+//                Brushes.Black);
+//
+//            return new Size(formattedText.Width, formattedText.Height);
+//        }
 
         /// <summary>
         /// Sets a tile to the given type and room, if applicable.
@@ -144,15 +142,23 @@ namespace PCG_DFFortressGenerator.Classes
         /// <param name="z">The z-coordinate of the tile.</param>
         /// <param name="tileStatus">The status of the tile.</param>
         /// <param name="room">The roomtype of the tile.</param>
-        private void SetT(int x, int y, int z, Tile.TileType tileStatus, Area room)
+        private void SetTile(int x, int y, int z, Tile.TileType tileStatus, Area room)
         {
             MapLayers[z].SetTile(x, y, tileStatus, room);
         }
 
         public Map Copy()
         {
-            // TODO: Copy tile layers
-            return null;
+            var newMap = new Map(X, Y, Z);
+            var newLayers = new TileLayer[Z];
+
+            for (var z = 0; z < Z; z++)
+            {
+                newLayers[z] = MapLayers[z].Copy();
+            }
+
+            newMap.SetLayers(newLayers);
+            return newMap;
         }
     }
 
@@ -181,6 +187,35 @@ namespace PCG_DFFortressGenerator.Classes
             X = x;
             Y = y;
             Z = z;
+        }
+
+        public Position Copy()
+        {
+            return new Position(X, Y, Z);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Position) obj);
+        }
+
+        protected bool Equals(Position other)
+        {
+            return X == other.X && Y == other.Y && Z == other.Z;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = X;
+                hashCode = (hashCode * 397) ^ Y;
+                hashCode = (hashCode * 397) ^ Z;
+                return hashCode;
+            }
         }
     }
 }

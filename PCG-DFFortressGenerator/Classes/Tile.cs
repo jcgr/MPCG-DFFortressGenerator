@@ -48,11 +48,6 @@
         {
         }
 
-        public Tile Copy()
-        {
-            return null;
-        }
-
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
@@ -67,14 +62,14 @@
                 case TileType.NotDug:
                     return ".";
 
-                case TileType.Dug:
-                    return " ";
-
                 case TileType.Stairs:
                     return "|";
 
                 case TileType.Room:
                     return AreaType.AreaName;
+
+                case TileType.Dug:
+                    return " ";
 
                 default:
                     return " ";
