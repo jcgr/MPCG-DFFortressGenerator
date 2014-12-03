@@ -188,7 +188,8 @@ namespace PCG_DFFortressGenerator.Classes
 
             for (var x = 0; Math.Abs(x) <= Math.Abs(xDifference); x += xChange)
                 for (var y = 0; Math.Abs(y) <= Math.Abs(yDifference); y += yChange)
-                    if (tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.NotDug)
+                    if (tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.NotDug
+                        || tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.RoomWall)
                         return false;
 
             return true;

@@ -13,6 +13,7 @@
             NotDug,
             Dug,
             Room,
+            RoomWall,
             Stairs
         };
 
