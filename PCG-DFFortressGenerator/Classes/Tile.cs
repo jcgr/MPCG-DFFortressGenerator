@@ -3,7 +3,7 @@
     /// <summary>
     /// A class that represents one of the tiles of the map.
     /// </summary>
-    class Tile
+    public class Tile
     {
         /// <summary>
         /// Determines what the tile contains.

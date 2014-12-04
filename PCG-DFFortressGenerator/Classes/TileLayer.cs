@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Documents;
-
-namespace PCG_DFFortressGenerator.Classes
+﻿namespace PCG_DFFortressGenerator.Classes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
     /// <summary>
     /// A class that represents one layer of the map.
     /// </summary>
-    class TileLayer
+    public class TileLayer
     {
         /// <summary>
         /// The size of the layer on the x-axis (height)

@@ -11,36 +11,64 @@
     /// <summary>
     /// A class that represents a special area of the fortress (a room, a workshop or a stockpile).
     /// </summary>
-    class Area
+    public class Area
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Area"/> class.
+        /// </summary>
+        /// <param name="minHeight"> The minimum height of the area. </param>
+        /// <param name="maxHeight"> The maximum The minimum height of the area. </param>
+        /// <param name="minWidth"> The minimum width of the area. </param>
+        /// <param name="maxWidth"> The maximum width of the area. </param>
+        /// <param name="areaName"> The name of the area. </param>
+        public Area(int minHeight = 4, int maxHeight = 4, int minWidth = 4, int maxWidth = 4, string areaName = "1")
+        {
+            this.MinHeight = minHeight;
+            this.MaxHeight = maxHeight;
+            this.MinWidth = minWidth;
+            this.MaxWidth = maxWidth;
+            this.AreaName = areaName;
+
+            this.AreaTiles = new List<Tile>();
+        }
+
+        /// <summary>
+        /// Gets or sets the minimum height of the area.
+        /// </summary>
         public int MinHeight { get; set; }
 
+        /// <summary>
+        /// Gets or sets the minimum width of the area.
+        /// </summary>
         public int MinWidth { get; set; }
 
+        /// <summary>
+        /// Gets or sets the maximum height of the area.
+        /// </summary>
         public int MaxHeight { get; set; }
 
+        /// <summary>
+        /// Gets or sets the maximum width of the area.
+        /// </summary>
         public int MaxWidth { get; set; }
 
+        /// <summary>
+        /// Gets the tiles that makes up the area.
+        /// </summary>
         public List<Tile> AreaTiles { get; private set; }
 
-        // Make sure it is only one character due to the map being ASCII for now.
-        public String AreaName { get; protected set; }
+        /// <summary>
+        /// Gets or sets name of the area.
+        /// Should only be a single character due to the map being ASCII.
+        /// </summary>
+        public string AreaName { get; protected set; }
 
-        public Area()
-        {
-            MinHeight = 4;
-            MaxHeight = 4;
-            MinWidth = 4;
-            MaxWidth = 4;
-            AreaName = "1";
-
-            AreaTiles = new List<Tile>();
-        }
+        // TODO: Refactor to char?
 
         /// <summary>
         /// Adds a tile to the area.
         /// </summary>
-        /// <param name="tile">The tile.</param>
+        /// <param name="tile"> The tile to add to the area. </param>
         public void AddTile(Tile tile)
         {
             AreaTiles.Add(tile);
@@ -57,6 +85,7 @@
 
             switch (areaName)
             {
+                // Rooms
                 case "Barracks":
                     newArea = new Barracks();
                     break;
@@ -76,6 +105,7 @@
                     newArea = new Office();
                     break;
 
+                // Workshops
                 case "Brewery":
                     newArea = new Brewery();
                     break;
@@ -104,6 +134,7 @@
                     newArea = new WoodFurnace();
                     break;
 
+                // Stockpiles
                 case "BarBlock":
                     newArea = new BarBlock();
                     break;
