@@ -212,9 +212,11 @@ namespace PCG_DFFortressGenerator.Classes
                         if (tileLayer.Entrance == null)
                             Console.WriteLine("Much error, such wow, many paths " + NumberOfRooms);
 
-                        var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
+                        var path = Pathfinding.DijkstraFindPathToOpenArea(
+                            Map,
+                            chosenWallTile,
                             tileLayer.Entrance.AreaTiles[Random.Next(tileLayer.Entrance.AreaTiles.Count)]);
-                                
+
                         if (path == null) continue;
                                 
                         foreach (var pathTile in path)
