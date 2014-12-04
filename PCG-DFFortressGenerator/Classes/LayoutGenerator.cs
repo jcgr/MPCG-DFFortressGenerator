@@ -115,7 +115,7 @@ namespace PCG_DFFortressGenerator.Classes
 
             while (!done)
             {
-                GenerateRoomAndPath(tileLayer, openPositions, layer);
+                GenerateRoomAndPath(tileLayer, openPositions);
                 done = IsLayerFinished(tileLayer, openPositions);
             }
 
