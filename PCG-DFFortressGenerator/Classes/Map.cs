@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Windows.Documents;
-
-namespace PCG_DFFortressGenerator.Classes
+﻿namespace PCG_DFFortressGenerator.Classes
 {
     using System;
+    using System.Collections.Generic;
 
     using PCG_DFFortressGenerator.Classes.Rooms;
 
-    class Map
+    /// <summary>
+    /// A map used in the generator.
+    /// </summary>
+    public class Map
     {
         /// <summary>
         /// The layers of the map.
@@ -170,7 +171,7 @@ namespace PCG_DFFortressGenerator.Classes
     /// <summary>
     /// A class that represents the position of something.
     /// </summary>
-    class Position
+    public class Position
     {
         /// <summary>
         /// The x-coordinate of the position

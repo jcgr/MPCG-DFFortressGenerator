@@ -1,12 +1,11 @@
 ﻿namespace PCG_DFFortressGenerator.Classes
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// A static class used for pathfinding in the fortress.
     /// </summary>
-    static class Pathfinding
+    public static class Pathfinding
     {
         /// <summary>
         /// Finds the distance from the start til to the end tile.
@@ -17,7 +16,22 @@
         /// <returns>The distance of the path. Returns -1 if there is no path.</returns>
         public static int DijkstraFindDistanceTo(Map map, Tile start, Tile end)
         {
-            var path = DijkstraFindShortestPathTo(map, start, end);
+            var path = DijkstraFindPathTo(map, start, end);
+            if (path == null) 
+                return -1;
+            return path.Count;
+        }
+
+        /// <summary>
+        /// Finds the distance from the start til to the end tile.
+        /// </summary>
+        /// <param name="map">The map in use.</param>
+        /// <param name="start">The tile to start at.</param>
+        /// <param name="tt">The tiletype to look for.</param>
+        /// <returns>The distance of the path. Returns -1 if there is no path.</returns>
+        public static int DijkstraFindDistanceTo(Map map, Tile start, Tile.TileType tt)
+        {
+            var path = DijkstraFindPathTo(map, start, tt);
             if (path == null) return -1;
             return path.Count;
         }
@@ -27,9 +41,68 @@
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="start">The tile to start at.</param>
+        /// <param name="tt">The tiletype to look fort.</param>
+        /// <returns>A linked list with the tiles that make up the path. Returns null if there is no path.</returns>
+        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile.TileType tt)
+        {
+            TileNode endTile = null;
+
+            var vertices = new List<TileNode>();
+            var visited = new List<Tile>();
+
+            var startTile = new TileNode { Tile = start };
+            vertices.Add(startTile);
+            visited.Add(start);
+
+            // Find the path
+            while (vertices.Count > 0)
+            {
+                // Grab first element of the list
+                var tempTile = vertices[0];
+                vertices.RemoveAt(0);
+
+                // If it is the correct stair type, we're done
+                if (tempTile.Tile.TileStatus.Equals(tt))
+                {
+                    endTile = tempTile;
+                    break;
+                }
+
+                // Find neighbours and add them to the list of vertices to check, if they haven't been visited already.
+                var neighbours = FindNeighbourTiles(map, tempTile.Tile);
+                foreach (var neighbour in neighbours)
+                {
+                    if (visited.Contains(neighbour)) continue;
+
+                    var newPfTile = new TileNode { Tile = neighbour, ParentNode = tempTile };
+                    vertices.Add(newPfTile);
+                    visited.Add(neighbour);
+                }
+            }
+
+            // If we cannot reach the end tile, return null.
+            if (endTile == null)
+                return null;
+
+            // Recreate the path to the stairs.
+            var path = new LinkedList<Tile>();
+            while (endTile != null)
+            {
+                path.AddFirst(endTile.Tile);
+                endTile = endTile.ParentNode;
+            }
+
+            return path;
+        }
+
+        /// <summary>
+        /// Finds the shortest path from the start til to the end tile (uses Dijkstra's algorithm)
+        /// </summary>
+        /// <param name="map">The map in use.</param>
+        /// <param name="start">The tile to start at.</param>
         /// <param name="end">The tile to end at.</param>
         /// <returns>A linked list with the tiles that make up the path. Returns null if there is no path.</returns>
-        private static LinkedList<Tile> DijkstraFindShortestPathTo(Map map, Tile start, Tile end)
+        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile end)
         {
             TileNode endTile = null;
 
@@ -71,37 +144,24 @@
                 return null;
 
             // Recreate the path to the stairs.
-            var pathToStairs = new LinkedList<Tile>();
+            var path = new LinkedList<Tile>();
             while (endTile != null)
             {
-                pathToStairs.AddFirst(endTile.Tile);
+                path.AddFirst(endTile.Tile);
                 endTile = endTile.ParentNode;
             }
 
-            return pathToStairs;
-        }
-
-        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile end)
-        {
-            return DijkstraFindShortestPathToOpenArea(map, start, end);
+            return path;
         }
 
         /// <summary>
-        /// The dijsktra find shortest path to open area.
+        /// Uses the Dijkstra algorithm to find a path that connects a tile to another tile (cannot search diagonally or through walls).
         /// </summary>
-        /// <param name="map">
-        /// The map.
-        /// </param>
-        /// <param name="start">
-        /// The start.
-        /// </param>
-        /// <param name="end">
-        /// The end.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LinkedList"/>.
-        /// </returns>
-        private static LinkedList<Tile> DijkstraFindShortestPathToOpenArea(Map map, Tile start, Tile end)
+        /// <param name="map"> The map to do pathfinding on. </param>
+        /// <param name="start"> The tile to start at. </param>
+        /// <param name="end"> The tile to end at. </param>
+        /// <returns> The <see cref="LinkedList"/> containing the path. </returns>
+        public static LinkedList<Tile> DijkstraFindPathToOpenArea(Map map, Tile start, Tile end)
         {
             TileNode endTile = null;
 

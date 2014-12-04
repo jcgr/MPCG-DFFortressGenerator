@@ -189,7 +189,7 @@ namespace PCG_DFFortressGenerator.Classes
                         if (tileLayer.Entrance == null)
                             Console.WriteLine(NumberOfRooms + " - " + layer);
 //                        Console.WriteLine(layer);
-                        var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
+                        var path = Pathfinding.DijkstraFindPathToOpenArea(Map, chosenWallTile,
                             tileLayer.Entrance.AreaTiles[0]);
                                 
                         if (path == null) continue;
@@ -279,7 +279,7 @@ namespace PCG_DFFortressGenerator.Classes
                         var chosenWallTile = possibleTiles[randomWallTileIndex];
                         possibleTiles.RemoveAt(randomWallTileIndex);
 
-                        var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
+                        var path = Pathfinding.DijkstraFindPathToOpenArea(Map, chosenWallTile,
                             tileLayer.Entrance.AreaTiles[0]);
 
                         if (path == null) continue;
