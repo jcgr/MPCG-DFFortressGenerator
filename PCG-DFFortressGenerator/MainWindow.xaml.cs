@@ -9,6 +9,8 @@
     using Classes.Stockpiles;
     using Classes.Workshops;
 
+    using PCG_DFFortressGenerator.Evolution;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -36,6 +38,8 @@
             var z = Convert.ToInt32(cbMapSizeZ.Text);
             Map = new Map(x, y, z) {CurrentZLevel = z - 1};
 
+            var evolver = new Evolver(x, y, z, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+
             // Puts the correct level values into cbZLevels
             cbZLevel.Items.Clear();
             var newZLevels = new List<string>();
@@ -47,11 +51,16 @@
             cbZLevel.SelectedIndex = z - 1;
 //            Console.WriteLine(Map.CurrentZLevel);
 //            Map.TestMap();
-            var lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
-            lg.GenerateLayout();
 
-            tbMapDisplay.Text = Map.ToString();
+
+            //var lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            //lg.GenerateLayout();
+
+            //tbMapDisplay.Text = Map.ToString();
             _mapGenerated = true;
+
+
+
 //            Console.WriteLine(Map.ToString());
 
 //            var newMap = Map.Copy();

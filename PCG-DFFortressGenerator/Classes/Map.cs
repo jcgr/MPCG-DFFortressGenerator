@@ -182,6 +182,12 @@ namespace PCG_DFFortressGenerator.Classes
             newMap.SetLayers(newLayers);
             return newMap;
         }
+
+        public void CalculateDistancesBetweenRooms()
+        {
+            // TODO: Implement calculation of distances between rooms (Melnyk)
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>

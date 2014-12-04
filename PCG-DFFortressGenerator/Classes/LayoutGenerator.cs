@@ -5,6 +5,8 @@ using PCG_DFFortressGenerator.Classes.Rooms;
 
 namespace PCG_DFFortressGenerator.Classes
 {
+    using System.Runtime.CompilerServices;
+
     class LayoutGenerator
     {
         /// <summary>
@@ -20,7 +22,12 @@ namespace PCG_DFFortressGenerator.Classes
         /// <summary>
         /// The number of rooms that have to be generated.
         /// </summary>
-        private int NumberOfRooms { get; set; }
+        private int CurrentNumberOfRooms { get; set; }
+
+        /// <summary>
+        /// The number of rooms that have to be generated.
+        /// </summary>
+        private int RequiredNumberOfRooms { get; set; }
 
         /// <summary>
         /// A random generator.
@@ -38,7 +45,15 @@ namespace PCG_DFFortressGenerator.Classes
             Random = new Random();
             ChosenAreas = chosenAreas;
             NumberOfDwarves = numberOfDwarves;
-            NumberOfRooms = CalculateNumberOfRooms();
+            this.CurrentNumberOfRooms = CalculateNumberOfRooms();
+        }
+
+        public LayoutGenerator(int x, int y, int z, int requiredNumberOfRooms)
+        {
+            Map = new Map(x, y, z);
+            Random = new Random();
+            this.RequiredNumberOfRooms = requiredNumberOfRooms;
+            this.CurrentNumberOfRooms = RequiredNumberOfRooms;
         }
 
         /// <summary>
@@ -50,9 +65,30 @@ namespace PCG_DFFortressGenerator.Classes
             for (var z = Map.Z - 1; z >= 0; z--)
             {
                 GenerateRooms(Map, z);
-                if (NumberOfRooms <= 0)
+                if (this.CurrentNumberOfRooms <= 0)
                     break;
             }
+        }
+
+        /// <summary>
+        /// Generates a new map layout
+        /// </summary>
+        /// <returns> The newly generated <see cref="Map"/>. </returns>
+        public Map GenerateNewLayout()
+        {
+            this.Map = new Map(this.Map.X, this.Map.Y, this.Map.Z);
+            this.CurrentNumberOfRooms = RequiredNumberOfRooms;
+
+
+            GenerateEntrance(Map.MapLayers[Map.Z - 1]);
+            for (var z = Map.Z - 1; z >= 0; z--)
+            {
+                GenerateRooms(Map, z);
+                if (this.CurrentNumberOfRooms <= 0)
+                    break;
+            }
+
+            return this.Map;
         }
 
         /// <summary>
@@ -119,9 +155,9 @@ namespace PCG_DFFortressGenerator.Classes
                 done = IsLayerFinished(tileLayer, openPositions);
             }
 
-//            Console.WriteLine("After layer " + layer + " there are " + NumberOfRooms + " remaining");
+//            Console.WriteLine("After layer " + layer + " there are " + CurrentNumberOfRooms + " remaining");
 
-            if (NumberOfRooms <= 0)
+            if (this.CurrentNumberOfRooms <= 0)
                 return;
 
             GenerateStairsToNextLevel(map, layer, openPositions);
@@ -210,7 +246,7 @@ namespace PCG_DFFortressGenerator.Classes
                         wallTiles.RemoveAt(randomWallTileIndex);
 
                         if (tileLayer.Entrance == null)
-                            Console.WriteLine("Much error, such wow, many paths " + NumberOfRooms);
+                            Console.WriteLine("Much error, such wow, many paths " + this.CurrentNumberOfRooms);
 
                         var path = Pathfinding.DijkstraFindPathToOpenArea(
                             Map,
@@ -232,7 +268,7 @@ namespace PCG_DFFortressGenerator.Classes
                     foreach (var areaTile in tempArea.AreaTiles)
                         openPositions.Remove(areaTile.Position);
 
-                    NumberOfRooms--;
+                    this.CurrentNumberOfRooms--;
                     generated = true;
 
                     break;
@@ -385,7 +421,7 @@ namespace PCG_DFFortressGenerator.Classes
         /// <returns>True if the layer is finished; false otherwise.</returns>
         private bool IsLayerFinished(TileLayer tileLayer, List<Position> openPositions)
         {
-            if (NumberOfRooms <= 0)
+            if (this.CurrentNumberOfRooms <= 0)
                 return true;
             if (openPositions.Count <= (tileLayer.X * tileLayer.Y) * 0.1)
                 return true;

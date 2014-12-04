@@ -63,7 +63,10 @@
         /// </summary>
         public string AreaName { get; protected set; }
 
-        // TODO: Refactor to char?
+        /// <summary>
+        /// Gets the distances to all other areas in the map that this area is in.
+        /// </summary>
+        public Dictionary<int, double> Distances { get; private set; }
 
         /// <summary>
         /// Adds a tile to the area.
