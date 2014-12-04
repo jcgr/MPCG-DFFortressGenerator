@@ -329,7 +329,7 @@ namespace PCG_DFFortressGenerator.Classes
                     tileLayer.MapTiles[startPosition.X, startPosition.Y].TileStatus = Tile.TileType.Stairs;
                     tileLayer.MapTiles[checkX, checkY].TileStatus = Tile.TileType.Stairs;
 
-                    // Do the same for the next layer
+                    // Create matching stairs on the next layer
                     if (layer > 0)
                     {
                         if (map.MapLayers[layer - 1] != null)
@@ -376,6 +376,13 @@ namespace PCG_DFFortressGenerator.Classes
             return true;
         }
 
+        /// <summary>
+        /// Checks if the layer is finished with regards to generating (no more rooms needed or only 10%
+        /// of the layer is open).
+        /// </summary>
+        /// <param name="tileLayer">The layer to check for.</param>
+        /// <param name="openPositions">The open positions on the layer.</param>
+        /// <returns>True if the layer is finished; false otherwise.</returns>
         private bool IsLayerFinished(TileLayer tileLayer, List<Position> openPositions)
         {
             if (NumberOfRooms <= 0)
