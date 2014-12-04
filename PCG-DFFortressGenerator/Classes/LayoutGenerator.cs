@@ -308,7 +308,9 @@ namespace PCG_DFFortressGenerator.Classes
                         var chosenWallTile = possibleTiles[randomWallTileIndex];
                         possibleTiles.RemoveAt(randomWallTileIndex);
 
-                        var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
+                        var path = Pathfinding.DijkstraFindPathToOpenArea(
+                            Map,
+                            chosenWallTile,
                             tileLayer.Entrance.AreaTiles[Random.Next(tileLayer.Entrance.AreaTiles.Count)]);
 
                         if (path == null) continue;

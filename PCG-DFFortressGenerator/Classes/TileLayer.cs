@@ -30,7 +30,7 @@
         public Tile[,] MapTiles { get; set; }
 
         /// <summary>
-        /// The areas on this layer.
+        /// The Areas on this layer.
         /// </summary>
         public List<Area> LayerAreas { get; private set; }
 
