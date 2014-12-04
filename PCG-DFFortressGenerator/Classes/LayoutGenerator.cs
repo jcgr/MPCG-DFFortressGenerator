@@ -7,14 +7,29 @@ namespace PCG_DFFortressGenerator.Classes
 {
     class LayoutGenerator
     {
+        /// <summary>
+        /// The map that has been generated.
+        /// </summary>
         public Map Map { get; private set; }
 
+        /// <summary>
+        /// The number of dwarves the fortress should contain.
+        /// </summary>
         private int NumberOfDwarves { get; set; }
 
+        /// <summary>
+        /// The number of rooms that have to be generated.
+        /// </summary>
         private int NumberOfRooms { get; set; }
 
+        /// <summary>
+        /// A random generator.
+        /// </summary>
         private Random Random { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private List<Area> ChosenAreas { get; set; }
 
         public LayoutGenerator(Map map, List<Area> chosenAreas, int numberOfDwarves)
@@ -24,16 +39,20 @@ namespace PCG_DFFortressGenerator.Classes
             ChosenAreas = chosenAreas;
             NumberOfDwarves = numberOfDwarves;
             NumberOfRooms = CalculateNumberOfRooms();
+        }
 
+        /// <summary>
+        /// Generates a laytout for the map that belongs to the layout generator.
+        /// </summary>
+        public void GenerateLayout()
+        {
             GenerateEntrance(Map.MapLayers[Map.Z - 1]);
-//            GenerateRooms(Map.MapLayers[Map.Z - 1]);
-            for (int z = Map.Z - 1; z >= 0; z--)
+            for (var z = Map.Z - 1; z >= 0; z--)
             {
                 GenerateRooms(Map, z);
                 if (NumberOfRooms <= 0)
                     break;
             }
-
         }
 
         /// <summary>
@@ -108,10 +127,14 @@ namespace PCG_DFFortressGenerator.Classes
             GenerateStairsToNextLevel(map, layer, openPositions);
         }
 
-        private void GenerateRoomAndPath(TileLayer tileLayer, List<Position> openPositions, int layer)
+        /// <summary>
+        /// Generates a room on the given layer along with a path to the entrance on the layer.
+        /// </summary>
+        /// <param name="tileLayer">The layer to generate a room for.</param>
+        /// <param name="openPositions">The positions on the layer that have not yet been tried.</param>
+        private void GenerateRoomAndPath(TileLayer tileLayer, List<Position> openPositions)
         {
             var generated = false;
-            var tempArea = new Area();
             var originalLayout = tileLayer.Copy();
 
             while (!generated)
@@ -141,7 +164,7 @@ namespace PCG_DFFortressGenerator.Classes
                     if (!this.TilesOpenBetween(startPosition.X, startPosition.Y, checkX, checkY, tileLayer)) continue;
 
                     // Create area
-                    tempArea = tileLayer.GenerateAndAddArea(
+                    var tempArea = tileLayer.GenerateAndAddArea(
                         startPosition.X + combination.Item1
                         , startPosition.Y + combination.Item2
                         , checkX - combination.Item1
@@ -187,10 +210,10 @@ namespace PCG_DFFortressGenerator.Classes
                         wallTiles.RemoveAt(randomWallTileIndex);
 
                         if (tileLayer.Entrance == null)
-                            Console.WriteLine(NumberOfRooms + " - " + layer);
-//                        Console.WriteLine(layer);
+                            Console.WriteLine("Much error, such wow, many paths " + NumberOfRooms);
+
                         var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
-                            tileLayer.Entrance.AreaTiles[0]);
+                            tileLayer.Entrance.AreaTiles[Random.Next(tileLayer.Entrance.AreaTiles.Count)]);
                                 
                         if (path == null) continue;
                                 
@@ -207,8 +230,6 @@ namespace PCG_DFFortressGenerator.Classes
                     foreach (var areaTile in tempArea.AreaTiles)
                         openPositions.Remove(areaTile.Position);
 
-//                    Console.WriteLine("Room number: " + NumberOfRooms);
-
                     NumberOfRooms--;
                     generated = true;
 
@@ -223,6 +244,12 @@ namespace PCG_DFFortressGenerator.Classes
             }
         }
 
+        /// <summary>
+        /// Generates stairs on the chosen layer that leads to the next layer.
+        /// </summary>
+        /// <param name="map">The map in use.</param>
+        /// <param name="layer">The layer to generate stairs on (will make stairs to layer - 1).</param>
+        /// <param name="openPositions">The positions not yet checked.</param>
         private void GenerateStairsToNextLevel(Map map, int layer, List<Position> openPositions)
         {
             var tileLayer = map.MapLayers[layer];
@@ -280,7 +307,7 @@ namespace PCG_DFFortressGenerator.Classes
                         possibleTiles.RemoveAt(randomWallTileIndex);
 
                         var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
-                            tileLayer.Entrance.AreaTiles[0]);
+                            tileLayer.Entrance.AreaTiles[Random.Next(tileLayer.Entrance.AreaTiles.Count)]);
 
                         if (path == null) continue;
 

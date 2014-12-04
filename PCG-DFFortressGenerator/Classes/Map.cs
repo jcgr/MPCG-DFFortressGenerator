@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Windows.Documents;
+﻿using System.Linq;
+using PCG_DFFortressGenerator.Classes.Workshops;
 
 namespace PCG_DFFortressGenerator.Classes
 {
     using System;
+    using System.Collections.Generic;
 
-    using PCG_DFFortressGenerator.Classes.Rooms;
+    using Rooms;
 
     class Map
     {
@@ -73,6 +74,8 @@ namespace PCG_DFFortressGenerator.Classes
 
             for (var z = Z - 1; z >= 0; z--)
                 tempList.AddRange(MapLayers[z].LayerAreas);
+
+            return tempList;
         }
 
         /// <summary>
@@ -99,8 +102,16 @@ namespace PCG_DFFortressGenerator.Classes
             for (var zz = 0; zz < 5; zz++)
                 MapLayers[zz] = new TileLayer(20, 20, zz);
 
-            SetTile(9, 0, 4, Tile.TileType.Room, new Entrance());
-            SetTile(10, 0, 4, Tile.TileType.Room, new Entrance());
+            var entrance = new Entrance();
+            entrance.AddTile(MapLayers[4].MapTiles[9, 0]);
+            entrance.AddTile(MapLayers[4].MapTiles[10, 0]);
+            MapLayers[4].MapTiles[9, 0].TileStatus = Tile.TileType.Room;
+            MapLayers[4].MapTiles[10, 0].TileStatus = Tile.TileType.Room;
+            MapLayers[4].MapTiles[9, 0].AreaType = entrance;
+            MapLayers[4].MapTiles[10, 0].AreaType = entrance;
+            MapLayers[4].Entrance = entrance;
+//            SetTile(9, 0, 4, Tile.TileType.Room, new Entrance());
+//            SetTile(10, 0, 4, Tile.TileType.Room, new Entrance());
             /*for (var y = 1; y < 11; y++)
             {
                 SetTile(9, y, 4, Tile.TileType.Dug, null);
@@ -117,17 +128,20 @@ namespace PCG_DFFortressGenerator.Classes
                 SetTile(9, y, 3, Tile.TileType.Dug, null);
                 SetTile(10, y, 3, Tile.TileType.Dug, null);
             }*/
-            SetTile(9, 4, 4, Tile.TileType.Room, new Bedroom());
-            SetTile(10, 4, 4, Tile.TileType.Room, new Bedroom());
+            MapLayers[4].GenerateAndAddArea(9, 4, 10, 4, new Bedroom());
+//            SetTile(9, 4, 4, Tile.TileType.Room, new Bedroom());
+//            SetTile(10, 4, 4, Tile.TileType.Room, new Bedroom());
 
             Console.WriteLine(@"----------------------------");
             Console.WriteLine(@"First level");
             Console.WriteLine(ToString());
             Console.WriteLine();
-            CurrentZLevel = 3;
-            Console.WriteLine(@"Second level");
+//            CurrentZLevel = 3;
+            Console.WriteLine(@"Replaced room");
+            MapLayers[4].ReplaceArea(MapLayers[4].LayerAreas[0], new Kitchen());
             Console.WriteLine(ToString());
             Console.WriteLine(@"----------------------------");
+            Console.WriteLine(MapLayers[4].LayerAreas.OfType<Kitchen>().Any());
             Console.WriteLine(@"----------------------------");
 
             //Window.tbMapDisplay.Text = this.ToString();
@@ -194,10 +208,15 @@ namespace PCG_DFFortressGenerator.Classes
             Z = z;
         }
 
+        /// <summary>
+        /// Creates a copy of the position.
+        /// </summary>
+        /// <returns>A copy of the position.</returns>
         public Position Copy()
         {
             return new Position(X, Y, Z);
         }
+
 
         public override string ToString()
         {

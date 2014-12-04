@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows.Documents;
 
@@ -97,6 +98,11 @@ namespace PCG_DFFortressGenerator.Classes
             LayerAreas.Add(area);
         }
 
+        /// <summary>
+        /// Reaplces an area on the layer with another area.
+        /// </summary>
+        /// <param name="index">The index of the area to replace.</param>
+        /// <param name="newArea">The area to place instead.</param>
         public void ReplaceArea(int index, Area newArea)
         {
             if (index >= LayerAreas.Count)
@@ -112,6 +118,34 @@ namespace PCG_DFFortressGenerator.Classes
             LayerAreas[index] = newArea;
         }
 
+        /// <summary>
+        /// Replaces an area on the layer with another area.
+        /// </summary>
+        /// <param name="oldArea">The index of the area to replace.</param>
+        /// <param name="newArea">The area to place instead.</param>
+        public void ReplaceArea(Area oldArea, Area newArea)
+        {
+            var index = -1;
+
+            if (LayerAreas.Contains(oldArea))
+                index = LayerAreas.FindIndex(x => x.Equals(oldArea));
+
+            if (index >= 0)
+            {
+                foreach (var areaTile in LayerAreas[index].AreaTiles)
+                {
+                    areaTile.AreaType = newArea;
+                    MapTiles[areaTile.Position.X, areaTile.Position.Y].AreaType = newArea;
+                }
+
+                LayerAreas[index] = newArea;
+            }
+        }
+
+        /// <summary>
+        /// Creates a deep copy of the layer.
+        /// </summary>
+        /// <returns>A copy of the layer.</returns>
         public TileLayer Copy()
         {
             var newLayer = new TileLayer(X, Y, ZLevel);

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using PCG_DFFortressGenerator.Classes;
-using PCG_DFFortressGenerator.Classes.Rooms;
-using PCG_DFFortressGenerator.Classes.Stockpiles;
-using PCG_DFFortressGenerator.Classes.Workshops;
-
-namespace PCG_DFFortressGenerator
+﻿namespace PCG_DFFortressGenerator
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows;
+    using System.Windows.Controls;
+    using Classes;
+    using Classes.Rooms;
+    using Classes.Stockpiles;
+    using Classes.Workshops;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -49,6 +48,7 @@ namespace PCG_DFFortressGenerator
 //            Console.WriteLine(Map.CurrentZLevel);
 //            Map.TestMap();
             var lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            lg.GenerateLayout();
 
             tbMapDisplay.Text = Map.ToString();
             _mapGenerated = true;

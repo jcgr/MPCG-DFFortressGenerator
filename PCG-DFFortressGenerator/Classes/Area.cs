@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using PCG_DFFortressGenerator.Classes.Rooms;
-using PCG_DFFortressGenerator.Classes.Stockpiles;
-using PCG_DFFortressGenerator.Classes.Workshops;
-
-namespace PCG_DFFortressGenerator.Classes
+﻿namespace PCG_DFFortressGenerator.Classes
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Rooms;
+    using Stockpiles;
+    using Workshops;
+
     /// <summary>
     /// A class that represents a special area of the fortress (a room, a workshop or a stockpile).
     /// </summary>
@@ -37,11 +37,19 @@ namespace PCG_DFFortressGenerator.Classes
             AreaTiles = new List<Tile>();
         }
 
+        /// <summary>
+        /// Adds a tile to the area.
+        /// </summary>
+        /// <param name="tile">The tile.</param>
         public void AddTile(Tile tile)
         {
             AreaTiles.Add(tile);
         }
 
+        /// <summary>
+        /// Creates a deep copy of the area.
+        /// </summary>
+        /// <returns>A copy of the area.</returns>
         public Area Copy()
         {
             var newArea = new Area();
