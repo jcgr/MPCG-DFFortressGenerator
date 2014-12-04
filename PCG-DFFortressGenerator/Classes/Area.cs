@@ -21,10 +21,6 @@ namespace PCG_DFFortressGenerator.Classes
 
         public int MaxWidth { get; set; }
 
-//        public int MinSize { get; set; }
-//
-//        public int MaxSize { get; set; }
-
         public List<Tile> AreaTiles { get; private set; }
 
         // Make sure it is only one character due to the map being ASCII for now.
@@ -36,8 +32,6 @@ namespace PCG_DFFortressGenerator.Classes
             MaxHeight = 4;
             MinWidth = 4;
             MaxWidth = 4;
-//            MinSize = 0;
-//            MaxSize = 10000;
             AreaName = "1";
 
             AreaTiles = new List<Tile>();

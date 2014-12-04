@@ -7,7 +7,7 @@
     {
         public Food()
         {
-            AreaName = "O";
+            AreaName = "D";
 
 //            MinSize = 10;
 //            MaxSize = 30;

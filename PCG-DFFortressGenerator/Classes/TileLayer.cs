@@ -114,7 +114,6 @@ namespace PCG_DFFortressGenerator.Classes
 
         public TileLayer Copy()
         {
-//            Console.WriteLine(LayerAreas.Count);
             var newLayer = new TileLayer(X, Y, ZLevel);
 
             foreach (var layerArea in LayerAreas)

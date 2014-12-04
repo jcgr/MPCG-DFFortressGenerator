@@ -1,4 +1,7 @@
-﻿namespace PCG_DFFortressGenerator.Classes
+﻿using System.Collections.Generic;
+using System.Windows.Documents;
+
+namespace PCG_DFFortressGenerator.Classes
 {
     using System;
 
@@ -57,6 +60,19 @@
         public void SetLayers(TileLayer[] layers)
         {
             MapLayers = layers;
+        }
+
+        /// <summary>
+        /// Gets a list of all the areas in the map. To figure out which level an area is on,
+        /// check the Z-position of one of the tiles of the area.
+        /// </summary>
+        /// <returns>A list of all areas in the map.</returns>
+        public List<Area> GetAllAreas()
+        {
+            var tempList = new List<Area>();
+
+            for (var z = Z - 1; z >= 0; z--)
+                tempList.AddRange(MapLayers[z].LayerAreas);
         }
 
         /// <summary>
@@ -119,19 +135,6 @@
             //Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
         }
 
-//        public Size MeasureString(string candidate)
-//        {
-//            var formattedText = new FormattedText(
-//                candidate,
-//                CultureInfo.CurrentUICulture,
-//                FlowDirection.LeftToRight,
-//                new Typeface(Window.tbMapDisplay.FontFamily, Window.tbMapDisplay.FontStyle, Window.tbMapDisplay.FontWeight, Window.tbMapDisplay.FontStretch),
-//                Window.tbMapDisplay.FontSize,
-//                Brushes.Black);
-//
-//            return new Size(formattedText.Width, formattedText.Height);
-//        }
-
         /// <summary>
         /// Sets a tile to the given type and room, if applicable.
         /// </summary>
@@ -145,6 +148,10 @@
             MapLayers[z].SetTile(x, y, tileStatus, room);
         }
 
+        /// <summary>
+        /// Creates a deep copy of the map.
+        /// </summary>
+        /// <returns>A deep copy of the map.</returns>
         public Map Copy()
         {
             var newMap = new Map(X, Y, Z);

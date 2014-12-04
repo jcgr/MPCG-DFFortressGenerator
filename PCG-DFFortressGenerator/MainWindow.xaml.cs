@@ -46,13 +46,13 @@ namespace PCG_DFFortressGenerator
                 newZLevels.Add("" + zz);
             }
             cbZLevel.SelectedIndex = z - 1;
-            Console.WriteLine(Map.CurrentZLevel);
+//            Console.WriteLine(Map.CurrentZLevel);
 //            Map.TestMap();
-            LayoutGenerator lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            var lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
 
             tbMapDisplay.Text = Map.ToString();
             _mapGenerated = true;
-            Console.WriteLine(Map.ToString());
+//            Console.WriteLine(Map.ToString());
 
 //            var newMap = Map.Copy();
 //            newMap.CurrentZLevel = Map.CurrentZLevel;

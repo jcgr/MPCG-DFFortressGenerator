@@ -7,11 +7,11 @@ namespace PCG_DFFortressGenerator.Classes
 {
     class LayoutGenerator
     {
+        public Map Map { get; private set; }
+
         private int NumberOfDwarves { get; set; }
 
         private int NumberOfRooms { get; set; }
-
-        public Map Map { get; private set; }
 
         private Random Random { get; set; }
 
@@ -27,7 +27,7 @@ namespace PCG_DFFortressGenerator.Classes
 
             GenerateEntrance(Map.MapLayers[Map.Z - 1]);
 //            GenerateRooms(Map.MapLayers[Map.Z - 1]);
-            for (int z = Map.Z - 1; z > 0; z--)
+            for (int z = Map.Z - 1; z >= 0; z--)
             {
                 GenerateRooms(Map, z);
                 if (NumberOfRooms <= 0)
@@ -50,7 +50,7 @@ namespace PCG_DFFortressGenerator.Classes
                 rooms += (int)Math.Ceiling(NumberOfDwarves / 6d);
 
             rooms += NumberOfDwarves / 2;
-
+//            Console.WriteLine(NumberOfDwarves + " rooms: " + rooms);
             return rooms;
         }
 
@@ -72,7 +72,15 @@ namespace PCG_DFFortressGenerator.Classes
                     tile2 = tile1 - 1;
             }
 
-            var entrance = layer.GenerateAndAddArea(tile2, 0, tile1, 0, new Entrance());
+//            var entrance = layer.GenerateAndAddArea(tile2, 0, tile1, 0, new Entrance());
+
+            var entrance = new Entrance();
+            entrance.AddTile(layer.MapTiles[tile2, 0]);
+            entrance.AddTile(layer.MapTiles[tile1, 0]);
+            layer.MapTiles[tile2, 0].TileStatus = Tile.TileType.Room;
+            layer.MapTiles[tile1, 0].TileStatus = Tile.TileType.Room;
+            layer.MapTiles[tile2, 0].AreaType = entrance;
+            layer.MapTiles[tile1, 0].AreaType = entrance;
             layer.Entrance = entrance;
         }
 
@@ -91,6 +99,8 @@ namespace PCG_DFFortressGenerator.Classes
                 GenerateRoomAndPath(tileLayer, openPositions, layer);
                 done = IsLayerFinished(tileLayer, openPositions);
             }
+
+//            Console.WriteLine("After layer " + layer + " there are " + NumberOfRooms + " remaining");
 
             if (NumberOfRooms <= 0)
                 return;
@@ -176,7 +186,9 @@ namespace PCG_DFFortressGenerator.Classes
                         var chosenWallTile = wallTiles[randomWallTileIndex];
                         wallTiles.RemoveAt(randomWallTileIndex);
 
-                        Console.WriteLine(layer);
+                        if (tileLayer.Entrance == null)
+                            Console.WriteLine(NumberOfRooms + " - " + layer);
+//                        Console.WriteLine(layer);
                         var path = Pathfinding.DijkstraFindPathTo(Map, chosenWallTile,
                             tileLayer.Entrance.AreaTiles[0]);
                                 
@@ -194,6 +206,8 @@ namespace PCG_DFFortressGenerator.Classes
 
                     foreach (var areaTile in tempArea.AreaTiles)
                         openPositions.Remove(areaTile.Position);
+
+//                    Console.WriteLine("Room number: " + NumberOfRooms);
 
                     NumberOfRooms--;
                     generated = true;
@@ -214,6 +228,8 @@ namespace PCG_DFFortressGenerator.Classes
             var tileLayer = map.MapLayers[layer];
             var originalLayout = tileLayer.Copy();
             var generated = false;
+            openPositions =
+                openPositions.Where(x => tileLayer.MapTiles[x.X, x.Y].TileStatus == Tile.TileType.NotDug).ToList();
 
             while (!generated)
             {
@@ -239,7 +255,8 @@ namespace PCG_DFFortressGenerator.Classes
                     var checkY = startPosition.Y + (combination.Item2);
 
                     if (!tileLayer.WithinLayer(checkX, checkY)) continue;
-                    if (!this.TilesOpenBetween(startPosition.X, startPosition.Y, checkX, checkY, tileLayer)) continue;
+//                    if (tileLayer.MapTiles[checkX, checkY].TileStatus == Tile.TileType.RoomWall) continue;
+                    if (tileLayer.MapTiles[checkX, checkY].TileStatus != Tile.TileType.NotDug) continue;
 
                     var possibleTiles = new List<Tile>
                     {
@@ -282,14 +299,18 @@ namespace PCG_DFFortressGenerator.Classes
                     tileLayer.MapTiles[checkX, checkY].TileStatus = Tile.TileType.Stairs;
 
                     // Do the same for the next layer
-                    if (map.MapLayers[layer - 1] != null)
+                    if (layer > 0)
                     {
-                        var newEntrance = new Area();
-                        newEntrance.AddTile(map.MapLayers[layer - 1].MapTiles[startPosition.X, startPosition.Y]);
-                        newEntrance.AddTile(map.MapLayers[layer - 1].MapTiles[checkX, checkY]);
-                        map.MapLayers[layer - 1].MapTiles[startPosition.X, startPosition.Y].TileStatus = Tile.TileType.Stairs;
-                        map.MapLayers[layer - 1].MapTiles[checkX, checkY].TileStatus = Tile.TileType.Stairs;
-                        map.MapLayers[layer - 1].Entrance = newEntrance;
+                        if (map.MapLayers[layer - 1] != null)
+                        {
+                            var newEntrance = new Area();
+                            newEntrance.AddTile(map.MapLayers[layer - 1].MapTiles[startPosition.X, startPosition.Y]);
+                            newEntrance.AddTile(map.MapLayers[layer - 1].MapTiles[checkX, checkY]);
+                            map.MapLayers[layer - 1].MapTiles[startPosition.X, startPosition.Y].TileStatus = Tile.TileType.Stairs;
+                            map.MapLayers[layer - 1].MapTiles[checkX, checkY].TileStatus = Tile.TileType.Stairs;
+                            map.MapLayers[layer - 1].Entrance = newEntrance;
+//                            Console.WriteLine("Generating stairs on level " + (layer - 1));
+                        }
                     }
 
                     generated = true;
