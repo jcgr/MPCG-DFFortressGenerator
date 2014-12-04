@@ -7,7 +7,7 @@
     {
         public Fishery()
         {
-            AreaName = "#";
+            AreaName = "e";
         }
     }
 }

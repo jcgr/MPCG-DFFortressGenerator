@@ -137,7 +137,7 @@
             <CheckBox Content="Brewery (q)" Name="chkBrewery" HorizontalAlignment="Left" Margin="10,204,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Carpenter's (c)" Name="chkCarpenters" HorizontalAlignment="Left" Margin="149,204,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Craftdwarf's (¤)" Name="chkCraftdwarfs" HorizontalAlignment="Left" Margin="10,224,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Fishery (#)" Name="chkFishery" HorizontalAlignment="Left" Margin="149,224,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Fishery (e)" Name="chkFishery" HorizontalAlignment="Left" Margin="149,224,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Kitchen (k)" Name="chkKitchen" HorizontalAlignment="Left" Margin="10,244,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Mason's (m)" Name="chkMasons" HorizontalAlignment="Left" Margin="149,244,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Metalsmith's (h)" Name="chkMetalsmiths" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Width="119"/>
@@ -149,7 +149,7 @@
             <CheckBox Content="Bar/Block (B)" Name="chkBarBlock" HorizontalAlignment="Left" Margin="10,337,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Cloth (C)" Name="chkCloth" HorizontalAlignment="Left" Margin="149,337,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Finished Goods (G)" Name="chkFinishedGoods" HorizontalAlignment="Left" Margin="10,357,0,0" VerticalAlignment="Top" Width="119"/>
-            <CheckBox Content="Food (O)" Name="chkFood" HorizontalAlignment="Left" Margin="149,357,0,0" VerticalAlignment="Top" Width="119"/>
+            <CheckBox Content="Food (D)" Name="chkFood" HorizontalAlignment="Left" Margin="149,357,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Furniture (U)" Name="chkFurniture" HorizontalAlignment="Left" Margin="10,377,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Leather (L)" Name="chkLeather" HorizontalAlignment="Left" Margin="149,377,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Stone (S)" Name="chkStone" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="119"/>
