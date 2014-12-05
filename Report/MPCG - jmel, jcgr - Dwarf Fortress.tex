@@ -87,6 +87,15 @@ breaklines=true}
         \pagebreak
 }
 
+\newcommand{\insertPicture}[3]{
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=#1\textwidth]{Images/#2}
+	\caption{#3}
+	\label{fig:#2}
+\end{figure}
+}
+
 % Title
 \title{
 \Huge{Fortress generation for Dwarf Fortress}\\
