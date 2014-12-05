@@ -3,6 +3,6 @@
 
 How does your algorithm work? Describe in as much detail as you can fit into the report. Also, how did you interface it to the game?
 
-% Assumptions about knowledge of both our own robot and enemy robot
-% Assumptions about actions by enemy robot
-% Our simplified scoring system
+Algorithm: Generate various layouts by digging rooms in random (open) positions, then connecting them to the entrance. Evolve/mutate by swapping room content around for each layout and evaluating each room assignment for every layout.
+
+Interface: We did not interface it directly into the game. We give the user a layout map that provides the best room layouts generated.
