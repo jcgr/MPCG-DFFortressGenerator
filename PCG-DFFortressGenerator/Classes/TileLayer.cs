@@ -140,6 +140,18 @@
             }
         }
 
+        public List<Tuple<Tuple<int, int>, Area>> GetAreasWithIndicies()
+        {
+            var tempList = new List<Tuple<Tuple<int, int>, Area>>();
+
+            for (int i = 0; i < LayerAreas.Count; i++)
+            {
+                tempList.Add(new Tuple<Tuple<int, int>, Area>(new Tuple<int, int>(ZLevel, i), LayerAreas[i]));
+            }
+
+            return tempList;
+        }
+
         /// <summary>
         /// Creates a deep copy of the layer.
         /// </summary>

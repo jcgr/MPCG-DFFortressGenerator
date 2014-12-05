@@ -82,6 +82,21 @@ namespace PCG_DFFortressGenerator.Classes
         }
 
         /// <summary>
+        /// Gets a list of all the areas in the map. To figure out which level an area is on,
+        /// check the Z-position of one of the tiles of the area.
+        /// </summary>
+        /// <returns>A list of all areas in the map.</returns>
+        public List<Tuple<Tuple<int, int>, Area>> GetAllAreasWithIndicies()
+        {
+            var tempList = new List<Tuple<Tuple<int, int>, Area>>();
+
+            for (var z = Z - 1; z >= 0; z--)
+                tempList.AddRange(MapLayers[z].GetAreasWithIndicies());
+
+            return tempList;
+        }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>
