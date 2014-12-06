@@ -1,8 +1,38 @@
 \section{Methods}
 \label{04}
 
-How does your algorithm work? Describe in as much detail as you can fit into the report. Also, how did you interface it to the game?
+There are various different ways to generate dungeons\cite[Chapter 3]{PCGBook}\cite{FearAI}, but we did not feel that they did what we wanted. We wanted all of the rooms to be connected to the entrance as directly as possible, while still being able to connect to each other on the way.
 
-Algorithm: Generate various layouts by digging rooms in random (open) positions, then connecting them to the entrance. Evolve/mutate by swapping room content around for each layout and evaluating each room assignment for every layout.
+For this purpose, we wrote our own algorithm, which works as follows:
 
-Interface: We did not interface it directly into the game. We give the user a layout map that provides the best room layouts generated.
+\begin{enumerate}
+
+	\item Create a map of the user-specified dimensions and calculate the number of rooms we want, based on how many dwarves the user expects to have in their fortress.
+
+	\item Create an entrance to the fortress on the top layer along one side of the room.
+
+	\item For each layer in the map (starting at the top one), make a list that contains all positions that are not dug out, then do the following:
+
+	\begin{enumerate}
+		
+		\item Choose a random position from the list of open positions and use it as one corner of the room.
+
+		\item Pick a random, diagonal direction (north/east, south/east, south/west or north/west), go 6 tiles that way and see if the positions in that direction are open.
+
+		\item If they are open, build a room in the middle 4x4 square and remove the positions now occupied by the room from the list of open positions.
+
+		\item Create a path from the room to the nearest entrance (stairs on the lower levels count as entrances to that level).
+
+		\item Once enough rooms have been created, or only 10\% of the layer is open, create stairs to the next layer, and connect these stairs to the entrance of the current layer.
+
+		\item Repeat for each layer until enough rooms have been built.
+
+	\end{enumerate}
+
+\end{enumerate}
+
+%How does your algorithm work? Describe in as much detail as you can fit into the report. Also, how did you interface it to the game?
+
+%Algorithm: Generate various layouts by digging rooms in random (open) positions, then connecting them to the entrance. Evolve/mutate by swapping room content around for each layout and evaluating each room assignment for every layout.
+
+%Interface: We did not interface it directly into the game. We give the user a layout map that provides the best room layouts generated.
