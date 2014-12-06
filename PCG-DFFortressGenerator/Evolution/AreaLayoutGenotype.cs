@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// The genotype of an area layout used in mutation.
@@ -9,41 +10,26 @@
     public class AreaLayoutGenotype
     {
         /// <summary>
-        /// The fitness value of the layout.
-        /// </summary>
-        private double fitnessValue;
-
-        /// <summary>
-        /// Only calculate fitness if 
-        /// </summary>
-        private bool isFitnessCalculated;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AreaLayoutGenotype"/> class.
         /// </summary>
-        public AreaLayoutGenotype()
+        /// <param name="generation"> The generation where this born. </param>
+        /// <param name="areas">The areas to use.</param>
+        public AreaLayoutGenotype(int generation, List<AreaGenotype> areas)
         {
-            this.Areas = new List<AreaGenotype>();
-            this.fitnessValue = double.MinValue;
+            this.Areas = areas;
+            this.FitnessValue = double.MinValue;
+            this.Generation = generation;
         }
+
+        /// <summary>
+        /// Gets the generation of this area layout.
+        /// </summary>
+        public int Generation { get; private set; }
 
         /// <summary>
         /// Gets the fitness value of the area layout.
         /// </summary>
-        public double FitnessValue 
-        {
-            get
-            {
-                if (this.isFitnessCalculated)
-                {
-                    return this.fitnessValue;
-                }
-
-                this.fitnessValue = this.CalculateFitness();
-                this.isFitnessCalculated = true;
-                return this.fitnessValue;
-            }
-        }
+        public double FitnessValue { get; private set; }
 
         /// <summary>
         /// Gets the areas of the layout.
@@ -51,125 +37,113 @@
         public List<AreaGenotype> Areas { get; private set; }
 
         /// <summary>
-        /// Mutates a .
-        /// </summary>
-        /// <param name="mutationChance"> The chance that a room is mutated into a different room. </param>
-        /// <returns> The newly created <see cref="AreaLayoutGenotype"/>. </returns>
-        public AreaLayoutGenotype Mutate(double mutationChance)
-        {
-            // TODO: Implement mutate
-            return null;
-        }
-
-        /// <summary>
         /// Gets a random room type.
         /// </summary>
         /// <returns>The random room type.</returns>
-        private string GetRandomRoom()
+        public static string GetRandomRoom()
         {
-            var rand = new Random(23);
-            var nextInt = rand.Next();
+            var nextInt = Evolver.Random.Next(23);
             switch (nextInt)
             {
-                // ----------
-                // Rooms
-                // ----------
-                // Barracks
+                    // ----------
+                    // Rooms
+                    // ----------
+                    // Barracks
                 case 0:
                     return "r";
 
-                // Bedroom
+                    // Bedroom
                 case 1:
                     return "b";
 
-                // Dining Room
+                    // Dining Room
                 case 2:
                     return "d";
 
-                // Entrance would normally be 3, but we should not be able to generate án Entrance randomly in any room.
-                // Farm
+                    // Entrance would normally be 3, but we should not be able to generate án Entrance randomly in any room.
+                    // Farm
                 case 3:
                     return "f";
 
-                // Office
+                    // Office
                 case 4:
                     return "o";
 
-                // ----------
-                // Workshops
-                // ----------
-                // Brewery
+                    // ----------
+                    // Workshops
+                    // ----------
+                    // Brewery
                 case 5:
                     return "q";
 
-                // Carpenter
+                    // Carpenter
                 case 6:
                     return "c";
 
-                // Craftdwarf
+                    // Craftdwarf
                 case 7:
                     return "¤";
 
-                // Fishery
+                    // Fishery
                 case 8:
                     return "e";
 
-                // Kitchen
+                    // Kitchen
                 case 9:
                     return "k";
 
-                // Mason
+                    // Mason
                 case 10:
                     return "m";
 
-                // Metalsmith
+                    // Metalsmith
                 case 11:
                     return "h";
 
-                // Smelter
+                    // Smelter
                 case 12:
                     return "s";
 
-                // Wood Furnace
+                    // Wood Furnace
                 case 13:
                     return "u";
 
-                // ----------
-                // Stockpiles
-                // ----------
-                // BarBlock
+                    // ----------
+                    // Stockpiles
+                    // ----------
+                    // BarBlock
                 case 14:
                     return "B";
 
-                // Cloth
+                    // Cloth
                 case 15:
                     return "C";
 
-                // Finished Goods
+                    // Finished Goods
                 case 16:
                     return "G";
 
-                // Food
+                    // Food
                 case 17:
                     return "D";
 
-                // Furniture
+                    // Furniture
                 case 18:
                     return "U";
 
-                // Leather
+                    // Leather
                 case 19:
                     return "L";
 
-                // Stone
+                    // Stone
                 case 20:
                     return "S";
 
-                // Weaponry
+                    // Weaponry
                 case 21:
                     return "W";
 
-                // Wood
+                    // Wood
                 case 22:
                     return "T";
 
@@ -179,17 +153,80 @@
         }
 
         /// <summary>
-        /// Calculates the fitness of this area layout.
+        /// Mutates a layout into a new child.
         /// </summary>
-        /// <returns> The fitness of the layout as a <see cref="double"/>. </returns>
-        private double CalculateFitness()
+        /// <param name="generation"> The generation where this born. </param>
+        /// <param name="mutationChance"> The chance that a room is mutated into a different room.  </param>
+        /// <param name="requiredAreas"> The required areas for the generation. </param>
+        /// <returns> The newly created <see cref="AreaLayoutGenotype"/>.  </returns>
+        public AreaLayoutGenotype Mutate(int generation, double mutationChance, Dictionary<string, int> requiredAreas)
         {
-            foreach (var ag in this.Areas)
+            // TODO: Grooss check mutate
+            var rand = new Random();
+            var newLayoutList = new List<AreaGenotype>();
+ 
+            for (var i = 0; i < this.Areas.Count; i++)
             {
-                // TODO: Calculate fitness (Melnyk)
+                var oldArea = this.Areas[i];
+                var areaName = rand.NextDouble() <= mutationChance && oldArea.Name != "@"
+                                   ? GetRandomRoom()
+                                   : oldArea.Name;
+                var area = new AreaGenotype(oldArea.Distances, areaName);
+                newLayoutList.Add(area);
             }
 
-            return 0.0;
+            var newLayout = new AreaLayoutGenotype(this.Generation, newLayoutList);
+            newLayout.FitnessValue = newLayout.CalculateFitness(requiredAreas);
+            return newLayout;
+        }
+
+        /// <summary>
+        /// Calculates the fitness of this area layout.
+        /// </summary>
+        /// <param name="requiredAreas">The areas required</param>
+        /// <returns> The fitness of the layout as a <see cref="double"/>. </returns>
+        private double CalculateFitness(Dictionary<string, int> requiredAreas)
+        {
+            // TODO: Grooss check CalculateFitness
+            var fitness = 0.0;
+
+            foreach (var keyValuePair in requiredAreas)
+            {
+                var areaAmount = this.Areas.Count(a => a.Name == keyValuePair.Key);
+                var requiredRooms = keyValuePair.Value;
+                if (areaAmount >= requiredRooms)
+                {
+                    continue;
+                }
+
+                var missingRooms = requiredRooms - areaAmount;
+                fitness -= missingRooms * (Evolver.MissingRoomPenalty + (Evolver.MissingRoomPenaltyScalingFactor * this.Generation));
+            }
+
+            foreach (var a in this.Areas)
+            {
+                for (var i = 0; i < Areas.Count; i++)
+                {
+                    var target = this.Areas[i];
+                    if (target == a)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        var dist = a.Distances[i];
+                        var weight = Evolver.AreaWeights[a.Name][target.Name];
+                        fitness += dist * weight;
+                    }
+                    catch (KeyNotFoundException knfe)
+                    {
+                        fitness += 0.0;
+                    }
+                }
+            }
+
+            return fitness;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace PCG_DFFortressGenerator.Classes
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -30,6 +29,7 @@
             this.AreaName = areaName;
 
             this.AreaTiles = new List<Tile>();
+            this.Distances = new Dictionary<int, double>();
         }
 
         /// <summary>

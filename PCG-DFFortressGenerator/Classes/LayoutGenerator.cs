@@ -1,60 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using PCG_DFFortressGenerator.Classes.Rooms;
-
-namespace PCG_DFFortressGenerator.Classes
+﻿namespace PCG_DFFortressGenerator.Classes
 {
-    using System.Runtime.CompilerServices;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    class LayoutGenerator
+    using PCG_DFFortressGenerator.Classes.Rooms;
+
+    /// <summary>
+    /// Used to generate map layouts for Dwarf Fortress.
+    /// </summary>
+    public class LayoutGenerator
     {
         /// <summary>
-        /// The map that has been generated.
+        /// Initializes a new instance of the <see cref="LayoutGenerator"/> class.
+        /// </summary>
+        /// <param name="map"> The map. </param>
+        /// <param name="chosenAreas"> The chosen areas. </param>
+        /// <param name="numberOfDwarves"> The number of dwarves. </param>
+        public LayoutGenerator(Map map, List<Area> chosenAreas, int numberOfDwarves)
+        {
+            this.Map = map;
+            this.Random = new Random();
+            this.ChosenAreas = chosenAreas;
+            this.NumberOfDwarves = numberOfDwarves;
+            this.CurrentNumberOfRooms = this.CalculateNumberOfRooms();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LayoutGenerator"/> class.
+        /// </summary>
+        /// <param name="x"> The x-size. </param>
+        /// <param name="y"> The y-size. </param>
+        /// <param name="z"> The z-size. </param>
+        /// <param name="requiredNumberOfRooms"> The required number of rooms for the map. </param>
+        public LayoutGenerator(int x, int y, int z, int requiredNumberOfRooms)
+        {
+            this.Map = new Map(x, y, z);
+            this.Random = new Random();
+            this.RequiredNumberOfRooms = requiredNumberOfRooms;
+            this.CurrentNumberOfRooms = this.RequiredNumberOfRooms;
+        }
+
+        /// <summary>
+        /// Gets the map that has been generated.
         /// </summary>
         public Map Map { get; private set; }
 
         /// <summary>
-        /// The number of dwarves the fortress should contain.
+        /// Gets or sets the number of dwarves the fortress should contain.
         /// </summary>
         private int NumberOfDwarves { get; set; }
 
         /// <summary>
-        /// The number of rooms that have to be generated.
+        /// Gets or sets the number of rooms that have to be generated.
         /// </summary>
         private int CurrentNumberOfRooms { get; set; }
 
         /// <summary>
-        /// The number of rooms that have to be generated.
+        /// Gets or sets the number of rooms that have to be generated.
         /// </summary>
         private int RequiredNumberOfRooms { get; set; }
 
         /// <summary>
-        /// A random generator.
+        /// Gets or sets the random generator.
         /// </summary>
         private Random Random { get; set; }
 
         /// <summary>
-        /// 
+        /// Gets or sets the chosen areas for the fortress.
         /// </summary>
         private List<Area> ChosenAreas { get; set; }
-
-        public LayoutGenerator(Map map, List<Area> chosenAreas, int numberOfDwarves)
-        {
-            Map = map;
-            Random = new Random();
-            ChosenAreas = chosenAreas;
-            NumberOfDwarves = numberOfDwarves;
-            this.CurrentNumberOfRooms = CalculateNumberOfRooms();
-        }
-
-        public LayoutGenerator(int x, int y, int z, int requiredNumberOfRooms)
-        {
-            Map = new Map(x, y, z);
-            Random = new Random();
-            this.RequiredNumberOfRooms = requiredNumberOfRooms;
-            this.CurrentNumberOfRooms = RequiredNumberOfRooms;
-        }
 
         /// <summary>
         /// Generates a laytout for the map that belongs to the layout generator.
@@ -66,7 +81,9 @@ namespace PCG_DFFortressGenerator.Classes
             {
                 GenerateRooms(Map, z);
                 if (this.CurrentNumberOfRooms <= 0)
+                {
                     break;
+                }
             }
         }
 
@@ -79,16 +96,60 @@ namespace PCG_DFFortressGenerator.Classes
             this.Map = new Map(this.Map.X, this.Map.Y, this.Map.Z);
             this.CurrentNumberOfRooms = RequiredNumberOfRooms;
 
-
             GenerateEntrance(Map.MapLayers[Map.Z - 1]);
             for (var z = Map.Z - 1; z >= 0; z--)
             {
                 GenerateRooms(Map, z);
                 if (this.CurrentNumberOfRooms <= 0)
+                {
                     break;
+                }
             }
 
             return this.Map;
+        }
+
+        /// <summary>
+        /// Checks if the tiles between the given positions are "open" (not dug or part of a wall) on the given layer.
+        /// </summary>
+        /// <param name="startX">The start x-coordinate.</param>
+        /// <param name="startY">The start y-coordinate.</param>
+        /// <param name="endX">The end x-coordinate.</param>
+        /// <param name="endY">The end y-coordinate.</param>
+        /// <param name="tileLayer">The layer</param>
+        /// <returns>True if all tiles are open; false otherwise.</returns>
+        private static bool TilesOpenBetween(int startX, int startY, int endX, int endY, TileLayer tileLayer)
+        {
+            var differenceX = endX - startX;
+            var differenceY = endY - startY;
+            var changeX = differenceX < 0 ? -1 : 1;
+            var changeY = differenceY < 0 ? -1 : 1;
+
+            for (var x = 0; Math.Abs(x) <= Math.Abs(differenceX); x += changeX)
+                for (var y = 0; Math.Abs(y) <= Math.Abs(differenceY); y += changeY)
+                    if (tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.NotDug
+                        && tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.RoomWall)
+                        return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if the given position is within the bounds of the map.
+        /// </summary>
+        /// <param name="map">The map in use.</param>
+        /// <param name="pos">The position to check.</param>
+        /// <returns>True if the position is inside the bounds of the map; False otherwise.</returns>
+        private static bool WithinMap(Map map, Position pos)
+        {
+            // TODO: Grooss! Is this needed?
+            if (pos.X < 0 || pos.X > map.X)
+                return false;
+            if (pos.Y < 0 || pos.Y > map.Y)
+                return false;
+            if (pos.Z < 0 || pos.Z > map.Z)
+                return false;
+            return true;
         }
 
         /// <summary>
@@ -100,15 +161,25 @@ namespace PCG_DFFortressGenerator.Classes
             var rooms = 0;
 
             if (ChosenAreas.OfType<Bedroom>().Any())
+            {
                 rooms += (int)Math.Ceiling(NumberOfDwarves / 8d);
+            }
+
             if (ChosenAreas.OfType<DiningRoom>().Any())
+            {
                 rooms += (int)Math.Ceiling(NumberOfDwarves / 6d);
+            }
 
             rooms += NumberOfDwarves / 2;
-//            Console.WriteLine(NumberOfDwarves + " rooms: " + rooms);
+
+            // Console.WriteLine(NumberOfDwarves + " rooms: " + rooms);
             return rooms;
         }
 
+        /// <summary>
+        /// Generates an entrance to the fortress.
+        /// </summary>
+        /// <param name="layer"> The layer to generate on. </param>
         private void GenerateEntrance(TileLayer layer)
         {
             var tile1 = Random.Next(layer.X - 2) + 1;
@@ -127,8 +198,7 @@ namespace PCG_DFFortressGenerator.Classes
                     tile2 = tile1 - 1;
             }
 
-//            var entrance = layer.GenerateAndAddArea(tile2, 0, tile1, 0, new Entrance());
-
+            // var entrance = layer.GenerateAndAddArea(tile2, 0, tile1, 0, new Entrance());
             var entrance = new Entrance();
             entrance.AddTile(layer.MapTiles[tile2, 0]);
             entrance.AddTile(layer.MapTiles[tile1, 0]);
@@ -139,6 +209,11 @@ namespace PCG_DFFortressGenerator.Classes
             layer.Entrance = entrance;
         }
 
+        /// <summary>
+        /// Generates rooms in the fortress.
+        /// </summary>
+        /// <param name="map"> The map to generate on. </param>
+        /// <param name="layer"> The layer to generate on. </param>
         private void GenerateRooms(Map map, int layer)
         {
             var done = false;
@@ -155,8 +230,7 @@ namespace PCG_DFFortressGenerator.Classes
                 done = IsLayerFinished(tileLayer, openPositions);
             }
 
-//            Console.WriteLine("After layer " + layer + " there are " + CurrentNumberOfRooms + " remaining");
-
+            // Console.WriteLine("After layer " + layer + " there are " + CurrentNumberOfRooms + " remaining");
             if (this.CurrentNumberOfRooms <= 0)
                 return;
 
@@ -197,15 +271,15 @@ namespace PCG_DFFortressGenerator.Classes
                     var checkY = startPosition.Y + (combination.Item2 * 5);
 
                     if (!tileLayer.WithinLayer(checkX, checkY)) continue;
-                    if (!this.TilesOpenBetween(startPosition.X, startPosition.Y, checkX, checkY, tileLayer)) continue;
+                    if (!TilesOpenBetween(startPosition.X, startPosition.Y, checkX, checkY, tileLayer)) continue;
 
                     // Create area
                     var tempArea = tileLayer.GenerateAndAddArea(
-                        startPosition.X + combination.Item1
-                        , startPosition.Y + combination.Item2
-                        , checkX - combination.Item1
-                        , checkY - combination.Item2
-                        , new Area());
+                        startPosition.X + combination.Item1,
+                        startPosition.Y + combination.Item2,
+                        checkX - combination.Item1,
+                        checkY - combination.Item2,
+                        new Area());
 
                     var wallTiles = new List<Tile>();
 
@@ -245,9 +319,8 @@ namespace PCG_DFFortressGenerator.Classes
                         var chosenWallTile = wallTiles[randomWallTileIndex];
                         wallTiles.RemoveAt(randomWallTileIndex);
 
-                        if (tileLayer.Entrance == null)
-                            Console.WriteLine("Much error, such wow, many paths " + this.CurrentNumberOfRooms);
-
+                        // if (tileLayer.Entrance == null)
+                        // Console.WriteLine("Much error, such wow, many paths " + this.CurrentNumberOfRooms);
                         var path = Pathfinding.DijkstraFindPathToOpenArea(
                             Map,
                             chosenWallTile,
@@ -259,8 +332,7 @@ namespace PCG_DFFortressGenerator.Classes
                         {
                             if (pathTile.TileStatus == Tile.TileType.Stairs) continue;
                             if (pathTile.TileStatus == Tile.TileType.Room) continue;
-                            tileLayer.SetTile(pathTile.Position.X, pathTile.Position.Y, Tile.TileType.Dug,
-                                null);
+                            tileLayer.SetTile(pathTile.Position.X, pathTile.Position.Y, Tile.TileType.Dug, null);
                             pathGenerated = true;
                         }
                     }
@@ -316,11 +388,10 @@ namespace PCG_DFFortressGenerator.Classes
                     possibleCombinations.RemoveAt(combinationIndex);
 
                     // Create positions to check for being open.
-                    var checkX = startPosition.X + (combination.Item1);
-                    var checkY = startPosition.Y + (combination.Item2);
+                    var checkX = startPosition.X + combination.Item1;
+                    var checkY = startPosition.Y + combination.Item2;
 
                     if (!tileLayer.WithinLayer(checkX, checkY)) continue;
-//                    if (tileLayer.MapTiles[checkX, checkY].TileStatus == Tile.TileType.RoomWall) continue;
                     if (tileLayer.MapTiles[checkX, checkY].TileStatus != Tile.TileType.NotDug) continue;
 
                     var possibleTiles = new List<Tile>
@@ -355,8 +426,7 @@ namespace PCG_DFFortressGenerator.Classes
                         {
                             if (pathTile.TileStatus == Tile.TileType.Stairs) continue;
                             if (pathTile.TileStatus == Tile.TileType.Room) continue;
-                            tileLayer.SetTile(pathTile.Position.X, pathTile.Position.Y, Tile.TileType.Dug,
-                                null);
+                            tileLayer.SetTile(pathTile.Position.X, pathTile.Position.Y, Tile.TileType.Dug, null);
                             pathGenerated = true;
                         }
                     }
@@ -376,7 +446,6 @@ namespace PCG_DFFortressGenerator.Classes
                             map.MapLayers[layer - 1].MapTiles[startPosition.X, startPosition.Y].TileStatus = Tile.TileType.Stairs;
                             map.MapLayers[layer - 1].MapTiles[checkX, checkY].TileStatus = Tile.TileType.Stairs;
                             map.MapLayers[layer - 1].Entrance = newEntrance;
-//                            Console.WriteLine("Generating stairs on level " + (layer - 1));
                         }
                     }
 
@@ -385,31 +454,6 @@ namespace PCG_DFFortressGenerator.Classes
                     break;
                 }
             }
-        }
-
-        /// <summary>
-        /// Checks if the tiles between the given positions are "open" (not dug or part of a wall) on the given layer.
-        /// </summary>
-        /// <param name="startX">The start x-coordinate.</param>
-        /// <param name="startY">The start y-coordinate.</param>
-        /// <param name="endX">The start y-coordinate.</param>
-        /// <param name="endY">The end y-coordinate.</param>
-        /// <param name="tileLayer">The layer</param>
-        /// <returns>True if all tiles are open; false otherwise.</returns>
-        private bool TilesOpenBetween(int startX, int startY, int endX, int endY, TileLayer tileLayer)
-        {
-            var xDifference = endX - startX;
-            var yDifference = endY - startY;
-            var xChange = xDifference < 0 ? -1 : 1;
-            var yChange = yDifference < 0 ? -1 : 1;
-
-            for (var x = 0; Math.Abs(x) <= Math.Abs(xDifference); x += xChange)
-                for (var y = 0; Math.Abs(y) <= Math.Abs(yDifference); y += yChange)
-                    if (tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.NotDug
-                        && tileLayer.MapTiles[x + startX, y + startY].TileStatus != Tile.TileType.RoomWall)
-                        return false;
-
-            return true;
         }
 
         /// <summary>
@@ -427,23 +471,6 @@ namespace PCG_DFFortressGenerator.Classes
                 return true;
 
             return false;
-        }
-
-        /// <summary>
-        /// Checks if the given position is within the bounds of the map.
-        /// </summary>
-        /// <param name="map">The map in use.</param>
-        /// <param name="pos">The position to check.</param>
-        /// <returns>True if the position is inside the bounds of the map; False otherwise.</returns>
-        private static bool WithinMap(Map map, Position pos)
-        {
-            if (pos.X < 0 || pos.X > map.X)
-                return false;
-            if (pos.Y < 0 || pos.Y > map.Y)
-                return false;
-            if (pos.Z < 0 || pos.Z > map.Z)
-                return false;
-            return true;
         }
     }
 }

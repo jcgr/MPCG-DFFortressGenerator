@@ -20,6 +20,7 @@
         /// <param name="z">The depth of the map.</param>
         public Map(int x, int y, int z)
         {
+            Random = new Random();
             this.MapLayers = new TileLayer[z];
             this.X = x;
             this.Y = y;
@@ -30,6 +31,11 @@
             for (var zz = 0; zz < z; zz++)
                 this.MapLayers[zz] = new TileLayer(x, y, zz);
         }
+
+        /// <summary>
+        /// Gets the random object.
+        /// </summary>
+        public static Random Random { get; private set; }
 
         /// <summary>
         /// Gets the layers of the map.
@@ -191,8 +197,6 @@
         /// </summary>
         public void CalculateDistancesBetweenAreas()
         {
-            var random = new Random();
-
             var areas = this.GetAllAreas();
             var numberOfAreas = this.GetAllAreas().Count;
             foreach (var area in areas)
@@ -204,16 +208,18 @@
                     {
                         area.Distances[i] = 0;
                     }
-
-                    var tiles = area.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
-                    var start = tiles[random.Next(tiles.Count)];
-                    var targetTiles = target.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
-                    area.Distances[i] = Pathfinding.DijkstraFindDistanceTo(this, start, targetTiles);
+                    else
+                    {
+                        var tiles = area.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                        var start = tiles[Random.Next(tiles.Count)];
+                        var targetTiles = target.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                        area.Distances[i] = Pathfinding.DijkstraFindDistanceTo(this, start, targetTiles);
+                    }
                 }
             }
 
+            // TODO: Save distance in the target area so as not to check again
             // TODO: Grooss check! Implement calculation of distances between rooms (Melnyk)
-            throw new NotImplementedException();
         }
 
         /// <summary>
