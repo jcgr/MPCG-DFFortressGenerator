@@ -1,6 +1,4 @@
-﻿using PCG_DFFortressGenerator.Classes.Stockpiles;
-
-namespace PCG_DFFortressGenerator.Evolution
+﻿namespace PCG_DFFortressGenerator.Evolution
 {
     using System;
     using System.Collections.Generic;
@@ -60,27 +58,17 @@ namespace PCG_DFFortressGenerator.Evolution
             this.GeneratedMaps = new List<Map>();
             AreaWeights = GenerateAreaWeights();
 
-            var numberOfRoomsRequired = this.CalculateNumberOfRooms(chosenAreas, numberOfDwarves);
+            var numberOfRoomsRequired = CalculateNumberOfRooms(chosenAreas, numberOfDwarves);
             var lg = new LayoutGenerator(x, y, z, numberOfRoomsRequired);
 
             for (var i = 0; i < NumberOfLayoutsToGenerate; i++)
             {
                 this.GeneratedMaps[i] = lg.GenerateNewLayout();
-                this.GeneratedMaps[i].CalculateDistancesBetweenRooms();
+                this.GeneratedMaps[i].CalculateDistancesBetweenAreas();
             }
 
-            this.RequiredAreas = new Dictionary<string, int>(); // TODO: Extract area names from chosenAreas (Done? Melnyk, check)
-            for (var i = 0; i < chosenAreas.Count; i++)
-            {
-                var tempName = chosenAreas[i].AreaName;
-                if (tempName.Equals("b"))
-                    RequiredAreas.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 8d));
-                else if (tempName.Equals("d"))
-                    RequiredAreas.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 6d));
-                else
-                    RequiredAreas.Add(tempName, 1);
-            }
-
+            this.RequiredAreas = GetRequiredAreas(chosenAreas, numberOfDwarves); 
+           
             // TODO: Do evolution loop
         }
 
@@ -102,148 +90,101 @@ namespace PCG_DFFortressGenerator.Evolution
         /// <summary>
         /// The generate area weights.
         /// </summary>
-        /// <returns> The <see cref="Dictionary"/> containing the weights between areas. </returns>
+        /// <returns> The Dictionary containing the weights between areas. </returns>
         private static Dictionary<string, Dictionary<string, double>> GenerateAreaWeights()
         {
             var finalDict = new Dictionary<string, Dictionary<string, double>>();
-            const double close = 1d;
-            const double far = -1d;
+            const double Close = 1d;
+            const double Far = -1d;
 
             // ----------
             // Rooms
             // ----------
             // Barracks
             var barrackDict = new Dictionary<string, double>
-            {
-                {"r", close}, 
-                {"b", far}, 
-                {"d", far}, 
-                {"@", close}
-            };
+                                  {
+                                      { "r", Close },
+                                      { "b", Far },
+                                      { "d", Far },
+                                      { "@", Close }
+                                  };
             finalDict.Add("r", barrackDict);
 
             // Bedroom
-            var bedroomDict = new Dictionary<string, double>
-            {
-                {"b", close}, 
-                {"r", far}, 
-                {"@", close}
-            };
+            var bedroomDict = new Dictionary<string, double> { { "b", Close }, { "r", Far }, { "@", Close } };
             finalDict.Add("b", bedroomDict);
 
             // Dining Room
-            var diningroomDict = new Dictionary<string, double>
-            {
-                { "d", close }, 
-                { "r", far }, 
-                { "@", far }
-            };
+            var diningroomDict = new Dictionary<string, double> { { "d", Close }, { "r", Far }, { "@", Far } };
             finalDict.Add("d", diningroomDict);
 
             // Entrance
             var entranceDict = new Dictionary<string, double>
-            {
-                { "@", close }, 
-                { "r", close }, 
-                { "b", far }, 
-                { "d", far }
-            };
+                                   {
+                                       { "@", Close },
+                                       { "r", Close },
+                                       { "b", Far },
+                                       { "d", Far }
+                                   };
             finalDict.Add("@", entranceDict);
 
             // Farm
-            var farmDict = new Dictionary<string, double>
-            {
-                {"f", close}
-            };
+            var farmDict = new Dictionary<string, double> { { "f", Close } };
             finalDict.Add("f", farmDict);
 
             // Office
-            var officeDict = new Dictionary<string, double>
-            {
-                {"o", close}
-            };
+            var officeDict = new Dictionary<string, double> { { "o", Close } };
             finalDict.Add("o", officeDict);
 
             // ----------
             // Workshops
             // ----------
             // Brewery
-            var breweryDict = new Dictionary<string, double>
-            {
-                {"q", close}, 
-                {"D", close}
-            };
+            var breweryDict = new Dictionary<string, double> { { "q", Close }, { "D", Close } };
             finalDict.Add("q", breweryDict);
 
             // Carpenter
-            var carpenterDict = new Dictionary<string, double>
-            {
-                {"c", close}, 
-                {"U", close}, 
-                {"T", close}
-            };
+            var carpenterDict = new Dictionary<string, double> { { "c", Close }, { "U", Close }, { "T", Close } };
             finalDict.Add("c", carpenterDict);
 
             // Craftdwarf
             var craftdwarfDict = new Dictionary<string, double>
-            {
-                {"¤", close}, 
-                {"G", close}, 
-                {"S", close}, 
-                {"T", close}
-            };
+                                     {
+                                         { "¤", Close },
+                                         { "G", Close },
+                                         { "S", Close },
+                                         { "T", Close }
+                                     };
             finalDict.Add("¤", craftdwarfDict);
 
             // Fishery
-            var fisheryDict = new Dictionary<string, double>
-            {
-                {"e", close}, 
-                {"D", close}
-            };
+            var fisheryDict = new Dictionary<string, double> { { "e", Close }, { "D", Close } };
             finalDict.Add("e", fisheryDict);
 
             // Kitchen
-            var kitchenDict = new Dictionary<string, double>
-            {
-                {"k", close}, 
-                {"D", close}
-            };
+            // TODO: Grooss ? Hvad er kitchen value? Burde nok addes til finalDict
+            var kitchenDict = new Dictionary<string, double> { { "k", Close }, { "D", Close } };
 
             // Mason
-            var masonDict = new Dictionary<string, double>
-            {
-                {"m", close}, 
-                {"U", close}, 
-                {"S", close}
-            };
+            var masonDict = new Dictionary<string, double> { { "m", Close }, { "U", Close }, { "S", Close } };
             finalDict.Add("m", masonDict);
 
             // Metalsmith
-            var metalsmithDict = new Dictionary<string, double>
-            {
-                {"h", close}, 
-                {"B", close}, 
-                {"W", close}
-            };
+            var metalsmithDict = new Dictionary<string, double> { { "h", Close }, { "B", Close }, { "W", Close } };
             finalDict.Add("h", metalsmithDict);
 
             // Smelter
-            var smelterDict = new Dictionary<string, double>
-            {
-                {"s", close}, 
-                {"u", close}, 
-                {"B", close}
-            };
+            var smelterDict = new Dictionary<string, double> { { "s", Close }, { "u", Close }, { "B", Close } };
             finalDict.Add("s", smelterDict);
 
             // Wood Furnace
             var woodfurnaceDict = new Dictionary<string, double>
-            {
-                {"u", close},
-                {"s", close},
-                {"B", close},
-                {"T", close}
-            };
+                                      {
+                                          { "u", Close },
+                                          { "s", Close },
+                                          { "B", Close },
+                                          { "T", Close }
+                                      };
             finalDict.Add("u", woodfurnaceDict);
 
             // ----------
@@ -251,85 +192,89 @@ namespace PCG_DFFortressGenerator.Evolution
             // ----------
             // BarBlock
             var barblockDict = new Dictionary<string, double>
-            {
-                {"B", close}, 
-                {"s", close}, 
-                {"h", close}, 
-                {"u", close}
-            };
+                                   {
+                                       { "B", Close },
+                                       { "s", Close },
+                                       { "h", Close },
+                                       { "u", Close }
+                                   };
             finalDict.Add("B", barblockDict);
 
             // Cloth
-            var clothDict = new Dictionary<string, double>
-            {
-                {"C", close}
-            };
+            var clothDict = new Dictionary<string, double> { { "C", Close } };
             finalDict.Add("C", clothDict);
 
             // Finished Goods
-            var finishedgoodsDict = new Dictionary<string, double>
-            {
-                {"G", close}, 
-                {"¤", close}
-            };
+            var finishedgoodsDict = new Dictionary<string, double> { { "G", Close }, { "¤", Close } };
             finalDict.Add("G", finishedgoodsDict);
 
             // Food
             var foodDict = new Dictionary<string, double>
-            {
-                {"D", close},
-                {"d", close},
-                {"e", close},
-                {"k", close},
-                {"q", close}
-            };
+                               {
+                                   { "D", Close },
+                                   { "d", Close },
+                                   { "e", Close },
+                                   { "k", Close },
+                                   { "q", Close }
+                               };
             finalDict.Add("D", foodDict);
 
             // Furniture
-            var furnitureDict = new Dictionary<string, double>
-            {
-                {"U", close}, 
-                {"c", close}, 
-                {"m", close}
-            };
+            var furnitureDict = new Dictionary<string, double> { { "U", Close }, { "c", Close }, { "m", Close } };
             finalDict.Add("U", furnitureDict);
 
             // Leather
-            var leatherDict = new Dictionary<string, double>
-            {
-                {"L", close}
-            };
+            var leatherDict = new Dictionary<string, double> { { "L", Close } };
             finalDict.Add("L", leatherDict);
 
             // Stone
-            var stoneDict = new Dictionary<string, double>
-            {
-                {"S", close}, 
-                {"¤", close}, 
-                {"m", close}
-            };
+            var stoneDict = new Dictionary<string, double> { { "S", Close }, { "¤", Close }, { "m", Close } };
             finalDict.Add("S", stoneDict);
 
             // Weaponry
-            var weaponryDict = new Dictionary<string, double>
-            {
-                {"W", close}, 
-                {"h", close}
-            };
+            var weaponryDict = new Dictionary<string, double> { { "W", Close }, { "h", Close } };
             finalDict.Add("W", weaponryDict);
 
             // Wood
             var woodDict = new Dictionary<string, double>
-            {
-                {"T", close}, 
-                {"c", close}, 
-                {"¤", close}, 
-                {"u", close}
-            };
+                               {
+                                   { "T", Close },
+                                   { "c", Close },
+                                   { "¤", Close },
+                                   { "u", Close }
+                               };
             finalDict.Add("T", woodDict);
 
-            // TODO: Write area weights in code (Done? Melnyk, check)
             return finalDict;
+        }
+
+        /// <summary>
+        /// Converts chosen areas and number of dwarves into a dictionary.
+        /// </summary>
+        /// <param name="chosenAreas">The areas chosen by the user.</param>
+        /// <param name="numberOfDwarves">The number of dwarves to accomodate.</param>
+        /// <returns>The dictionary.</returns>
+        private static Dictionary<string, int> GetRequiredAreas(List<Area> chosenAreas, int numberOfDwarves)
+        {
+            var ra = new Dictionary<string, int>();
+
+            foreach (var tempName in chosenAreas.Select(t => t.AreaName))
+            {
+                if (tempName.Equals("b"))
+                {
+                    ra.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 8d));
+                }
+                else if (tempName.Equals("d"))
+                {
+                    ra.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 6d));
+                }
+                else
+                {
+                    ra.Add(tempName, 1);
+                }
+            }
+
+            return ra;
         }
 
         /// <summary>
@@ -338,7 +283,7 @@ namespace PCG_DFFortressGenerator.Evolution
         /// <param name="requiredAreas"> The areas that must be in the layout. </param>
         /// <param name="numberOfDwarves"> The number of dwarves to take into account when generating. </param>
         /// <returns> The number of rooms required. </returns>
-        private int CalculateNumberOfRooms(List<Area> requiredAreas, int numberOfDwarves)
+        private static int CalculateNumberOfRooms(List<Area> requiredAreas, int numberOfDwarves)
         {
             var rooms = 0;
 
@@ -346,6 +291,7 @@ namespace PCG_DFFortressGenerator.Evolution
             {
                 rooms += (int)Math.Ceiling(numberOfDwarves / 8d);
             }
+
             if (requiredAreas.OfType<DiningRoom>().Any())
             {
                 rooms += (int)Math.Ceiling(numberOfDwarves / 6d);

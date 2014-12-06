@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using PCG_DFFortressGenerator.Classes.Workshops;
-﻿
-namespace PCG_DFFortressGenerator.Classes
+﻿namespace PCG_DFFortressGenerator.Classes
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
-    using Rooms;
+    using PCG_DFFortressGenerator.Classes.Rooms;
+    using PCG_DFFortressGenerator.Classes.Workshops;
 
     /// <summary>
     /// A map used in the generator.
@@ -14,53 +13,53 @@ namespace PCG_DFFortressGenerator.Classes
     public class Map
     {
         /// <summary>
-        /// The layers of the map.
-        /// </summary>
-        public TileLayer[] MapLayers { get; private set; }
-
-        /// <summary>
-        /// The size of the map on the x-axis
-        /// </summary>
-        public int X { get; private set; }
-
-        /// <summary>
-        /// The size of the map on the y-axis
-        /// </summary>
-        public int Y { get; private set; }
-
-        /// <summary>
-        /// The size of the map on the z-axis
-        /// </summary>
-        public int Z { get; private set; }
-
-        /// <summary>
-        /// The z-level being shown currently (used by ToString)
-        /// </summary>
-        public int CurrentZLevel { get; set; }
-
-        /// <summary>
-        /// Initializes a map with the given dimensions.
+        /// Initializes a new instance of the <see cref="Map"/> class with the given dimensions. 
         /// </summary>
         /// <param name="x">The height of the map.</param>
         /// <param name="y">The width of the map.</param>
         /// <param name="z">The depth of the map.</param>
         public Map(int x, int y, int z)
         {
-            MapLayers = new TileLayer[z];
-            X = x;
-            Y = y;
-            Z = z;
-            CurrentZLevel = 0;
-//            WhitespaceX = 257.6 / 20d;
-//            WhitespaceY = 120.933333333333 / 20d;
+            this.MapLayers = new TileLayer[z];
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+            this.CurrentZLevel = 0;
 
             // Initializing every layer of the map.
             for (var zz = 0; zz < z; zz++)
-                MapLayers[zz] = new TileLayer(x, y, zz);
-
-//            TestMap();
+                this.MapLayers[zz] = new TileLayer(x, y, zz);
         }
 
+        /// <summary>
+        /// Gets the layers of the map.
+        /// </summary>
+        public TileLayer[] MapLayers { get; private set; }
+
+        /// <summary>
+        /// Gets the size of the map on the x-axis
+        /// </summary>
+        public int X { get; private set; }
+
+        /// <summary>
+        /// Gets the size of the map on the y-axis
+        /// </summary>
+        public int Y { get; private set; }
+
+        /// <summary>
+        /// Gets the size of the map on the z-axis
+        /// </summary>
+        public int Z { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the z-level being shown currently (used by ToString).
+        /// </summary>
+        public int CurrentZLevel { get; set; }
+
+        /// <summary>
+        /// Changes the layers of this map.
+        /// </summary>
+        /// <param name="layers"> The layers to change to. </param>
         public void SetLayers(TileLayer[] layers)
         {
             MapLayers = layers;
@@ -128,8 +127,9 @@ namespace PCG_DFFortressGenerator.Classes
             MapLayers[4].MapTiles[9, 0].AreaType = entrance;
             MapLayers[4].MapTiles[10, 0].AreaType = entrance;
             MapLayers[4].Entrance = entrance;
-//            SetTile(9, 0, 4, Tile.TileType.Room, new Entrance());
-//            SetTile(10, 0, 4, Tile.TileType.Room, new Entrance());
+
+            // SetTile(9, 0, 4, Tile.TileType.Room, new Entrance());
+            // SetTile(10, 0, 4, Tile.TileType.Room, new Entrance());
             /*for (var y = 1; y < 11; y++)
             {
                 SetTile(9, y, 4, Tile.TileType.Dug, null);
@@ -147,14 +147,15 @@ namespace PCG_DFFortressGenerator.Classes
                 SetTile(10, y, 3, Tile.TileType.Dug, null);
             }*/
             MapLayers[4].GenerateAndAddArea(9, 4, 10, 4, new Bedroom());
-//            SetTile(9, 4, 4, Tile.TileType.Room, new Bedroom());
-//            SetTile(10, 4, 4, Tile.TileType.Room, new Bedroom());
 
+            // SetTile(9, 4, 4, Tile.TileType.Room, new Bedroom());
+            // SetTile(10, 4, 4, Tile.TileType.Room, new Bedroom());
             Console.WriteLine(@"----------------------------");
             Console.WriteLine(@"First level");
             Console.WriteLine(ToString());
             Console.WriteLine();
-//            CurrentZLevel = 3;
+
+            // CurrentZLevel = 3;
             Console.WriteLine(@"Replaced room");
             MapLayers[4].ReplaceArea(MapLayers[4].LayerAreas[0], new Kitchen());
             Console.WriteLine(ToString());
@@ -162,22 +163,9 @@ namespace PCG_DFFortressGenerator.Classes
             Console.WriteLine(MapLayers[4].LayerAreas.OfType<Kitchen>().Any());
             Console.WriteLine(@"----------------------------");
 
-            //Window.tbMapDisplay.Text = this.ToString();
-            //Console.WriteLine(MeasureString(ToString()).Height + " of " + Window.tbMapDisplay.Height);
-            //Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
-        }
-
-        /// <summary>
-        /// Sets a tile to the given type and room, if applicable.
-        /// </summary>
-        /// <param name="x">The x-coordinate of the tile.</param>
-        /// <param name="y">The y-coordinate of the tile.</param>
-        /// <param name="z">The z-coordinate of the tile.</param>
-        /// <param name="tileStatus">The status of the tile.</param>
-        /// <param name="room">The roomtype of the tile.</param>
-        private void SetTile(int x, int y, int z, Tile.TileType tileStatus, Area room)
-        {
-            MapLayers[z].SetTile(x, y, tileStatus, room);
+            // Window.tbMapDisplay.Text = this.ToString();
+            // Console.WriteLine(MeasureString(ToString()).Height + " of " + Window.tbMapDisplay.Height);
+            // Console.WriteLine(MeasureString(ToString()).Width + " of " + Window.tbMapDisplay.Width);
         }
 
         /// <summary>
@@ -198,77 +186,47 @@ namespace PCG_DFFortressGenerator.Classes
             return newMap;
         }
 
-        public void CalculateDistancesBetweenRooms()
+        /// <summary>
+        /// Calculates and updates the distances between all areas.
+        /// </summary>
+        public void CalculateDistancesBetweenAreas()
         {
-            // TODO: Implement calculation of distances between rooms (Melnyk)
+            var random = new Random();
+
+            var areas = this.GetAllAreas();
+            var numberOfAreas = this.GetAllAreas().Count;
+            foreach (var area in areas)
+            {
+                for (var i = 0; i < numberOfAreas; i++)
+                {
+                    var target = areas[i];
+                    if (target == area)
+                    {
+                        area.Distances[i] = 0;
+                    }
+
+                    var tiles = area.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                    var start = tiles[random.Next(tiles.Count)];
+                    var targetTiles = target.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                    area.Distances[i] = Pathfinding.DijkstraFindDistanceTo(this, start, targetTiles);
+                }
+            }
+
+            // TODO: Grooss check! Implement calculation of distances between rooms (Melnyk)
             throw new NotImplementedException();
         }
-    }
-
-    /// <summary>
-    /// A class that represents the position of something.
-    /// </summary>
-    public class Position
-    {
-        /// <summary>
-        /// The x-coordinate of the position
-        /// </summary>
-        public int X { get; private set; }
 
         /// <summary>
-        /// The y-coordinate of the position
+        /// Sets a tile to the given type and room, if applicable.
         /// </summary>
-        public int Y { get; private set; }
-
-        /// <summary>
-        /// The z-coordinate of the position
-        /// </summary>
-        public int Z { get; private set; }
-
-        public Position(int x, int y, int z)
+        /// <param name="x">The x-coordinate of the tile.</param>
+        /// <param name="y">The y-coordinate of the tile.</param>
+        /// <param name="z">The z-coordinate of the tile.</param>
+        /// <param name="tileStatus">The status of the tile.</param>
+        /// <param name="room">The roomtype of the tile.</param>
+        private void SetTile(int x, int y, int z, Tile.TileType tileStatus, Area room)
         {
-            X = x;
-            Y = y;
-            Z = z;
-        }
-
-        /// <summary>
-        /// Creates a copy of the position.
-        /// </summary>
-        /// <returns>A copy of the position.</returns>
-        public Position Copy()
-        {
-            return new Position(X, Y, Z);
-        }
-
-
-        public override string ToString()
-        {
-            return "(X: " + X + ", Y: " + Y + ", Z: " + Z + ")";
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Position) obj);
-        }
-
-        protected bool Equals(Position other)
-        {
-            return X == other.X && Y == other.Y && Z == other.Z;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hashCode = X;
-                hashCode = (hashCode * 397) ^ Y;
-                hashCode = (hashCode * 397) ^ Z;
-                return hashCode;
-            }
+            this.MapLayers[z].SetTile(x, y, tileStatus, room);
         }
     }
 }
