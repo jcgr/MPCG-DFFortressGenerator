@@ -41,7 +41,6 @@ namespace PCG_DFFortressGenerator
             var z = Convert.ToInt32(cbMapSizeZ.Text);
             Map = new Map(x, y, z) {CurrentZLevel = z - 1};
 
-            // TODO Un-outcomment if Evolver.cs has been checked.
             var evolver = new Evolver(x, y, z, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
 
             // Puts the correct level values into cbZLevels
@@ -53,7 +52,6 @@ namespace PCG_DFFortressGenerator
                 newZLevels.Add("" + zz);
             }
             cbZLevel.SelectedIndex = z - 1;
-//            Console.WriteLine(Map.CurrentZLevel);
 //            Map.TestMap();
 
 

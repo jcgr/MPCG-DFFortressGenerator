@@ -114,7 +114,7 @@
             }
 
             // -----------------
-            // TODO Test each setup, Melnyk check
+            // TODO Test each setup, Melnyk check (approved by Melnyk
             // -----------------
             foreach (var testSetup in testSetups)
             {
@@ -215,7 +215,7 @@
                 // Console.WriteLine("Done! - " + (sw.ElapsedMilliseconds / 1000d));
 
                 // -----------------
-                // TODO Print to file, Melnyk check
+                // TODO Print to file, Melnyk check (approved by Melnyk)
                 // -----------------
                 var newDirectory = Directory.GetCurrentDirectory() + "\\TestData";
                 var testDataDirectory = newDirectory + "\\Dwarf" + numberOfDwarves;
