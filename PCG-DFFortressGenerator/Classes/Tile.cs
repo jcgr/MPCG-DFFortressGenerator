@@ -61,7 +61,7 @@
             switch (TileStatus)
             {
                 case TileType.NotDug:
-                    return "O";
+                    return "\u2588";
 
                 case TileType.Stairs:
                     return "|";
@@ -70,10 +70,10 @@
                     return AreaType.AreaName;
 
                 case TileType.RoomWall:
-                    return "#";
+                    return "\u25D8";
 
                 case TileType.Dug:
-                    return " ";
+                    return ".";
 
                 default:
                     return " ";
