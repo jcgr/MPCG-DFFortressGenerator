@@ -53,8 +53,8 @@
 //            Map.TestMap();
 
 
-            //var lg = new LayoutGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
-            //lg.GenerateLayout();
+            //var lg = new MapGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            //lg.GenerateMap();
 
             //tbMapDisplay.Text = Map.ToString();
             _mapGenerated = true;

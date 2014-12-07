@@ -53,7 +53,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\LayoutGenerator.cs" />
+    <Compile Include="Classes\MapGenerator.cs" />
     <Compile Include="Classes\Map.cs" />
     <Compile Include="Classes\Pathfinding.cs" />
     <Compile Include="Classes\Area.cs" />
@@ -95,7 +95,7 @@
     <Compile Include="Classes\Workshops\WoodFurnace.cs" />
     <Compile Include="Classes\Workshops\Workshop.cs" />
     <Compile Include="Evolution\AreaGenotype.cs" />
-    <Compile Include="Evolution\AreaLayoutGenotype.cs" />
+    <Compile Include="Evolution\AreaAssignmentsGenotype.cs" />
     <Compile Include="Evolution\Evolver.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

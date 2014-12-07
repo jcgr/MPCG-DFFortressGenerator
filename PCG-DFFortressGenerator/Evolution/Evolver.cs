@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-
-namespace PCG_DFFortressGenerator.Evolution
+﻿namespace PCG_DFFortressGenerator.Evolution
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
 
     using PCG_DFFortressGenerator.Classes;
@@ -31,12 +30,12 @@ namespace PCG_DFFortressGenerator.Evolution
         public const int NumberOfGenerations = 100;
 
         /// <summary>
-        /// The number of different layouts are used in evolution.
+        /// The number of different assignments that are used in evolution.
         /// </summary>
-        public const int NumberOfLayoutsToGenerate = 10;
+        public const int NumberOfAssignmentsToGenerate = 1;
 
         /// <summary>
-        /// The penalty to apply to a fitness of a layout if it does not contain the required rooms.
+        /// The penalty to apply to a fitness of an assignment if it does not contain the required rooms.
         /// </summary>
         public const double MissingRoomPenalty = 100;
 
@@ -60,23 +59,24 @@ namespace PCG_DFFortressGenerator.Evolution
             Random = new Random();
             this.CurrentGeneration = 0;
             this.GeneratedMaps = new List<Map>();
-            this.GeneratedLayouts = new List<AreaLayoutGenotype>();
+            this.GeneratedAssignments = new List<AreaAssignmentsGenotype>();
             AreaWeights = GenerateAreaWeights();
 
             var numberOfRoomsRequired = CalculateNumberOfRooms(chosenAreas, numberOfDwarves);
-            var lg = new LayoutGenerator(x, y, z, numberOfRoomsRequired);
+            var lg = new MapGenerator(x, y, z, numberOfRoomsRequired);
 
-            //var sw = new Stopwatch();
-            //sw.Start();
+            var sw = new Stopwatch();
+            sw.Start();
             //Console.WriteLine("-----------------------------------");
             //Console.WriteLine();
-            //Console.WriteLine("Starting layout generation - " + (sw.ElapsedMilliseconds / 1000d));
+            Console.WriteLine("Starting layout generation - " + (sw.ElapsedMilliseconds / 1000d));
             // Generate layouts and calculate distances between rooms for each layout.
-            for (var i = 0; i < NumberOfLayoutsToGenerate; i++)
+            for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
             {
-                this.GeneratedMaps.Add(lg.GenerateNewLayout());
+                this.GeneratedMaps.Add(lg.GenerateNewMap());
+                Console.WriteLine("Layout " + i + " generated - " + (sw.ElapsedMilliseconds / 1000d));
                 this.GeneratedMaps[i].CalculateDistancesBetweenAreas();
-                //Console.WriteLine("Layout " + i + " generated - " + (sw.ElapsedMilliseconds / 1000d));
+                Console.WriteLine("Distance for layout " + i + " calculated - " + (sw.ElapsedMilliseconds / 1000d));
             }
             //Console.WriteLine("Finished layout generation - " + (sw.ElapsedMilliseconds / 1000d));
             //Console.WriteLine();
@@ -86,16 +86,16 @@ namespace PCG_DFFortressGenerator.Evolution
             this.RequiredAreas = GetRequiredAreas(chosenAreas, numberOfDwarves);
 
             //Console.WriteLine("Initializeing layout populations - " + (sw.ElapsedMilliseconds / 1000d));
-            for (var i = 0; i < NumberOfLayoutsToGenerate; i++)
+            for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
             {
                 var listOfAreas = new List<AreaGenotype>();
                 foreach (var b in this.GeneratedMaps[i].GetAllAreas())
                 {
-                    var areaToAdd = (b.AreaName == "@") ? new AreaGenotype(b.Distances, "@") : new AreaGenotype(b.Distances, AreaLayoutGenotype.GetRandomRoom());
+                    var areaToAdd = (b.AreaName == "@") ? new AreaGenotype(b.Distances, "@") : new AreaGenotype(b.Distances, AreaAssignmentsGenotype.GetRandomRoom());
                     listOfAreas.Add(areaToAdd);
                 }
 
-                this.GeneratedLayouts.Add(new AreaLayoutGenotype(this.CurrentGeneration, listOfAreas));
+                this.GeneratedAssignments.Add(new AreaAssignmentsGenotype(this.CurrentGeneration, listOfAreas));
                 //Console.WriteLine(i + " has been populated");
             }
 
@@ -110,20 +110,20 @@ namespace PCG_DFFortressGenerator.Evolution
             // Mutate layouts
             while (CurrentGeneration < NumberOfGenerations)
             {
-                for (var l = 0; l < GeneratedLayouts.Count; l++)
+                for (var l = 0; l < this.GeneratedAssignments.Count; l++)
                 {
-                    var children = new List<AreaLayoutGenotype>();
-                    var parent = GeneratedLayouts[l];
+                    var children = new List<AreaAssignmentsGenotype>();
+                    var parent = this.GeneratedAssignments[l];
 
                     for (var i = 0; i < ChildrenToSpawn; i++)
                     {
                         children.Add(parent.Mutate(CurrentGeneration, MutationChance, RequiredAreas));
                     }
 
-                    var bestChild = children.FirstOrDefault(c => Math.Abs(c.FitnessValue - children.Max(layout => layout.FitnessValue)) < 1E-17);
+                    var bestChild = children.FirstOrDefault(c => Math.Abs(c.FitnessValue - children.Max(assignment => assignment.FitnessValue)) < 1E-17);
                     var bestFit = ((bestChild != null) && (parent.FitnessValue <= bestChild.FitnessValue)) ? bestChild : parent;
 
-                    this.GeneratedLayouts[l] = bestFit;
+                    this.GeneratedAssignments[l] = bestFit;
                 }
 
                 //Console.WriteLine("Generation " + CurrentGeneration + "/" + NumberOfGenerations + " is finished - " + (sw.ElapsedMilliseconds / 1000d));
@@ -138,10 +138,10 @@ namespace PCG_DFFortressGenerator.Evolution
             //Console.WriteLine("Copying generated layouts to maps - " + (sw.ElapsedMilliseconds / 1000d));
             for (var i = 0; i < GeneratedMaps.Count; i++)
             {
-                for (var j = 0; j < GeneratedLayouts[i].Areas.Count; j++)
+                for (var j = 0; j < this.GeneratedAssignments[i].Areas.Count; j++)
                 {
                     var oldArea = GeneratedMaps[i].GetAllAreas()[j];
-                    var newName = GeneratedLayouts[i].Areas[j].Name;
+                    var newName = this.GeneratedAssignments[i].Areas[j].Name;
                     var mapLayer = GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
                     mapLayer.ReplaceArea(oldArea, new Area(areaName: newName));
                 }
@@ -191,9 +191,9 @@ namespace PCG_DFFortressGenerator.Evolution
         public int CurrentGeneration { get; private set; }
 
         /// <summary>
-        /// Gets the generated layouts.
+        /// Gets the generated assignments.
         /// </summary>
-        public List<AreaLayoutGenotype> GeneratedLayouts { get; private set; }
+        public List<AreaAssignmentsGenotype> GeneratedAssignments { get; private set; }
 
         /// <summary>
         /// Gets the maps generated by the evolver.
@@ -201,7 +201,7 @@ namespace PCG_DFFortressGenerator.Evolution
         public List<Map> GeneratedMaps { get; private set; }
 
         /// <summary>
-        /// Gets or sets the required rooms for the layout.
+        /// Gets or sets the required rooms for the area assignments.
         /// </summary>
         public Dictionary<string, int> RequiredAreas { get; set; }
 
@@ -398,7 +398,7 @@ namespace PCG_DFFortressGenerator.Evolution
         /// <summary>
         /// Calculates the number of rooms required.
         /// </summary>
-        /// <param name="requiredAreas"> The areas that must be in the layout. </param>
+        /// <param name="requiredAreas"> The areas that must be in the map. </param>
         /// <param name="numberOfDwarves"> The number of dwarves to take into account when generating. </param>
         /// <returns> The number of rooms required. </returns>
         private static int CalculateNumberOfRooms(List<Area> requiredAreas, int numberOfDwarves)

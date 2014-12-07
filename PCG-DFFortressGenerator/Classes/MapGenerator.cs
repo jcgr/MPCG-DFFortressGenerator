@@ -9,15 +9,15 @@
     /// <summary>
     /// Used to generate map layouts for Dwarf Fortress.
     /// </summary>
-    public class LayoutGenerator
+    public class MapGenerator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LayoutGenerator"/> class.
+        /// Initializes a new instance of the <see cref="MapGenerator"/> class.
         /// </summary>
         /// <param name="map"> The map. </param>
         /// <param name="chosenAreas"> The chosen areas. </param>
         /// <param name="numberOfDwarves"> The number of dwarves. </param>
-        public LayoutGenerator(Map map, List<Area> chosenAreas, int numberOfDwarves)
+        public MapGenerator(Map map, List<Area> chosenAreas, int numberOfDwarves)
         {
             this.Map = map;
             this.Random = new Random();
@@ -27,13 +27,13 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LayoutGenerator"/> class.
+        /// Initializes a new instance of the <see cref="MapGenerator"/> class.
         /// </summary>
         /// <param name="x"> The x-size. </param>
         /// <param name="y"> The y-size. </param>
         /// <param name="z"> The z-size. </param>
         /// <param name="requiredNumberOfRooms"> The required number of rooms for the map. </param>
-        public LayoutGenerator(int x, int y, int z, int requiredNumberOfRooms)
+        public MapGenerator(int x, int y, int z, int requiredNumberOfRooms)
         {
             this.Map = new Map(x, y, z);
             this.Random = new Random();
@@ -72,9 +72,9 @@
         private List<Area> ChosenAreas { get; set; }
 
         /// <summary>
-        /// Generates a laytout for the map that belongs to the layout generator.
+        /// Generates a laytout for the map that belongs to the map generator.
         /// </summary>
-        public void GenerateLayout()
+        public void GenerateMap()
         {
             GenerateEntrance(Map.MapLayers[Map.Z - 1]);
             for (var z = Map.Z - 1; z >= 0; z--)
@@ -91,7 +91,7 @@
         /// Generates a new map layout
         /// </summary>
         /// <returns> The newly generated <see cref="Map"/>. </returns>
-        public Map GenerateNewLayout()
+        public Map GenerateNewMap()
         {
             this.Map = new Map(this.Map.X, this.Map.Y, this.Map.Z);
             this.CurrentNumberOfRooms = RequiredNumberOfRooms;

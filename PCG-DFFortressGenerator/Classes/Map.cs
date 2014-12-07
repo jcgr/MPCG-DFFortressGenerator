@@ -199,23 +199,28 @@
         {
             var areas = this.GetAllAreas();
             var numberOfAreas = this.GetAllAreas().Count;
-            foreach (var area in areas)
+            for (var j = 0; j < areas.Count; j++)
             {
+                var area = areas[j];
                 for (var i = 0; i < numberOfAreas; i++)
                 {
                     var target = areas[i];
-                    if (target == area)
+                    if (i == j)
                     {
                         area.Distances[i] = 0;
                     }
-                    else
+                    else if (!target.Distances.ContainsKey(j))
                     {
-                        //var tiles = area.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
                         var tiles = area.AreaTiles;
                         var start = tiles[Random.Next(tiles.Count)];
-                        //var targetTiles = target.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
                         var targetTiles = target.AreaTiles;
-                        area.Distances[i] = Pathfinding.DijkstraFindDistanceTo(this, start, targetTiles);
+                        var dist = Pathfinding.DijkstraFindDistanceTo(this, start, targetTiles);
+                        area.Distances[i] = dist;
+                        target.Distances[j] = dist;
+                    }
+                    else
+                    {
+                        area.Distances[i] = target.Distances[j];
                     }
                 }
             }

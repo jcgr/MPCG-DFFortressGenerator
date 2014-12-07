@@ -1,22 +1,20 @@
-﻿using System.Diagnostics;
-
-namespace PCG_DFFortressGenerator.Evolution
+﻿namespace PCG_DFFortressGenerator.Evolution
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
-    /// The genotype of an area layout used in mutation.
+    /// The genotype of an area assignment used in mutation.
     /// </summary>
-    public class AreaLayoutGenotype
+    public class AreaAssignmentsGenotype
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AreaLayoutGenotype"/> class.
+        /// Initializes a new instance of the <see cref="AreaAssignmentsGenotype"/> class.
         /// </summary>
         /// <param name="generation"> The generation where this born. </param>
         /// <param name="areas">The areas to use.</param>
-        public AreaLayoutGenotype(int generation, List<AreaGenotype> areas)
+        public AreaAssignmentsGenotype(int generation, List<AreaGenotype> areas)
         {
             this.Areas = areas;
             this.FitnessValue = double.MinValue;
@@ -24,17 +22,17 @@ namespace PCG_DFFortressGenerator.Evolution
         }
 
         /// <summary>
-        /// Gets the generation of this area layout.
+        /// Gets the generation of this area assignment.
         /// </summary>
         public int Generation { get; private set; }
 
         /// <summary>
-        /// Gets the fitness value of the area layout.
+        /// Gets the fitness value of the area assignment.
         /// </summary>
         public double FitnessValue { get; private set; }
 
         /// <summary>
-        /// Gets the areas of the layout.
+        /// Gets the areas of the assignment.
         /// </summary>
         public List<AreaGenotype> Areas { get; private set; }
 
@@ -155,16 +153,16 @@ namespace PCG_DFFortressGenerator.Evolution
         }
 
         /// <summary>
-        /// Mutates a layout into a new child.
+        /// Mutates as assignment into a new child.
         /// </summary>
         /// <param name="generation"> The generation where this born. </param>
         /// <param name="mutationChance"> The chance that a room is mutated into a different room.  </param>
         /// <param name="requiredAreas"> The required areas for the generation. </param>
-        /// <returns> The newly created <see cref="AreaLayoutGenotype"/>.  </returns>
-        public AreaLayoutGenotype Mutate(int generation, double mutationChance, Dictionary<string, int> requiredAreas)
+        /// <returns> The newly created <see cref="AreaAssignmentsGenotype"/>.  </returns>
+        public AreaAssignmentsGenotype Mutate(int generation, double mutationChance, Dictionary<string, int> requiredAreas)
         {
             var rand = new Random();
-            var newLayoutList = new List<AreaGenotype>();
+            var newAssignmentList = new List<AreaGenotype>();
 
             for (var i = 0; i < this.Areas.Count; i++)
             {
@@ -172,19 +170,19 @@ namespace PCG_DFFortressGenerator.Evolution
                 var areaName = (rand.NextDouble() <= mutationChance && oldArea.Name != "@")
                                    ? GetRandomRoom() : oldArea.Name;
                 var area = new AreaGenotype(oldArea.Distances, areaName);
-                newLayoutList.Add(area);
+                newAssignmentList.Add(area);
             }
 
-            var newLayout = new AreaLayoutGenotype(this.Generation, newLayoutList);
-            newLayout.FitnessValue = newLayout.CalculateFitness(requiredAreas);
-            return newLayout;
+            var newAssignment = new AreaAssignmentsGenotype(this.Generation, newAssignmentList);
+            newAssignment.FitnessValue = newAssignment.CalculateFitness(requiredAreas);
+            return newAssignment;
         }
 
         /// <summary>
-        /// Calculates the fitness of this area layout.
+        /// Calculates the fitness of this area assignment.
         /// </summary>
         /// <param name="requiredAreas">The areas required</param>
-        /// <returns> The fitness of the layout as a <see cref="double"/>. </returns>
+        /// <returns> The fitness of the assignment as a <see cref="double"/>. </returns>
         private double CalculateFitness(Dictionary<string, int> requiredAreas)
         {
             var fitness = 0.0;
