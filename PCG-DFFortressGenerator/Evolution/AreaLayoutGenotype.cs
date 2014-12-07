@@ -1,4 +1,6 @@
-﻿namespace PCG_DFFortressGenerator.Evolution
+﻿using System.Diagnostics;
+
+namespace PCG_DFFortressGenerator.Evolution
 {
     using System;
     using System.Collections.Generic;
@@ -161,16 +163,14 @@
         /// <returns> The newly created <see cref="AreaLayoutGenotype"/>.  </returns>
         public AreaLayoutGenotype Mutate(int generation, double mutationChance, Dictionary<string, int> requiredAreas)
         {
-            // TODO: Grooss check mutate
             var rand = new Random();
             var newLayoutList = new List<AreaGenotype>();
- 
+
             for (var i = 0; i < this.Areas.Count; i++)
             {
                 var oldArea = this.Areas[i];
-                var areaName = rand.NextDouble() <= mutationChance && oldArea.Name != "@"
-                                   ? GetRandomRoom()
-                                   : oldArea.Name;
+                var areaName = (rand.NextDouble() <= mutationChance && oldArea.Name != "@")
+                                   ? GetRandomRoom() : oldArea.Name;
                 var area = new AreaGenotype(oldArea.Distances, areaName);
                 newLayoutList.Add(area);
             }
@@ -187,7 +187,6 @@
         /// <returns> The fitness of the layout as a <see cref="double"/>. </returns>
         private double CalculateFitness(Dictionary<string, int> requiredAreas)
         {
-            // TODO: Grooss check CalculateFitness
             var fitness = 0.0;
 
             foreach (var keyValuePair in requiredAreas)
@@ -205,6 +204,7 @@
 
             foreach (var a in this.Areas)
             {
+                var distanceValues = Evolver.AreaWeights[a.Name];
                 for (var i = 0; i < Areas.Count; i++)
                 {
                     var target = this.Areas[i];
@@ -213,19 +213,14 @@
                         continue;
                     }
 
-                    try
+                    var weight = 0d;
+                    if (distanceValues.TryGetValue(target.Name, out weight))
                     {
                         var dist = a.Distances[i];
-                        var weight = Evolver.AreaWeights[a.Name][target.Name];
                         fitness += dist * weight;
-                    }
-                    catch (KeyNotFoundException knfe)
-                    {
-                        fitness += 0.0;
                     }
                 }
             }
-
             return fitness;
         }
     }

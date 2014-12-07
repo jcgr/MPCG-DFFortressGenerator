@@ -210,16 +210,15 @@
                     }
                     else
                     {
-                        var tiles = area.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                        //var tiles = area.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                        var tiles = area.AreaTiles;
                         var start = tiles[Random.Next(tiles.Count)];
-                        var targetTiles = target.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                        //var targetTiles = target.AreaTiles.Where(a => a.TileStatus != Tile.TileType.RoomWall).ToList();
+                        var targetTiles = target.AreaTiles;
                         area.Distances[i] = Pathfinding.DijkstraFindDistanceTo(this, start, targetTiles);
                     }
                 }
             }
-
-            // TODO: Save distance in the target area so as not to check again
-            // TODO: Grooss check! Implement calculation of distances between rooms (Melnyk)
         }
 
         /// <summary>

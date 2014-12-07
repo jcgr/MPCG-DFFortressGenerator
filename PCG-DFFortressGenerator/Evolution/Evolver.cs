@@ -1,4 +1,6 @@
-﻿namespace PCG_DFFortressGenerator.Evolution
+﻿using System.Diagnostics;
+
+namespace PCG_DFFortressGenerator.Evolution
 {
     using System;
     using System.Collections.Generic;
@@ -21,22 +23,22 @@
         /// <summary>
         /// The number of children to generate per parent in a new generation.
         /// </summary>
-        public const int ChildrenToSpawn = 1;
+        public const int ChildrenToSpawn = 10;
 
         /// <summary>
         /// Number of generations to run.
         /// </summary>
-        public const int NumberOfGenerations = 10;
+        public const int NumberOfGenerations = 100;
 
         /// <summary>
         /// The number of different layouts are used in evolution.
         /// </summary>
-        public const int NumberOfLayoutsToGenerate = 1;
+        public const int NumberOfLayoutsToGenerate = 10;
 
         /// <summary>
         /// The penalty to apply to a fitness of a layout if it does not contain the required rooms.
         /// </summary>
-        public const double MissingRoomPenalty = 10;
+        public const double MissingRoomPenalty = 100;
 
         /// <summary>
         /// The amount to increase the penalty per generation.
@@ -64,28 +66,48 @@
             var numberOfRoomsRequired = CalculateNumberOfRooms(chosenAreas, numberOfDwarves);
             var lg = new LayoutGenerator(x, y, z, numberOfRoomsRequired);
 
+            //var sw = new Stopwatch();
+            //sw.Start();
+            //Console.WriteLine("-----------------------------------");
+            //Console.WriteLine();
+            //Console.WriteLine("Starting layout generation - " + (sw.ElapsedMilliseconds / 1000d));
+            // Generate layouts and calculate distances between rooms for each layout.
             for (var i = 0; i < NumberOfLayoutsToGenerate; i++)
             {
                 this.GeneratedMaps.Add(lg.GenerateNewLayout());
                 this.GeneratedMaps[i].CalculateDistancesBetweenAreas();
+                //Console.WriteLine("Layout " + i + " generated - " + (sw.ElapsedMilliseconds / 1000d));
             }
+            //Console.WriteLine("Finished layout generation - " + (sw.ElapsedMilliseconds / 1000d));
+            //Console.WriteLine();
+            //Console.WriteLine("-----------------------------------");
+            //Console.WriteLine();
 
             this.RequiredAreas = GetRequiredAreas(chosenAreas, numberOfDwarves);
 
+            //Console.WriteLine("Initializeing layout populations - " + (sw.ElapsedMilliseconds / 1000d));
             for (var i = 0; i < NumberOfLayoutsToGenerate; i++)
             {
                 var listOfAreas = new List<AreaGenotype>();
                 foreach (var b in this.GeneratedMaps[i].GetAllAreas())
                 {
-                    var areaToAdd = b.AreaName == "@" ? new AreaGenotype(b.Distances, "@") : new AreaGenotype(b.Distances, AreaLayoutGenotype.GetRandomRoom());
+                    var areaToAdd = (b.AreaName == "@") ? new AreaGenotype(b.Distances, "@") : new AreaGenotype(b.Distances, AreaLayoutGenotype.GetRandomRoom());
                     listOfAreas.Add(areaToAdd);
                 }
 
                 this.GeneratedLayouts.Add(new AreaLayoutGenotype(this.CurrentGeneration, listOfAreas));
+                //Console.WriteLine(i + " has been populated");
             }
+
+            //Console.WriteLine("Layout populations finished - " + (sw.ElapsedMilliseconds / 1000d));
+            //Console.WriteLine();
+            //Console.WriteLine("-----------------------------------");
+            //Console.WriteLine();
 
             CurrentGeneration++;
 
+            //Console.WriteLine("Starting mutation - " + (sw.ElapsedMilliseconds / 1000d));
+            // Mutate layouts
             while (CurrentGeneration < NumberOfGenerations)
             {
                 for (var l = 0; l < GeneratedLayouts.Count; l++)
@@ -99,14 +121,21 @@
                     }
 
                     var bestChild = children.FirstOrDefault(c => Math.Abs(c.FitnessValue - children.Max(layout => layout.FitnessValue)) < 1E-17);
-                    var bestFit = bestChild != null && parent.FitnessValue < bestChild.FitnessValue ? bestChild : parent;
+                    var bestFit = ((bestChild != null) && (parent.FitnessValue <= bestChild.FitnessValue)) ? bestChild : parent;
 
                     this.GeneratedLayouts[l] = bestFit;
                 }
 
+                //Console.WriteLine("Generation " + CurrentGeneration + "/" + NumberOfGenerations + " is finished - " + (sw.ElapsedMilliseconds / 1000d));
                 CurrentGeneration++;
             }
 
+            //Console.WriteLine("Mutation finished - " + (sw.ElapsedMilliseconds / 1000d));
+            //Console.WriteLine();
+            //Console.WriteLine("-----------------------------------");
+            //Console.WriteLine();
+
+            //Console.WriteLine("Copying generated layouts to maps - " + (sw.ElapsedMilliseconds / 1000d));
             for (var i = 0; i < GeneratedMaps.Count; i++)
             {
                 for (var j = 0; j < GeneratedLayouts[i].Areas.Count; j++)
@@ -116,7 +145,32 @@
                     var mapLayer = GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
                     mapLayer.ReplaceArea(oldArea, new Area(areaName: newName));
                 }
+                //Console.WriteLine("Layout " + i + " copied");
             }
+
+            //Console.WriteLine("Layouts copied - " + (sw.ElapsedMilliseconds / 1000d));
+            //Console.WriteLine();
+            //Console.WriteLine("-----------------------------------");
+            //Console.WriteLine();
+
+            //for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
+            //{
+            //    var map = GeneratedMaps[mapIndex];
+            //    Console.WriteLine("Map " + mapIndex + " looks like this:");
+
+            //    for (var layer = map.Z - 1; layer >= 0; layer--)
+            //    {
+            //        if (map.MapLayers[layer].LayerAreas.Count <= 0) continue;
+            //        Console.WriteLine();
+            //        Console.WriteLine("Layer " + layer);
+            //        Console.WriteLine(map.MapLayers[layer]);
+            //    }
+
+            //    Console.WriteLine();
+            //    Console.WriteLine("-----------------------------------");
+            //    Console.WriteLine();
+            //}
+            //Console.WriteLine("Done! - " + (sw.ElapsedMilliseconds / 1000d));
 
             // TODO: (Grooss check) Do evolution loop
         }
@@ -166,12 +220,12 @@
             // ----------
             // Barracks
             var barrackDict = new Dictionary<string, double>
-                                  {
-                                      { "r", Close },
-                                      { "b", Far },
-                                      { "d", Far },
-                                      { "@", Close }
-                                  };
+                                    {
+                                        { "r", Close },
+                                        { "b", Far },
+                                        { "d", Far },
+                                        { "@", Close }
+                                    };
             finalDict.Add("r", barrackDict);
 
             // Bedroom
@@ -184,12 +238,12 @@
 
             // Entrance
             var entranceDict = new Dictionary<string, double>
-                                   {
-                                       { "@", Close },
-                                       { "r", Close },
-                                       { "b", Far },
-                                       { "d", Far }
-                                   };
+                                    {
+                                        { "@", Close },
+                                        { "r", Close },
+                                        { "b", Far },
+                                        { "d", Far }
+                                    };
             finalDict.Add("@", entranceDict);
 
             // Farm
@@ -213,12 +267,12 @@
 
             // Craftdwarf
             var craftdwarfDict = new Dictionary<string, double>
-                                     {
-                                         { "¤", Close },
-                                         { "G", Close },
-                                         { "S", Close },
-                                         { "T", Close }
-                                     };
+                                    {
+                                        { "¤", Close },
+                                        { "G", Close },
+                                        { "S", Close },
+                                        { "T", Close }
+                                    };
             finalDict.Add("¤", craftdwarfDict);
 
             // Fishery
@@ -226,8 +280,8 @@
             finalDict.Add("e", fisheryDict);
 
             // Kitchen
-            // TODO: Grooss ? Hvad er kitchen value? Burde nok addes til finalDict
             var kitchenDict = new Dictionary<string, double> { { "k", Close }, { "D", Close } };
+            finalDict.Add("k", kitchenDict);
 
             // Mason
             var masonDict = new Dictionary<string, double> { { "m", Close }, { "U", Close }, { "S", Close } };
@@ -243,12 +297,12 @@
 
             // Wood Furnace
             var woodfurnaceDict = new Dictionary<string, double>
-                                      {
-                                          { "u", Close },
-                                          { "s", Close },
-                                          { "B", Close },
-                                          { "T", Close }
-                                      };
+                                    {
+                                        { "u", Close },
+                                        { "s", Close },
+                                        { "B", Close },
+                                        { "T", Close }
+                                    };
             finalDict.Add("u", woodfurnaceDict);
 
             // ----------
@@ -256,12 +310,12 @@
             // ----------
             // BarBlock
             var barblockDict = new Dictionary<string, double>
-                                   {
-                                       { "B", Close },
-                                       { "s", Close },
-                                       { "h", Close },
-                                       { "u", Close }
-                                   };
+                                    {
+                                        { "B", Close },
+                                        { "s", Close },
+                                        { "h", Close },
+                                        { "u", Close }
+                                    };
             finalDict.Add("B", barblockDict);
 
             // Cloth
@@ -274,13 +328,13 @@
 
             // Food
             var foodDict = new Dictionary<string, double>
-                               {
-                                   { "D", Close },
-                                   { "d", Close },
-                                   { "e", Close },
-                                   { "k", Close },
-                                   { "q", Close }
-                               };
+                                    {
+                                        { "D", Close },
+                                        { "d", Close },
+                                        { "e", Close },
+                                        { "k", Close },
+                                        { "q", Close }
+                                    };
             finalDict.Add("D", foodDict);
 
             // Furniture
@@ -301,12 +355,12 @@
 
             // Wood
             var woodDict = new Dictionary<string, double>
-                               {
-                                   { "T", Close },
-                                   { "c", Close },
-                                   { "¤", Close },
-                                   { "u", Close }
-                               };
+                                    {
+                                        { "T", Close },
+                                        { "c", Close },
+                                        { "¤", Close },
+                                        { "u", Close }
+                                    };
             finalDict.Add("T", woodDict);
 
             return finalDict;

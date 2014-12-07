@@ -135,24 +135,6 @@
         }
 
         /// <summary>
-        /// Checks if the given position is within the bounds of the map.
-        /// </summary>
-        /// <param name="map">The map in use.</param>
-        /// <param name="pos">The position to check.</param>
-        /// <returns>True if the position is inside the bounds of the map; False otherwise.</returns>
-        private static bool WithinMap(Map map, Position pos)
-        {
-            // TODO: Grooss! Is this needed?
-            if (pos.X < 0 || pos.X > map.X)
-                return false;
-            if (pos.Y < 0 || pos.Y > map.Y)
-                return false;
-            if (pos.Z < 0 || pos.Z > map.Z)
-                return false;
-            return true;
-        }
-
-        /// <summary>
         /// Calculates the number of rooms required.
         /// </summary>
         /// <returns>The number of rooms required.</returns>
