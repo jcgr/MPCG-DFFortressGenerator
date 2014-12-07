@@ -3,6 +3,7 @@
 
 There are various different ways to generate dungeons\cite[Chapter 3]{PCGBook}\cite{FearAI}, but we did not feel that they did what we wanted. We wanted all of the rooms to be connected to the entrance as directly as possible, while still being able to connect to each other on the way.
 
+% Map generation algorithm
 For this purpose, we wrote our own algorithm, which works as follows:
 
 \begin{enumerate}
@@ -19,7 +20,7 @@ For this purpose, we wrote our own algorithm, which works as follows:
 
 		\item Pick a random, diagonal direction (north/east, south/east, south/west or north/west), go 6 tiles that way and see if the positions in that direction are open.
 
-		\item If they are open, build a room in the middle 4x4 square and remove the positions now occupied by the room from the list of open positions.
+		\item If they are open, build a room in the middle 4x4 square, set the tiles around that square to room walls, and remove the positions now occupied by the room from the list of open positions.
 
 		\item Create a path from the room to the nearest entrance (stairs on the lower levels count as entrances to that level).
 
@@ -31,8 +32,16 @@ For this purpose, we wrote our own algorithm, which works as follows:
 
 \end{enumerate}
 
+%Evolution algorithm
+
 %How does your algorithm work? Describe in as much detail as you can fit into the report. Also, how did you interface it to the game?
 
 %Algorithm: Generate various layouts by digging rooms in random (open) positions, then connecting them to the entrance. Evolve/mutate by swapping room content around for each layout and evaluating each room assignment for every layout.
+
+%Discuss Dijkstra + AStar, fitness function, how distances are calculated (time saved later by spending time early)
+
+%PCG Taxonomy: classify
+
+%Multi-threading:
 
 %Interface: We did not interface it directly into the game. We give the user a layout map that provides the best room layouts generated.
