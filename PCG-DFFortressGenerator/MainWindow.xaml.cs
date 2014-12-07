@@ -42,7 +42,7 @@ namespace PCG_DFFortressGenerator
             Map = new Map(x, y, z) {CurrentZLevel = z - 1};
 
             // TODO Un-outcomment if Evolver.cs has been checked.
-            //var evolver = new Evolver(x, y, z, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            var evolver = new Evolver(x, y, z, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
 
             // Puts the correct level values into cbZLevels
             cbZLevel.Items.Clear();

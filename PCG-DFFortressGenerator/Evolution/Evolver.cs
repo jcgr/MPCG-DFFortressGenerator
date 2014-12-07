@@ -1,11 +1,9 @@
-﻿using System.IO;
-using System.Text;
-
-namespace PCG_DFFortressGenerator.Evolution
+﻿namespace PCG_DFFortressGenerator.Evolution
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
 
     using PCG_DFFortressGenerator.Classes;
@@ -17,25 +15,11 @@ namespace PCG_DFFortressGenerator.Evolution
     public class Evolver
     {
         #region Mutation Constants
-        /// <summary>
-        /// The chance that a room will mutate into a different room.
-        /// </summary>
-        public double MutationChance = 0.30;
-
-        /// <summary>
-        /// The number of children to generate per parent in a new generation.
-        /// </summary>
-        public int ChildrenToSpawn = 10;
-
-        /// <summary>
-        /// Number of generations to run.
-        /// </summary>
-        public int NumberOfGenerations = 100;
 
         /// <summary>
         /// The number of different assignments that are used in evolution.
         /// </summary>
-        public const int NumberOfAssignmentsToGenerate = 100;
+        public const int NumberOfAssignmentsToGenerate = 50;
 
         /// <summary>
         /// The penalty to apply to a fitness of an assignment if it does not contain the required rooms.
@@ -46,6 +30,21 @@ namespace PCG_DFFortressGenerator.Evolution
         /// The amount to increase the penalty per generation.
         /// </summary>
         public static double MissingRoomPenaltyScalingFactor = 2;
+
+        /// <summary>
+        /// The chance that a room will mutate into a different room.
+        /// </summary>
+        public double MutationChance = 0.3;
+
+        /// <summary>
+        /// The number of children to generate per parent in a new generation.
+        /// </summary>
+        public int ChildrenToSpawn = 10;
+
+        /// <summary>
+        /// Number of generations to run.
+        /// </summary>
+        public int NumberOfGenerations = 100;
 
         #endregion
 
@@ -72,26 +71,28 @@ namespace PCG_DFFortressGenerator.Evolution
             var sw = new Stopwatch();
             sw.Start();
 
-            //Console.WriteLine("-----------------------------------");
-            //Console.WriteLine();
-            Console.WriteLine("Starting layout generation - " + (sw.ElapsedMilliseconds / 1000d));
+            // Console.WriteLine("-----------------------------------");
+            // Console.WriteLine();
+            Console.WriteLine(@"Starting layout generation - " + (sw.ElapsedMilliseconds / 1000d));
+
             // Generate layouts and calculate distances between rooms for each layout.
             for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
             {
-                Console.WriteLine("Layout " + i + " started - " + (sw.ElapsedMilliseconds / 1000d));
+                Console.WriteLine(@"Layout " + i + @" started - " + (sw.ElapsedMilliseconds / 1000d));
                 this.GeneratedMaps.Add(lg.GenerateNewMap());
-                Console.WriteLine("Layout " + i + " generated - " + (sw.ElapsedMilliseconds / 1000d));
+                Console.WriteLine(@"Layout " + i + @" generated - " + (sw.ElapsedMilliseconds / 1000d));
                 this.GeneratedMaps[i].CalculateDistancesBetweenAreas();
-                Console.WriteLine("Distance for layout " + i + " calculated - " + (sw.ElapsedMilliseconds / 1000d));
-                Console.WriteLine("-----------------------------------");
+                Console.WriteLine(@"Distance for layout " + i + @" calculated - " + (sw.ElapsedMilliseconds / 1000d));
+                Console.WriteLine(@"-----------------------------------");
             }
-            //Console.WriteLine("Finished layout generation - " + (sw.ElapsedMilliseconds / 1000d));
-            //Console.WriteLine();
-            //Console.WriteLine("-----------------------------------");
-            //Console.WriteLine();
+
+            // Console.WriteLine("Finished layout generation - " + (sw.ElapsedMilliseconds / 1000d));
+            // Console.WriteLine();
+            // Console.WriteLine("-----------------------------------");
+            // Console.WriteLine();
 
             // -----------------
-            // TODO Create all test setups, Melnyk check
+            // TODO Create all test setups, Melnyk check (approved by Melnyk)
             // -----------------
             var testSetups = new List<TestSetups>();
             var testMutations = new[] { 0.1, 0.2, 0.3 };
@@ -106,7 +107,7 @@ namespace PCG_DFFortressGenerator.Evolution
                     {
                         for (var penaltyModifier = 0; penaltyModifier < testPenaltyModifier.Count(); penaltyModifier++)
                         {
-                            testSetups.Add(new TestSetups(testMutations[mut], testChildren[children], (int)(10000d / testMutations[mut]), testPenalty[penalty], testPenaltyModifier[penaltyModifier]));
+                            testSetups.Add(new TestSetups(testMutations[mut], testChildren[children], (int)(10000d / testChildren[children]), testPenalty[penalty], testPenaltyModifier[penaltyModifier]));
                         }
                     }
                 }
@@ -117,6 +118,7 @@ namespace PCG_DFFortressGenerator.Evolution
             // -----------------
             foreach (var testSetup in testSetups)
             {
+                this.GeneratedAssignments.Clear();
                 MutationChance = testSetup.TestMutationChance;
                 ChildrenToSpawn = testSetup.TestChildrenToSpawn;
                 NumberOfGenerations = testSetup.TestNumberOfGenerations;
@@ -124,7 +126,7 @@ namespace PCG_DFFortressGenerator.Evolution
                 MissingRoomPenaltyScalingFactor = testSetup.TestMissingRoomPenaltyScalingFactor;
                 CurrentGeneration = 0;
 
-                //Console.WriteLine("Initializeing layout populations - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine("Initializeing layout populations - " + (sw.ElapsedMilliseconds / 1000d));
                 for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
                 {
                     var listOfAreas = new List<AreaGenotype>();
@@ -135,17 +137,17 @@ namespace PCG_DFFortressGenerator.Evolution
                     }
 
                     this.GeneratedAssignments.Add(new AreaAssignmentsGenotype(this.CurrentGeneration, listOfAreas));
-                    //Console.WriteLine(i + " has been populated");
+
+                    // Console.WriteLine(i + " has been populated");
                 }
 
-                //Console.WriteLine("Layout populations finished - " + (sw.ElapsedMilliseconds / 1000d));
-                //Console.WriteLine();
-                //Console.WriteLine("-----------------------------------");
-                //Console.WriteLine();
-
+                // Console.WriteLine("Layout populations finished - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine();
+                // Console.WriteLine("-----------------------------------");
+                // Console.WriteLine();
                 CurrentGeneration++;
 
-                //Console.WriteLine("Starting mutation - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine("Starting mutation - " + (sw.ElapsedMilliseconds / 1000d));
                 // Mutate layouts
                 while (CurrentGeneration < NumberOfGenerations)
                 {
@@ -165,16 +167,16 @@ namespace PCG_DFFortressGenerator.Evolution
                         this.GeneratedAssignments[l] = bestFit;
                     }
 
-                    //Console.WriteLine("Generation " + CurrentGeneration + "/" + NumberOfGenerations + " is finished - " + (sw.ElapsedMilliseconds / 1000d));
+                    // Console.WriteLine("Generation " + CurrentGeneration + "/" + NumberOfGenerations + " is finished - " + (sw.ElapsedMilliseconds / 1000d));
                     CurrentGeneration++;
                 }
 
-                //Console.WriteLine("Mutation finished - " + (sw.ElapsedMilliseconds / 1000d));
-                //Console.WriteLine();
-                //Console.WriteLine("-----------------------------------");
-                //Console.WriteLine();
+                // Console.WriteLine("Mutation finished - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine();
+                // Console.WriteLine("-----------------------------------");
+                // Console.WriteLine();
 
-                //Console.WriteLine("Copying generated layouts to maps - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine("Copying generated layouts to maps - " + (sw.ElapsedMilliseconds / 1000d));
                 for (var i = 0; i < GeneratedMaps.Count; i++)
                 {
                     for (var j = 0; j < this.GeneratedAssignments[i].Areas.Count; j++)
@@ -182,35 +184,35 @@ namespace PCG_DFFortressGenerator.Evolution
                         var oldArea = GeneratedMaps[i].GetAllAreas()[j];
                         var newName = this.GeneratedAssignments[i].Areas[j].Name;
                         var mapLayer = GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
-                        mapLayer.ReplaceArea(oldArea, new Area(areaName: newName));
+                        mapLayer.ReplaceArea(oldArea, oldArea.CopyWithNewAreaName(newName));
                     }
-                    //Console.WriteLine("Layout " + i + " copied");
+
+                    // Console.WriteLine("Layout " + i + " copied");
                 }
 
-                //Console.WriteLine("Layouts copied - " + (sw.ElapsedMilliseconds / 1000d));
-                //Console.WriteLine();
-                //Console.WriteLine("-----------------------------------");
-                //Console.WriteLine();
+                // Console.WriteLine("Layouts copied - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine();
+                // Console.WriteLine("-----------------------------------");
+                // Console.WriteLine();
 
-                //for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
-                //{
-                //    var map = GeneratedMaps[mapIndex];
-                //    Console.WriteLine("Map " + mapIndex + " looks like this:");
+                // for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
+                // {
+                // var map = GeneratedMaps[mapIndex];
+                // Console.WriteLine("Map " + mapIndex + " looks like this:");
 
-                //    for (var layer = map.Z - 1; layer >= 0; layer--)
-                //    {
-                //        if (map.MapLayers[layer].LayerAreas.Count <= 0) continue;
-                //        Console.WriteLine();
-                //        Console.WriteLine("Layer " + layer);
-                //        Console.WriteLine(map.MapLayers[layer]);
-                //    }
+                // for (var layer = map.Z - 1; layer >= 0; layer--)
+                // {
+                // if (map.MapLayers[layer].LayerAreas.Count <= 0) continue;
+                // Console.WriteLine();
+                // Console.WriteLine("Layer " + layer);
+                // Console.WriteLine(map.MapLayers[layer]);
+                // }
 
-                //    Console.WriteLine();
-                //    Console.WriteLine("-----------------------------------");
-                //    Console.WriteLine();
-                //}
-                //Console.WriteLine("Done! - " + (sw.ElapsedMilliseconds / 1000d));
-
+                // Console.WriteLine();
+                // Console.WriteLine("-----------------------------------");
+                // Console.WriteLine();
+                // }
+                // Console.WriteLine("Done! - " + (sw.ElapsedMilliseconds / 1000d));
 
                 // -----------------
                 // TODO Print to file, Melnyk check
@@ -237,8 +239,6 @@ namespace PCG_DFFortressGenerator.Evolution
                         {
                             if (topMaps.Contains(mapIndex))
                                 continue;
-
-                            var map = GeneratedMaps[mapIndex];
                             if (GeneratedAssignments[mapIndex].FitnessValue > topValue)
                             {
                                 topValue = GeneratedAssignments[mapIndex].FitnessValue;
@@ -249,6 +249,9 @@ namespace PCG_DFFortressGenerator.Evolution
                         topMaps.Add(topIndex);
                         file.WriteLine(i + ": Map " + topIndex + " with fitness: " + topValue);
                     }
+
+                    file.WriteLine();
+                    file.WriteLine("-----------------------------------");
 
                     // Print all maps with their layers
                     for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
@@ -270,9 +273,8 @@ namespace PCG_DFFortressGenerator.Evolution
                     }
                 }
 
-                Console.WriteLine("Test data written to " + testDataFileName);
+                Console.WriteLine(@"Test data written to " + testDataFileName);
             }
-
         }
 
         /// <summary>
@@ -519,9 +521,24 @@ namespace PCG_DFFortressGenerator.Evolution
             return rooms;
         }
 
+        /// <summary>
+        /// Test setup used for generating maps with different constants.
+        /// </summary>
         private class TestSetups
         {
-            public TestSetups(double mutationChance, int children, int generations, double missingPenalty,
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TestSetups"/> class.
+            /// </summary>
+            /// <param name="mutationChance"> The mutation chance. </param>
+            /// <param name="children"> The amount of children. </param>
+            /// <param name="generations"> The number of generations. </param>
+            /// <param name="missingPenalty"> The missing room penalty. </param>
+            /// <param name="missingPenaltyScaling"> The missing penalty scaling. </param>
+            public TestSetups(
+                double mutationChance,
+                int children,
+                int generations,
+                double missingPenalty,
                 double missingPenaltyScaling)
             {
                 TestMutationChance = mutationChance;
@@ -532,38 +549,42 @@ namespace PCG_DFFortressGenerator.Evolution
             }
 
             /// <summary>
-            /// The chance that a room will mutate into a different room.
+            /// Gets the chance that a room will mutate into a different room.
             /// </summary>
-            public double TestMutationChance { get; set; }
+            public double TestMutationChance { get; private set; }
 
             /// <summary>
-            /// The number of children to generate per parent in a new generation.
+            /// Gets the number of children to generate per parent in a new generation.
             /// </summary>
-            public int TestChildrenToSpawn { get; set; }
+            public int TestChildrenToSpawn { get; private set; }
 
             /// <summary>
-            /// Number of generations to run.
+            /// Gets the number of generations to run.
             /// </summary>
-            public int TestNumberOfGenerations { get; set; }
+            public int TestNumberOfGenerations { get; private set; }
 
             /// <summary>
-            /// The penalty to apply to a fitness of an assignment if it does not contain the required rooms.
+            /// Gets the penalty to apply to a fitness of an assignment if it does not contain the required rooms.
             /// </summary>
-            public double TestMissingRoomPenalty { get; set; }
+            public double TestMissingRoomPenalty { get; private set; }
 
             /// <summary>
-            /// The amount to increase the penalty per generation.
+            /// Gets the amount to increase the penalty per generation.
             /// </summary>
-            public double TestMissingRoomPenaltyScalingFactor { get; set; }
+            public double TestMissingRoomPenaltyScalingFactor { get; private set; }
 
+            /// <summary>
+            /// Gets the setup as a name for a file.
+            /// </summary>
+            /// <returns> The name as a <see cref="string"/>. </returns>
             public string AsFileName()
             {
-                return ("Mutation" + TestMutationChance 
+                return "Mutation" + TestMutationChance 
                     + "-Children" + TestChildrenToSpawn 
                     + "-Generations" + TestNumberOfGenerations 
                     + "-MissingPenalty" + TestMissingRoomPenalty 
                     + "-MissingPenaltyFactor" + TestMissingRoomPenaltyScalingFactor 
-                    + ".txt");
+                    + ".txt";
             }
         }
     }

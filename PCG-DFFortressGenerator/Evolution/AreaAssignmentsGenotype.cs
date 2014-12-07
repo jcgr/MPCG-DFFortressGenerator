@@ -211,7 +211,7 @@
                         continue;
                     }
 
-                    var weight = 0d;
+                    double weight;
                     if (distanceValues.TryGetValue(target.Name, out weight))
                     {
                         var dist = a.Distances[i];

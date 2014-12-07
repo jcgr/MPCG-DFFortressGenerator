@@ -20,7 +20,8 @@
         /// <param name="minWidth"> The minimum width of the area. </param>
         /// <param name="maxWidth"> The maximum width of the area. </param>
         /// <param name="areaName"> The name of the area. </param>
-        public Area(int minHeight = 4, int maxHeight = 4, int minWidth = 4, int maxWidth = 4, string areaName = "1")
+        /// <param name="distances"> The distances to other areas in the map. </param>
+        public Area(int minHeight = 4, int maxHeight = 4, int minWidth = 4, int maxWidth = 4, string areaName = "1", Dictionary<int, double> distances = null)
         {
             this.MinHeight = minHeight;
             this.MaxHeight = maxHeight;
@@ -29,7 +30,7 @@
             this.AreaName = areaName;
 
             this.AreaTiles = new List<Tile>();
-            this.Distances = new Dictionary<int, double>();
+            this.Distances = distances ?? new Dictionary<int, double>();
         }
 
         /// <summary>
@@ -83,7 +84,8 @@
         /// <returns>A copy of the area.</returns>
         public Area Copy()
         {
-            var newArea = new Area();
+            var distances = this.Distances;
+            var newArea = new Area(distances:distances);
             var areaName = GetType().Name;
 
             switch (areaName)
@@ -167,6 +169,21 @@
                     break;
             }
 
+            newArea.AreaTiles = AreaTiles.Select(areaTile => new Tile(areaTile.TileStatus, newArea, areaTile.Position)).ToList();
+            return newArea;
+        }
+
+        /// <summary>
+        /// Copies this area while changing the name.
+        /// </summary>
+        /// <param name="s">The new area name.</param>
+        /// <returns>The newly copied area.</returns>
+        public Area CopyWithNewAreaName(string s)
+        {
+            var areaName = s;
+            var distances = this.Distances;
+            var newArea = new Area(areaName: areaName, distances: distances);
+            
             newArea.AreaTiles = AreaTiles.Select(areaTile => new Tile(areaTile.TileStatus, newArea, areaTile.Position)).ToList();
             return newArea;
         }
