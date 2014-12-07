@@ -1,4 +1,7 @@
-﻿namespace PCG_DFFortressGenerator.Evolution
+﻿using System.IO;
+using System.Text;
+
+namespace PCG_DFFortressGenerator.Evolution
 {
     using System;
     using System.Collections.Generic;
@@ -17,32 +20,32 @@
         /// <summary>
         /// The chance that a room will mutate into a different room.
         /// </summary>
-        public const double MutationChance = 0.30;
+        public double MutationChance = 0.30;
 
         /// <summary>
         /// The number of children to generate per parent in a new generation.
         /// </summary>
-        public const int ChildrenToSpawn = 10;
+        public int ChildrenToSpawn = 10;
 
         /// <summary>
         /// Number of generations to run.
         /// </summary>
-        public const int NumberOfGenerations = 100;
+        public int NumberOfGenerations = 100;
 
         /// <summary>
         /// The number of different assignments that are used in evolution.
         /// </summary>
-        public const int NumberOfAssignmentsToGenerate = 1;
+        public const int NumberOfAssignmentsToGenerate = 100;
 
         /// <summary>
         /// The penalty to apply to a fitness of an assignment if it does not contain the required rooms.
         /// </summary>
-        public const double MissingRoomPenalty = 100;
+        public static double MissingRoomPenalty = 100;
 
         /// <summary>
         /// The amount to increase the penalty per generation.
         /// </summary>
-        public const double MissingRoomPenaltyScalingFactor = 2;
+        public static double MissingRoomPenaltyScalingFactor = 2;
 
         #endregion
 
@@ -60,6 +63,7 @@
             this.CurrentGeneration = 0;
             this.GeneratedMaps = new List<Map>();
             this.GeneratedAssignments = new List<AreaAssignmentsGenotype>();
+            this.RequiredAreas = GetRequiredAreas(chosenAreas, numberOfDwarves);
             AreaWeights = GenerateAreaWeights();
 
             var numberOfRoomsRequired = CalculateNumberOfRooms(chosenAreas, numberOfDwarves);
@@ -67,112 +71,208 @@
 
             var sw = new Stopwatch();
             sw.Start();
+
             //Console.WriteLine("-----------------------------------");
             //Console.WriteLine();
             Console.WriteLine("Starting layout generation - " + (sw.ElapsedMilliseconds / 1000d));
             // Generate layouts and calculate distances between rooms for each layout.
             for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
             {
+                Console.WriteLine("Layout " + i + " started - " + (sw.ElapsedMilliseconds / 1000d));
                 this.GeneratedMaps.Add(lg.GenerateNewMap());
                 Console.WriteLine("Layout " + i + " generated - " + (sw.ElapsedMilliseconds / 1000d));
                 this.GeneratedMaps[i].CalculateDistancesBetweenAreas();
                 Console.WriteLine("Distance for layout " + i + " calculated - " + (sw.ElapsedMilliseconds / 1000d));
+                Console.WriteLine("-----------------------------------");
             }
             //Console.WriteLine("Finished layout generation - " + (sw.ElapsedMilliseconds / 1000d));
             //Console.WriteLine();
             //Console.WriteLine("-----------------------------------");
             //Console.WriteLine();
 
-            this.RequiredAreas = GetRequiredAreas(chosenAreas, numberOfDwarves);
-
-            //Console.WriteLine("Initializeing layout populations - " + (sw.ElapsedMilliseconds / 1000d));
-            for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
+            // -----------------
+            // TODO Create all test setups, Melnyk check
+            // -----------------
+            var testSetups = new List<TestSetups>();
+            var testMutations = new[] { 0.1, 0.2, 0.3 };
+            var testChildren = new[] { 10, 100, 1000 };
+            var testPenalty = new[] { 10, 100, 200 };
+            var testPenaltyModifier = new[] { 10, 100, 200 };
+            for (var mut = 0; mut < testMutations.Count(); mut++)
             {
-                var listOfAreas = new List<AreaGenotype>();
-                foreach (var b in this.GeneratedMaps[i].GetAllAreas())
+                for (var children = 0; children < testChildren.Count(); children++)
                 {
-                    var areaToAdd = (b.AreaName == "@") ? new AreaGenotype(b.Distances, "@") : new AreaGenotype(b.Distances, AreaAssignmentsGenotype.GetRandomRoom());
-                    listOfAreas.Add(areaToAdd);
+                    for (var penalty = 0; penalty < testPenalty.Count(); penalty++)
+                    {
+                        for (var penaltyModifier = 0; penaltyModifier < testPenaltyModifier.Count(); penaltyModifier++)
+                        {
+                            testSetups.Add(new TestSetups(testMutations[mut], testChildren[children], (int)(10000d / testMutations[mut]), testPenalty[penalty], testPenaltyModifier[penaltyModifier]));
+                        }
+                    }
                 }
-
-                this.GeneratedAssignments.Add(new AreaAssignmentsGenotype(this.CurrentGeneration, listOfAreas));
-                //Console.WriteLine(i + " has been populated");
             }
 
-            //Console.WriteLine("Layout populations finished - " + (sw.ElapsedMilliseconds / 1000d));
-            //Console.WriteLine();
-            //Console.WriteLine("-----------------------------------");
-            //Console.WriteLine();
-
-            CurrentGeneration++;
-
-            //Console.WriteLine("Starting mutation - " + (sw.ElapsedMilliseconds / 1000d));
-            // Mutate layouts
-            while (CurrentGeneration < NumberOfGenerations)
+            // -----------------
+            // TODO Test each setup, Melnyk check
+            // -----------------
+            foreach (var testSetup in testSetups)
             {
-                for (var l = 0; l < this.GeneratedAssignments.Count; l++)
-                {
-                    var children = new List<AreaAssignmentsGenotype>();
-                    var parent = this.GeneratedAssignments[l];
+                MutationChance = testSetup.TestMutationChance;
+                ChildrenToSpawn = testSetup.TestChildrenToSpawn;
+                NumberOfGenerations = testSetup.TestNumberOfGenerations;
+                MissingRoomPenalty = testSetup.TestMissingRoomPenalty;
+                MissingRoomPenaltyScalingFactor = testSetup.TestMissingRoomPenaltyScalingFactor;
+                CurrentGeneration = 0;
 
-                    for (var i = 0; i < ChildrenToSpawn; i++)
+                //Console.WriteLine("Initializeing layout populations - " + (sw.ElapsedMilliseconds / 1000d));
+                for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
+                {
+                    var listOfAreas = new List<AreaGenotype>();
+                    foreach (var b in this.GeneratedMaps[i].GetAllAreas())
                     {
-                        children.Add(parent.Mutate(CurrentGeneration, MutationChance, RequiredAreas));
+                        var areaToAdd = (b.AreaName == "@") ? new AreaGenotype(b.Distances, "@") : new AreaGenotype(b.Distances, AreaAssignmentsGenotype.GetRandomRoom());
+                        listOfAreas.Add(areaToAdd);
                     }
 
-                    var bestChild = children.FirstOrDefault(c => Math.Abs(c.FitnessValue - children.Max(assignment => assignment.FitnessValue)) < 1E-17);
-                    var bestFit = ((bestChild != null) && (parent.FitnessValue <= bestChild.FitnessValue)) ? bestChild : parent;
-
-                    this.GeneratedAssignments[l] = bestFit;
+                    this.GeneratedAssignments.Add(new AreaAssignmentsGenotype(this.CurrentGeneration, listOfAreas));
+                    //Console.WriteLine(i + " has been populated");
                 }
 
-                //Console.WriteLine("Generation " + CurrentGeneration + "/" + NumberOfGenerations + " is finished - " + (sw.ElapsedMilliseconds / 1000d));
+                //Console.WriteLine("Layout populations finished - " + (sw.ElapsedMilliseconds / 1000d));
+                //Console.WriteLine();
+                //Console.WriteLine("-----------------------------------");
+                //Console.WriteLine();
+
                 CurrentGeneration++;
-            }
 
-            //Console.WriteLine("Mutation finished - " + (sw.ElapsedMilliseconds / 1000d));
-            //Console.WriteLine();
-            //Console.WriteLine("-----------------------------------");
-            //Console.WriteLine();
-
-            //Console.WriteLine("Copying generated layouts to maps - " + (sw.ElapsedMilliseconds / 1000d));
-            for (var i = 0; i < GeneratedMaps.Count; i++)
-            {
-                for (var j = 0; j < this.GeneratedAssignments[i].Areas.Count; j++)
+                //Console.WriteLine("Starting mutation - " + (sw.ElapsedMilliseconds / 1000d));
+                // Mutate layouts
+                while (CurrentGeneration < NumberOfGenerations)
                 {
-                    var oldArea = GeneratedMaps[i].GetAllAreas()[j];
-                    var newName = this.GeneratedAssignments[i].Areas[j].Name;
-                    var mapLayer = GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
-                    mapLayer.ReplaceArea(oldArea, new Area(areaName: newName));
+                    for (var l = 0; l < this.GeneratedAssignments.Count; l++)
+                    {
+                        var children = new List<AreaAssignmentsGenotype>();
+                        var parent = this.GeneratedAssignments[l];
+
+                        for (var i = 0; i < ChildrenToSpawn; i++)
+                        {
+                            children.Add(parent.Mutate(CurrentGeneration, MutationChance, RequiredAreas));
+                        }
+
+                        var bestChild = children.FirstOrDefault(c => Math.Abs(c.FitnessValue - children.Max(assignment => assignment.FitnessValue)) < 1E-17);
+                        var bestFit = ((bestChild != null) && (parent.FitnessValue <= bestChild.FitnessValue)) ? bestChild : parent;
+
+                        this.GeneratedAssignments[l] = bestFit;
+                    }
+
+                    //Console.WriteLine("Generation " + CurrentGeneration + "/" + NumberOfGenerations + " is finished - " + (sw.ElapsedMilliseconds / 1000d));
+                    CurrentGeneration++;
                 }
-                //Console.WriteLine("Layout " + i + " copied");
+
+                //Console.WriteLine("Mutation finished - " + (sw.ElapsedMilliseconds / 1000d));
+                //Console.WriteLine();
+                //Console.WriteLine("-----------------------------------");
+                //Console.WriteLine();
+
+                //Console.WriteLine("Copying generated layouts to maps - " + (sw.ElapsedMilliseconds / 1000d));
+                for (var i = 0; i < GeneratedMaps.Count; i++)
+                {
+                    for (var j = 0; j < this.GeneratedAssignments[i].Areas.Count; j++)
+                    {
+                        var oldArea = GeneratedMaps[i].GetAllAreas()[j];
+                        var newName = this.GeneratedAssignments[i].Areas[j].Name;
+                        var mapLayer = GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
+                        mapLayer.ReplaceArea(oldArea, new Area(areaName: newName));
+                    }
+                    //Console.WriteLine("Layout " + i + " copied");
+                }
+
+                //Console.WriteLine("Layouts copied - " + (sw.ElapsedMilliseconds / 1000d));
+                //Console.WriteLine();
+                //Console.WriteLine("-----------------------------------");
+                //Console.WriteLine();
+
+                //for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
+                //{
+                //    var map = GeneratedMaps[mapIndex];
+                //    Console.WriteLine("Map " + mapIndex + " looks like this:");
+
+                //    for (var layer = map.Z - 1; layer >= 0; layer--)
+                //    {
+                //        if (map.MapLayers[layer].LayerAreas.Count <= 0) continue;
+                //        Console.WriteLine();
+                //        Console.WriteLine("Layer " + layer);
+                //        Console.WriteLine(map.MapLayers[layer]);
+                //    }
+
+                //    Console.WriteLine();
+                //    Console.WriteLine("-----------------------------------");
+                //    Console.WriteLine();
+                //}
+                //Console.WriteLine("Done! - " + (sw.ElapsedMilliseconds / 1000d));
+
+
+                // -----------------
+                // TODO Print to file, Melnyk check
+                // -----------------
+                var newDirectory = Directory.GetCurrentDirectory() + "\\TestData";
+                var testDataDirectory = newDirectory + "\\Dwarf" + numberOfDwarves;
+                var testDataFileName = testDataDirectory + "\\" + testSetup.AsFileName();
+                if (!Directory.Exists(newDirectory))
+                    Directory.CreateDirectory(newDirectory);
+                if (!Directory.Exists(testDataDirectory))
+                    Directory.CreateDirectory(testDataDirectory);
+
+                using (var file = new StreamWriter(testDataFileName))
+                {
+                    // Find top 10 map indicies
+                    file.WriteLine("Top 10 maps are:");
+                    var topMaps = new List<int>();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        var topValue = -1000000d;
+                        var topIndex = -1;
+
+                        for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
+                        {
+                            if (topMaps.Contains(mapIndex))
+                                continue;
+
+                            var map = GeneratedMaps[mapIndex];
+                            if (GeneratedAssignments[mapIndex].FitnessValue > topValue)
+                            {
+                                topValue = GeneratedAssignments[mapIndex].FitnessValue;
+                                topIndex = mapIndex;
+                            }
+                        }
+
+                        topMaps.Add(topIndex);
+                        file.WriteLine(i + ": Map " + topIndex + " with fitness: " + topValue);
+                    }
+
+                    // Print all maps with their layers
+                    for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
+                    {
+                        var map = GeneratedMaps[mapIndex];
+                        file.WriteLine("Map " + mapIndex + " with fitness (" + GeneratedAssignments[mapIndex].FitnessValue + ") looks like this:");
+
+                        for (var layer = map.Z - 1; layer >= 0; layer--)
+                        {
+                            if (map.MapLayers[layer].LayerAreas.Count <= 0) continue;
+                            file.WriteLine();
+                            file.WriteLine("Layer " + layer);
+                            file.WriteLine(map.MapLayers[layer].ToString());
+                        }
+
+                        file.WriteLine();
+                        file.WriteLine("-----------------------------------");
+                        file.WriteLine();
+                    }
+                }
+
+                Console.WriteLine("Test data written to " + testDataFileName);
             }
 
-            //Console.WriteLine("Layouts copied - " + (sw.ElapsedMilliseconds / 1000d));
-            //Console.WriteLine();
-            //Console.WriteLine("-----------------------------------");
-            //Console.WriteLine();
-
-            //for (var mapIndex = 0; mapIndex < GeneratedMaps.Count; mapIndex++)
-            //{
-            //    var map = GeneratedMaps[mapIndex];
-            //    Console.WriteLine("Map " + mapIndex + " looks like this:");
-
-            //    for (var layer = map.Z - 1; layer >= 0; layer--)
-            //    {
-            //        if (map.MapLayers[layer].LayerAreas.Count <= 0) continue;
-            //        Console.WriteLine();
-            //        Console.WriteLine("Layer " + layer);
-            //        Console.WriteLine(map.MapLayers[layer]);
-            //    }
-
-            //    Console.WriteLine();
-            //    Console.WriteLine("-----------------------------------");
-            //    Console.WriteLine();
-            //}
-            //Console.WriteLine("Done! - " + (sw.ElapsedMilliseconds / 1000d));
-
-            // TODO: (Grooss check) Do evolution loop
         }
 
         /// <summary>
@@ -417,6 +517,54 @@
 
             rooms += numberOfDwarves / 2;
             return rooms;
+        }
+
+        private class TestSetups
+        {
+            public TestSetups(double mutationChance, int children, int generations, double missingPenalty,
+                double missingPenaltyScaling)
+            {
+                TestMutationChance = mutationChance;
+                TestChildrenToSpawn = children;
+                TestNumberOfGenerations = generations;
+                TestMissingRoomPenalty = missingPenalty;
+                TestMissingRoomPenaltyScalingFactor = missingPenaltyScaling;
+            }
+
+            /// <summary>
+            /// The chance that a room will mutate into a different room.
+            /// </summary>
+            public double TestMutationChance { get; set; }
+
+            /// <summary>
+            /// The number of children to generate per parent in a new generation.
+            /// </summary>
+            public int TestChildrenToSpawn { get; set; }
+
+            /// <summary>
+            /// Number of generations to run.
+            /// </summary>
+            public int TestNumberOfGenerations { get; set; }
+
+            /// <summary>
+            /// The penalty to apply to a fitness of an assignment if it does not contain the required rooms.
+            /// </summary>
+            public double TestMissingRoomPenalty { get; set; }
+
+            /// <summary>
+            /// The amount to increase the penalty per generation.
+            /// </summary>
+            public double TestMissingRoomPenaltyScalingFactor { get; set; }
+
+            public string AsFileName()
+            {
+                return ("Mutation" + TestMutationChance 
+                    + "-Children" + TestChildrenToSpawn 
+                    + "-Generations" + TestNumberOfGenerations 
+                    + "-MissingPenalty" + TestMissingRoomPenalty 
+                    + "-MissingPenaltyFactor" + TestMissingRoomPenaltyScalingFactor 
+                    + ".txt");
+            }
         }
     }
 }
