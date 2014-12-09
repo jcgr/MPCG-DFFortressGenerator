@@ -1,10 +1,48 @@
 \section{Methods}
 \label{04}
 
-There are various different ways to generate dungeons\cite[Chapter 3]{PCGBook}\cite{FearAI}, but we did not feel that they did what we wanted. We wanted all of the rooms to be connected to the entrance as directly as possible, while still being able to connect to each other on the way.
+There are various different ways to generate dungeons\cite[Chapter 3]{PCGBook}, \textbf{more stuff/better intro}.
+
+For our dungeon generation, we use two different algorithms: A map generation algorithm to generate the basic layout of the map and evolutionary algorithms\cite[Chapter 2]{IoEC} to determine how the map layout can be used in the best way.
+
+\subsection{Evolution}
+\label{04_Evolution}
+
+\textbf{Only write about how We do OUR evolution. Rest should be in background.}
+
+We chose to make our evolution a bit different. Instead of evolving a number of map layouts every generation, we create a number of map layouts which each have their own set of room assignments (candidates). Evolution is done individually for each map layout on their set of room assignment, instead of on the map layouts themselves. The best room assignment is then chosen as the candidate to mutate for the next generation. This way we avoid situations where a map layout is discarded because the mutations were less successful than mutations of other map layouts.
+
+\textbf{Note about genotypes}
+
+\begin{enumerate}
+
+	\item Create 10 different maps layout (using the map generation algorithm, see below) with empty rooms. When a map has been generated, find the distance from any room to all other rooms (see \ref{04_Distances}).
+
+	\item For each map layout, create 10 random room assignments.
+
+	\item For every map layout, do the following every generation until enough generations have passed:
+
+	\begin{enumerate}
+
+		\item Use the current best room assignment as candidate for the generation.
+
+		\item Create 10 mutations of the candidate. A mutation iterates over every room and has a 30\% chance to transform the room into another random type of room.
+
+		\item When the mutations have been created, calculate their fitness value (note about that).
+
+		\item If a mutation is better than the current candidate for the map, replace the candidate with the best mutation.
+
+	\end{enumerate}
+
+	\item At the end, for every map, copy its best room assignment into the actual map.
+
+\end{enumerate}
 
 % Map generation algorithm
-For this purpose, we wrote our own algorithm, which works as follows:
+\subsection{Map generation}
+\label{04_MapGeneration}
+
+For the map generation algorithm, we decided to write our own algorithm, as we could not find any other algorithm that could do specifically what we wanted. Our map generation algorithm works as follows:
 
 \begin{enumerate}
 
@@ -12,7 +50,7 @@ For this purpose, we wrote our own algorithm, which works as follows:
 
 	\item Create an entrance to the fortress on the top layer along one side of the room.
 
-	\item For each layer in the map (starting at the top one), make a list that contains all positions that are not dug out, then do the following:
+	\item For each layer in the map (starting at the top one), make a list that contains all positions that are not dug out and then do the following:
 
 	\begin{enumerate}
 		
@@ -20,19 +58,23 @@ For this purpose, we wrote our own algorithm, which works as follows:
 
 		\item Pick a random, diagonal direction (north/east, south/east, south/west or north/west), go 6 tiles that way and see if the positions in that direction are open.
 
-		\item If they are open, build a room in the middle 4x4 square, set the tiles around that square to room walls, and remove the positions now occupied by the room from the list of open positions.
+		\item If they are open, build an empty room in the middle 4x4 square, set the tiles around that square to room walls, and remove the positions now occupied by the room from the list of open positions.
 
-		\item Create a path from the room to the nearest entrance (stairs on the lower levels count as entrances to that level).
+		\item Create a path from the room to the nearest entrance using Dijkstra (stairs on the lower levels count as entrances to that level).
 
 		\item Once enough rooms have been created, or only 10\% of the layer is open, create stairs to the next layer, and connect these stairs to the entrance of the current layer.
 
-		\item Repeat for each layer until enough rooms have been built.
+		\item Repeat steps a) to e) for each layer until enough rooms have been built.
 
 	\end{enumerate}
 
 \end{enumerate}
+\subsection{Distances between rooms}
+\label{04_Distances}
 
 %Evolution algorithm
+
+% Objective function: Should factor in that there are some rooms that we do not want a lot of.
 
 %How does your algorithm work? Describe in as much detail as you can fit into the report. Also, how did you interface it to the game?
 
@@ -45,3 +87,8 @@ For this purpose, we wrote our own algorithm, which works as follows:
 %Multi-threading:
 
 %Interface: We did not interface it directly into the game. We give the user a layout map that provides the best room layouts generated.
+
+% Distance improvements:
+% Find distance to rooms while generating path to entrances.
+% For distance between multiple layers: Save distance to entrance/exit for every room and just add them together.
+% Dijkstra: Use Dikjstra to find distance to ALL rooms instead of just looking for one specific room at a time.
