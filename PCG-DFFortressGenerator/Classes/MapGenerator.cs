@@ -99,7 +99,11 @@
             GenerateEntrance(Map.MapLayers[Map.Z - 1]);
             for (var z = Map.Z - 1; z >= 0; z--)
             {
-                GenerateRooms(Map, z);
+                if (!GenerateRooms(Map, z))
+                {
+                    break;
+                }
+
                 if (this.CurrentNumberOfRooms <= 0)
                 {
                     break;
@@ -196,7 +200,8 @@
         /// </summary>
         /// <param name="map"> The map to generate on. </param>
         /// <param name="layer"> The layer to generate on. </param>
-        private void GenerateRooms(Map map, int layer)
+        /// <returns>True if generation finished successfully, fales if not.</returns>
+        private bool GenerateRooms(Map map, int layer)
         {
             var done = false;
             var openPositions = new List<Position>();
@@ -214,9 +219,9 @@
 
             // Console.WriteLine("After layer " + layer + " there are " + CurrentNumberOfRooms + " remaining");
             if (this.CurrentNumberOfRooms <= 0)
-                return;
+                return true;
 
-            GenerateStairsToNextLevel(map, layer, openPositions);
+            return GenerateStairsToNextLevel(map, layer, openPositions);
         }
 
         /// <summary>
@@ -301,8 +306,8 @@
                         var chosenWallTile = wallTiles[randomWallTileIndex];
                         wallTiles.RemoveAt(randomWallTileIndex);
 
-                        // if (tileLayer.Entrance == null)
-                        // Console.WriteLine("Much error, such wow, many paths " + this.CurrentNumberOfRooms);
+                        if (tileLayer.Entrance == null)
+                            Console.WriteLine("Much error, such wow, many paths " + this.CurrentNumberOfRooms);
                         var path = Pathfinding.DijkstraFindPathToOpenArea(
                             Map,
                             chosenWallTile,
@@ -342,7 +347,7 @@
         /// <param name="map">The map in use.</param>
         /// <param name="layer">The layer to generate stairs on (will make stairs to layer - 1).</param>
         /// <param name="openPositions">The positions not yet checked.</param>
-        private void GenerateStairsToNextLevel(Map map, int layer, List<Position> openPositions)
+        private bool GenerateStairsToNextLevel(Map map, int layer, List<Position> openPositions)
         {
             var tileLayer = map.MapLayers[layer];
             var originalLayout = tileLayer.Copy();
@@ -390,7 +395,7 @@
                         if (possibleTiles.Count <= 0)
                         {
                             tileLayer = originalLayout;
-                            return;
+                            return false;
                         }
 
                         var randomWallTileIndex = Random.Next(possibleTiles.Count);
@@ -436,6 +441,8 @@
                     break;
                 }
             }
+
+            return true;
         }
 
         /// <summary>
