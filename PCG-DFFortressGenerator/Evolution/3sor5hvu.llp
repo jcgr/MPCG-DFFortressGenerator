@@ -19,7 +19,32 @@
         /// <summary>
         /// The number of different assignments that are used in evolution.
         /// </summary>
-        public const int NumberOfAssignmentsToGenerate = 5;
+        public const int NumberOfAssignmentsToGenerate = 1;
+
+        /// <summary>
+        /// The penalty to apply to a fitness of an assignment if it does not contain the required rooms.
+        /// </summary>
+        public static double MissingRoomPenalty = 100;
+
+        /// <summary>
+        /// The amount to increase the penalty per generation.
+        /// </summary>
+        public static double MissingRoomPenaltyScalingFactor = 10;
+
+        /// <summary>
+        /// The chance that a room will mutate into a different room.
+        /// </summary>
+        public double MutationChance = 0.3;
+
+        /// <summary>
+        /// The number of children to generate per parent in a new generation.
+        /// </summary>
+        public int ChildrenToSpawn = 10;
+
+        /// <summary>
+        /// Number of generations to run.
+        /// </summary>
+        public int NumberOfGenerations = 1000;
 
         #endregion
 
@@ -28,11 +53,7 @@
         /// </summary>
         public Evolver()
         {
-            MissingRoomPenalty = 100;
-            MissingRoomPenaltyScalingFactor = 10;
-            this.MutationChance = 0.3;
-            this.ChildrenToSpawn = 10;
-            this.NumberOfGenerations = 1000;
+            
         }
 
         /// <summary>
@@ -65,35 +86,6 @@
         /// </summary>
         public Dictionary<string, int> RequiredAreas { get; set; }
 
-        #region Mutation Values
-
-        /// <summary>
-        /// Gets or sets the penalty to apply to a fitness of an assignment if it does not contain the required rooms.
-        /// </summary>
-        public static double MissingRoomPenalty { get; set; }
-
-        /// <summary>
-        /// Gets or sets the amount to increase the penalty per generation.
-        /// </summary>
-        public static double MissingRoomPenaltyScalingFactor { get; set; }
-
-        /// <summary>
-        /// Gets or sets the chance that a room will mutate into a different room.
-        /// </summary>
-        public double MutationChance { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of children to generate per parent in a new generation.
-        /// </summary>
-        public int ChildrenToSpawn { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of generations to run.
-        /// </summary>
-        private int NumberOfGenerations { get; set; }
-
-        #endregion
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Evolver"/> class.
         /// </summary>
@@ -111,19 +103,14 @@
             this.RequiredAreas = GetRequiredAreas(chosenAreas, numberOfDwarves);
             AreaWeights = GenerateAreaWeights();
 
-            var updateString = "Generating initial maps.";
-
             var numberOfRoomsRequired = CalculateNumberOfRooms(chosenAreas, numberOfDwarves);
             var lg = new MapGenerator(x, y, z, numberOfRoomsRequired);
 
-            MainWindow.UpdateProgressBlock(updateString);
             for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
             {
                 this.GeneratedMaps.Add(lg.GenerateNewMap());
                 this.GeneratedMaps[i].CalculateDistancesBetweenAreas();
-                MainWindow.UpdateProgressBlock(updateString + "\n Map " + (i + 1) + "/" + NumberOfAssignmentsToGenerate + " generated.");
             }
-            updateString += "\n Map " + NumberOfAssignmentsToGenerate + "/" + NumberOfAssignmentsToGenerate + " generated. \n\n";
 
             this.GeneratedAssignments.Clear();
             this.CurrentGeneration = 0;
@@ -141,8 +128,6 @@
             }
 
             // Mutate layouts
-            updateString += "Evolving maps.";
-            MainWindow.UpdateProgressBlock(updateString);
             while (this.CurrentGeneration < this.NumberOfGenerations)
             {
                 for (var l = 0; l < this.GeneratedAssignments.Count; l++)
@@ -162,9 +147,6 @@
                 }
 
                 this.CurrentGeneration++;
-                
-                if (this.CurrentGeneration % 10 == 0)
-                    MainWindow.UpdateProgressBlock(updateString + "\n Generation " + this.CurrentGeneration + "/" + this.NumberOfGenerations);
             }
 
             for (var i = 0; i < this.GeneratedMaps.Count; i++)
@@ -261,15 +243,17 @@
                     }
 
                     this.GeneratedAssignments.Add(new AreaAssignmentsGenotype(this.CurrentGeneration, listOfAreas));
+
+                    // Console.WriteLine(i + " has been populated");
                 }
 
-                Console.WriteLine();
-                Console.WriteLine(@"-----------------------------------");
-                Console.WriteLine();
+                // Console.WriteLine("Layout populations finished - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine();
+                // Console.WriteLine("-----------------------------------");
+                // Console.WriteLine();
                 this.CurrentGeneration++;
 
-                Console.WriteLine(@"Starting mutation - " + (sw.ElapsedMilliseconds / 1000d));
-
+                // Console.WriteLine("Starting mutation - " + (sw.ElapsedMilliseconds / 1000d));
                 // Mutate layouts
                 while (this.CurrentGeneration < this.NumberOfGenerations)
                 {
@@ -289,15 +273,16 @@
                         this.GeneratedAssignments[l] = bestFit;
                     }
 
-                    Console.WriteLine(@"Generation " + this.CurrentGeneration + @"/" + this.NumberOfGenerations + @" is finished - " + (sw.ElapsedMilliseconds / 1000d));
+                    // Console.WriteLine("Generation " + CurrentGeneration + "/" + NumberOfGenerations + " is finished - " + (sw.ElapsedMilliseconds / 1000d));
                     this.CurrentGeneration++;
                 }
 
-                Console.WriteLine(@"Mutation finished - " + (sw.ElapsedMilliseconds / 1000d));
-                Console.WriteLine();
-                Console.WriteLine(@"-----------------------------------");
-                Console.WriteLine();
+                // Console.WriteLine("Mutation finished - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine();
+                // Console.WriteLine("-----------------------------------");
+                // Console.WriteLine();
 
+                // Console.WriteLine("Copying generated layouts to maps - " + (sw.ElapsedMilliseconds / 1000d));
                 for (var i = 0; i < this.GeneratedMaps.Count; i++)
                 {
                     for (var j = 0; j < this.GeneratedAssignments[i].Areas.Count; j++)
@@ -307,7 +292,14 @@
                         var mapLayer = this.GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
                         mapLayer.ReplaceArea(oldArea, oldArea.CopyWithNewAreaName(newName));
                     }
+
+                    // Console.WriteLine("Layout " + i + " copied");
                 }
+
+                // Console.WriteLine("Layouts copied - " + (sw.ElapsedMilliseconds / 1000d));
+                // Console.WriteLine();
+                // Console.WriteLine("-----------------------------------");
+                // Console.WriteLine();
 
                 // -----------------
                 // Print to file
@@ -546,9 +538,9 @@
             foreach (var tempName in chosenAreas.Select(t => t.AreaName))
             {
                 if (tempName.Equals("b"))
-                    ra.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 8d));
+                    ra.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 8d) - 1);
                 else if (tempName.Equals("d"))
-                    ra.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 6d));
+                    ra.Add(tempName, (int)Math.Ceiling(numberOfDwarves / 6d) - 1);
                 else if (tempName.Equals("r"))
                     ra.Add(tempName, (int)Math.Ceiling((int)Math.Ceiling(numberOfDwarves * 0.20) / 5d));
                 else
@@ -569,10 +561,10 @@
             var rooms = 0;
 
             if (requiredAreas.OfType<Bedroom>().Any())
-                rooms += (int)Math.Ceiling(numberOfDwarves / 8d);
+                rooms += (int)Math.Ceiling(numberOfDwarves / 8d) - 1;
 
             if (requiredAreas.OfType<DiningRoom>().Any())
-                rooms += (int)Math.Ceiling(numberOfDwarves / 6d);
+                rooms += (int)Math.Ceiling(numberOfDwarves / 6d) - 1;
 
             if (requiredAreas.OfType<Barracks>().Any()) 
                 rooms += (int)Math.Ceiling((int)Math.Ceiling(numberOfDwarves * 0.20) / 5d);

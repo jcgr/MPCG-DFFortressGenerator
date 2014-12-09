@@ -14,19 +14,19 @@
         <Grid HorizontalAlignment="Center" Height="665" Margin="10,10,288,10" VerticalAlignment="Center" Width="850">
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="665" Stroke="Black" VerticalAlignment="Top" Width="850" Panel.ZIndex="-2"/>
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="645" Margin="10,10,0,0" Stroke="Black" VerticalAlignment="Top" Width="645" Panel.ZIndex="-1"/>
-            <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="TextBlock 
-                       
-                       
-                       
-                       
-                       guid Test" VerticalAlignment="Top" FontFamily="Consolas" Height="645" Width="645" Name="tbMapDisplay" LineHeight="6" TextAlignment="Center" FontSize="11"/>
-            <ComboBox HorizontalAlignment="Left" Margin="700,10,0,0" VerticalAlignment="Top" Width="120" SelectedIndex="0" Name="cbZLevel" SelectionChanged="CbZLevel_OnSelectionChanged">
+            <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="No maps generated." VerticalAlignment="Top" FontFamily="Consolas" Height="645" Width="645" Name="tbMapDisplay" LineHeight="6" TextAlignment="Center" FontSize="11"/>
+            <ComboBox HorizontalAlignment="Left" Margin="745,10,0,0" VerticalAlignment="Top" Width="95" SelectedIndex="0" Name="cbGeneratedMaps" SelectionChanged="CbGeneratedMaps_OnSelectionChangedbGeneratedMaps_OnSelectionChanged">
+                <System:Int32>0</System:Int32>
+            </ComboBox>
+            <ComboBox HorizontalAlignment="Left" Margin="745,37,0,0" VerticalAlignment="Top" Width="95" SelectedIndex="0" Name="cbZLevel" SelectionChanged="CbZLevel_OnSelectionChanged">
                 <System:Int32>1</System:Int32>
             </ComboBox>
+            <TextBlock HorizontalAlignment="Left" Margin="660,13,0,0" TextWrapping="Wrap" Text="Map index:" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
+            <TextBlock HorizontalAlignment="Left" Margin="660,40,0,0" TextWrapping="Wrap" Text="Map layer:" VerticalAlignment="Top" Width="80" FontWeight="Bold"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Margin="865,10,0,0" VerticalAlignment="Top" Width="273" Height="665">
             <Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="665" Stroke="Black" VerticalAlignment="Top" Width="273" Panel.ZIndex="-2"/>
-            <Button Content="Generate Fortress" HorizontalAlignment="Left" Margin="70,445,0,0" VerticalAlignment="Top" Width="115" Height="28" x:Name="btnGenerateFortress" Click="BtnGenerateFortress_OnClick"/>
+            <Button Content="Generate Fortress" HorizontalAlignment="Left" Margin="80,445,0,0" VerticalAlignment="Top" Width="115" Height="28" x:Name="btnGenerateFortress" Click="BtnGenerateFortress_OnClick"/>
 
             <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Fortress Dimensions" VerticalAlignment="Top" Width="122" FontWeight="Bold"/>
             <TextBlock HorizontalAlignment="Left" Margin="10,34,0,0" TextWrapping="Wrap" Text="X:" VerticalAlignment="Top" Height="17" Width="15"/>
@@ -155,6 +155,8 @@
             <CheckBox Content="Stone (S)" Name="chkStone" HorizontalAlignment="Left" Margin="10,397,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Weaponry (W)" Name="chkWeaponry" HorizontalAlignment="Left" Margin="149,397,0,0" VerticalAlignment="Top" Width="119"/>
             <CheckBox Content="Wood (T)" Name="chkWood" HorizontalAlignment="Left" Margin="10,417,0,0" VerticalAlignment="Top" Width="119"/>
+
+            <TextBlock HorizontalAlignment="Left" Margin="5,478,0,0" TextWrapping="Wrap" Text="No maps generated." VerticalAlignment="Top" Height="92" Width="263" FontWeight="Bold" Name="tbProgress" TextAlignment="Center"/>
         </Grid>
     </Grid>
 </Window>

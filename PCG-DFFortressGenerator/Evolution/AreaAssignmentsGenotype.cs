@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using PCG_DFFortressGenerator.Classes;
+
     /// <summary>
     /// The genotype of an area assignment used in mutation.
     /// </summary>
@@ -200,10 +202,15 @@
                 fitness -= missingRooms * (Evolver.MissingRoomPenalty + (Evolver.MissingRoomPenaltyScalingFactor * this.Generation));
             }
 
+            var areaOccourances = new Dictionary<string, int>();
+
+            // Find fitness for each individual room
             foreach (var a in this.Areas)
             {
+                var roomFitness = 0.0;
+
                 var distanceValues = Evolver.AreaWeights[a.Name];
-                for (var i = 0; i < Areas.Count; i++)
+                for (var i = 0; i < this.Areas.Count; i++)
                 {
                     var target = this.Areas[i];
                     if (target == a)
@@ -215,10 +222,38 @@
                     if (distanceValues.TryGetValue(target.Name, out weight))
                     {
                         var dist = a.Distances[i];
-                        fitness += dist * weight;
+                        roomFitness += dist * weight;
                     }
                 }
+
+                // Increase occourance of this area
+                if (areaOccourances.ContainsKey(a.Name))
+                    areaOccourances[a.Name]++;
+                else
+                    areaOccourances[a.Name] = 1;
+
+                int occouranceValue;
+
+                // Lower fitness if we have enough of the room already.
+                if (areaOccourances.TryGetValue(a.Name, out occouranceValue))
+                {
+                    int requiredAreaValue;
+
+                    if (requiredAreas.TryGetValue(a.Name, out requiredAreaValue))
+                    {
+                        if (occouranceValue > requiredAreaValue)
+                            roomFitness = roomFitness / Math.Pow(2, occouranceValue - requiredAreaValue);
+                    }
+                    else
+                    {
+                        if (occouranceValue >= 1)
+                            roomFitness = roomFitness / Math.Pow(2, occouranceValue);
+                    }
+                }
+
+                fitness += roomFitness;
             }
+
             return fitness;
         }
     }

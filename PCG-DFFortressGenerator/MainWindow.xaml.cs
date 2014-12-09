@@ -1,12 +1,11 @@
-﻿using System.IO;
-using System.Text;
-
-namespace PCG_DFFortressGenerator
+﻿namespace PCG_DFFortressGenerator
 {
     using System;
     using System.Collections.Generic;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Threading;
+
     using Classes;
     using Classes.Rooms;
     using Classes.Stockpiles;
@@ -15,73 +14,106 @@ namespace PCG_DFFortressGenerator
     using PCG_DFFortressGenerator.Evolution;
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// The window for the GUI.
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Map Map { get; set; }
-
         /// <summary>
-        /// Used to prevent "CbZLevel_OnSelectionChanged" from throwing errors.
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
-        private bool _mapGenerated;
-
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Gets or sets the progress block.
+        /// </summary>
+        public static TextBlock ProgressBlock { get; set; }
+
+        /// <summary>
+        /// Gets or sets the original z level.
+        /// </summary>
+        private int OriginalZLevel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the map in focus.
+        /// </summary>
+        private Map Map { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of generated maps.
+        /// </summary>
+        private List<Map> Maps { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the map has been generated.
+        /// Used to prevent "OnSelectionChanged" methods from throwing errors.
+        /// </summary>
+        private bool MapGenerated { get; set; }
+
+        /// <summary>
+        /// Forces an update of the progress text block
+        /// </summary>
+        /// <param name="text">The text to update it with.</param>
+        public static void UpdateProgressBlock(string text)
+        {
+            ProgressBlock.Text = text;
+
+            var frame = new DispatcherFrame();
+            Dispatcher.CurrentDispatcher.BeginInvoke(
+                DispatcherPriority.Render,
+                new DispatcherOperationCallback(
+                    delegate
+                    {
+                        frame.Continue = false;
+                        return null;
+                    }),
+                null);
+            Dispatcher.PushFrame(frame);
+        }
+
+        /// <summary>
+        /// Happens when the button is clicked.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The e.</param>
         private void BtnGenerateFortress_OnClick(object sender, RoutedEventArgs e)
         {
-            _mapGenerated = false;
+            this.MapGenerated = false;
+            ProgressBlock = this.tbProgress;
+            UpdateProgressBlock("Generation started. \n Please wait.");
 
             // Creates a new map with the chosen values.
             var x = Convert.ToInt32(cbMapSizeX.Text);
             var y = Convert.ToInt32(cbMapSizeY.Text);
             var z = Convert.ToInt32(cbMapSizeZ.Text);
-            Map = new Map(x, y, z) {CurrentZLevel = z - 1};
+            this.OriginalZLevel = z - 1;
 
-            var evolver = new Evolver(x, y, z, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            var evolver = new Evolver();
+            evolver.EvolveMaps(x, y, z, this.FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+
+            this.Maps = evolver.GeneratedMaps;
+            this.Map = this.Maps[0];
+            this.Map.CurrentZLevel = this.OriginalZLevel;
+
+            // Puts the maps into cbGeneratedMaps
+            this.cbGeneratedMaps.Items.Clear();
+            for (var mapIndex = 1; mapIndex <= this.Maps.Count; mapIndex++)
+                this.cbGeneratedMaps.Items.Add(mapIndex);
+
+            this.cbGeneratedMaps.SelectedIndex = 0;
 
             // Puts the correct level values into cbZLevels
             cbZLevel.Items.Clear();
-            var newZLevels = new List<string>();
-            for (var zz = 1; zz <= z; zz++)
-            {
-                cbZLevel.Items.Add(zz);
-                newZLevels.Add("" + zz);
-            }
-            cbZLevel.SelectedIndex = z - 1;
-//            Map.TestMap();
+            for (var zz = z; zz > 0; zz--)
+                this.cbZLevel.Items.Add(zz);
 
+            this.cbZLevel.SelectedIndex = 0;
+            ProgressBlock.Text = "Generation finished!";
 
-            //var lg = new MapGenerator(Map, FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
-            //lg.GenerateMap();
-
-            //tbMapDisplay.Text = Map.ToString();
-            _mapGenerated = true;
-
-
-
-//            Console.WriteLine(Map.ToString());
-
-//            var newMap = Map.Copy();
-//            newMap.CurrentZLevel = Map.CurrentZLevel;
-//            newMap.MapLayers[newMap.CurrentZLevel].GenerateAndAddArea(1, 1, 2, 2, new Bedroom());
-
-//            var barracks = newMap.MapLayers[newMap.CurrentZLevel].LayerAreas[1];
-//            Console.WriteLine("Barracks! " + barracks.GetType().Name);
-//            newMap.MapLayers[newMap.CurrentZLevel].ReplaceArea(1, new DiningRoom());
-//
-//            Console.WriteLine(Map.ToString());
-//
-//            var tempList = FindChosenAreas();
-//            Console.WriteLine(tempList.OfType<Stone>().Any());
-//            Console.WriteLine(tempList.OfType<Barracks>().Any());
-//            Console.WriteLine(tempList.OfType<Craftdwarf>().Any());
-//
-//            Console.WriteLine("NEW MAP INCOMING WITH " + newMap.MapLayers[newMap.CurrentZLevel].LayerAreas.Count);
-//            Console.WriteLine(newMap.ToString());
+            this.MapGenerated = true;
+            this.tbMapDisplay.Text = Map.ToString();
         }
 
         /// <summary>
@@ -148,16 +180,34 @@ namespace PCG_DFFortressGenerator
         /// Fires when the cbZLevel combobox's selection is changed. Uses the chosen value to
         /// print the corresponding level of the map.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
         private void CbZLevel_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Map == null
-                || !_mapGenerated)
+                || !this.MapGenerated)
                 return;
-            
-            Map.CurrentZLevel = Convert.ToInt32(cbZLevel.SelectedItem) - 1;
-            tbMapDisplay.Text = Map.ToString();
+
+            this.Map.CurrentZLevel = Convert.ToInt32(cbZLevel.SelectedItem) - 1;
+            this.tbMapDisplay.Text = Map.ToString();
+        }
+
+        /// <summary>
+        /// Fires when the cbGeneratedMaps combobox's selection is changed. Uses the chosen value to
+        /// select the chosen map.
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The e</param>
+        private void CbGeneratedMaps_OnSelectionChangedbGeneratedMaps_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.Maps == null
+                || !this.MapGenerated)
+                return;
+
+            this.Map = this.Maps[Convert.ToInt32(this.cbGeneratedMaps.SelectedItem)];
+            this.Map.CurrentZLevel = this.OriginalZLevel;
+            this.cbZLevel.SelectedIndex = this.OriginalZLevel;
+            this.tbMapDisplay.Text = Map.ToString();
         }
     }
 }
