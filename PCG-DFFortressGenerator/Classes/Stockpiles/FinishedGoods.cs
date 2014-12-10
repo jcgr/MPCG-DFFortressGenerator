@@ -7,7 +7,7 @@
     {
         public FinishedGoods()
         {
-            AreaName = "D";
+            AreaName = "G";
 
 //            MinSize = 20;
 //            MaxSize = 50;

@@ -14,24 +14,16 @@
     /// </summary>
     public class Evolver
     {
-        #region Mutation Constants
-
-        /// <summary>
-        /// The number of different assignments that are used in evolution.
-        /// </summary>
-        public const int NumberOfAssignmentsToGenerate = 5;
-
-        #endregion
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Evolver"/> class.
         /// </summary>
         public Evolver()
         {
+            this.NumberOfAssignmentsToGenerate = 10;
             MissingRoomPenalty = 100;
             MissingRoomPenaltyScalingFactor = 10;
             this.MutationChance = 0.3;
-            this.ChildrenToSpawn = 10;
+            this.ChildrenToSpawn = 100;
             this.NumberOfGenerations = 1000;
         }
 
@@ -44,6 +36,40 @@
         /// Gets the random object.
         /// </summary>
         public static Random Random { get; private set; }
+
+        #region Mutation Values
+
+        /// <summary>
+        /// Gets or sets the penalty to apply to a fitness of an assignment if it does not contain the required rooms.
+        /// </summary>
+        public static double MissingRoomPenalty { get; set; }
+
+        /// <summary>
+        /// Gets or sets the amount to increase the penalty per generation.
+        /// </summary>
+        public static double MissingRoomPenaltyScalingFactor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of different assignments that are used in evolution.
+        /// </summary>
+        public int NumberOfAssignmentsToGenerate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the chance that a room will mutate into a different room.
+        /// </summary>
+        public double MutationChance { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of children to generate per parent in a new generation.
+        /// </summary>
+        public int ChildrenToSpawn { get; set; }
+
+        /// <summary>
+        /// Gets the number of generations to run.
+        /// </summary>
+        public int NumberOfGenerations { get; private set; }
+
+        #endregion
 
         /// <summary>
         /// Gets the current generation of the evolution.
@@ -64,35 +90,6 @@
         /// Gets or sets the required rooms for the area assignments.
         /// </summary>
         public Dictionary<string, int> RequiredAreas { get; set; }
-
-        #region Mutation Values
-
-        /// <summary>
-        /// Gets or sets the penalty to apply to a fitness of an assignment if it does not contain the required rooms.
-        /// </summary>
-        public static double MissingRoomPenalty { get; set; }
-
-        /// <summary>
-        /// Gets or sets the amount to increase the penalty per generation.
-        /// </summary>
-        public static double MissingRoomPenaltyScalingFactor { get; set; }
-
-        /// <summary>
-        /// Gets or sets the chance that a room will mutate into a different room.
-        /// </summary>
-        public double MutationChance { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of children to generate per parent in a new generation.
-        /// </summary>
-        public int ChildrenToSpawn { get; set; }
-
-        /// <summary>
-        /// Gets or sets the number of generations to run.
-        /// </summary>
-        private int NumberOfGenerations { get; set; }
-
-        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Evolver"/> class.
@@ -117,18 +114,19 @@
             var lg = new MapGenerator(x, y, z, numberOfRoomsRequired);
 
             MainWindow.UpdateProgressBlock(updateString);
-            for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
+            for (var i = 0; i < this.NumberOfAssignmentsToGenerate; i++)
             {
                 this.GeneratedMaps.Add(lg.GenerateNewMap());
                 this.GeneratedMaps[i].CalculateDistancesBetweenAreas();
-                MainWindow.UpdateProgressBlock(updateString + "\n Map " + (i + 1) + "/" + NumberOfAssignmentsToGenerate + " generated.");
+                MainWindow.UpdateProgressBlock(updateString + "\n Map " + (i + 1) + "/" + this.NumberOfAssignmentsToGenerate + " generated.");
             }
-            updateString += "\n Map " + NumberOfAssignmentsToGenerate + "/" + NumberOfAssignmentsToGenerate + " generated. \n\n";
+
+            updateString += "\n Map " + this.NumberOfAssignmentsToGenerate + "/" + this.NumberOfAssignmentsToGenerate + " generated. \n\n";
 
             this.GeneratedAssignments.Clear();
             this.CurrentGeneration = 0;
 
-            for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
+            for (var i = 0; i < this.NumberOfAssignmentsToGenerate; i++)
             {
                 var listOfAreas = new List<AreaGenotype>();
                 foreach (var b in this.GeneratedMaps[i].GetAllAreas())
@@ -205,7 +203,7 @@
             Console.WriteLine(@"Starting layout generation - " + (sw.ElapsedMilliseconds / 1000d));
 
             // Generate layouts and calculate distances between rooms for each layout.
-            for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
+            for (var i = 0; i < this.NumberOfAssignmentsToGenerate; i++)
             {
                 Console.WriteLine(@"Layout " + i + @" started - " + (sw.ElapsedMilliseconds / 1000d));
                 this.GeneratedMaps.Add(lg.GenerateNewMap());
@@ -251,7 +249,7 @@
                 this.CurrentGeneration = 0;
 
                 // Console.WriteLine("Initializeing layout populations - " + (sw.ElapsedMilliseconds / 1000d));
-                for (var i = 0; i < NumberOfAssignmentsToGenerate; i++)
+                for (var i = 0; i < this.NumberOfAssignmentsToGenerate; i++)
                 {
                     var listOfAreas = new List<AreaGenotype>();
                     foreach (var b in this.GeneratedMaps[i].GetAllAreas())

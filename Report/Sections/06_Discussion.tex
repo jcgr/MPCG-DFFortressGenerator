@@ -1,4 +1,35 @@
 \section{Discussion}
 \label{06}
 
-What are the strengths and shortcomings of your method? Why did you choose method X instead of Y? How well would it generalize to other game genres? How would you develop it further, if you had time?
+%What are the strengths and shortcomings of your method? Why did you choose method X instead of Y? How well would it generalize to other game genres? How would you develop it further, if you had time?
+
+\subsection{Finding distances}
+\label{06_Distances}
+
+\subsubsection{Dijkstra vs. A*}
+
+As mentioned in \ref{04_Evolution} we use Dijkstra's algorithm for our distance- and path-finding. We started out using Dijkstra during map generation for creating the path from a room to the entrance of the layer, as we did not know the position of the entrance in the first iterations. This was changed in later iterations, but we did not notice anything that was slower than we expected and therefore did not feel a need to change Dijkstra into A*.
+
+That being said, A* would have improved the speed of the algorithm to some degree, as A* is never worse than Dijkstra as long as the heuristic for A* is admissible.
+
+The point where A* would have made a huge impact is at the beginning of our evolution where we find the distances between all rooms for a given map. We find the distances by iterating over every room and finding its distance to each other room (assuming the distance is not known already) by using Dijkstra. When a room is found, the distance is updated both ways (from the start room to the target and from the target to the start room), which saves us some time.
+
+We still have to run $rooms^2$\textbf{check math} pathfindings where we know exactly where our target is. In such cases, A* is generally faster than Dijkstra or, in the worst case, as slow as Dijkstra. We have not been able to find any tradeoffs from using A* instead of Dijkstra.
+
+\subsubsection{Other ways of finding distances}
+
+Apart from using A*, there are two other methods we believe would have increased the speed of calculating distances.
+
+The first method would only work for finding the distance between rooms on different layers. Assuming every room knows the distance to the entrance of their layer (stairs leading up) and the distance to the exit of their layer (stairs leading down), we can find the distance rooms on different layers like this: Start with the distance from the start room to the stairs that lead to the next layer. If we are still not on the correct layer, add the distance from the entrance to the current layer to the exit of the layer. When the correct layer is found, add the distance from the end room to the entrance of the layer.
+
+This method is not useful for small fortresses, as they typically are not generated on multiple layers, but for larger fortresses that do span multiple layers, it has the potential to save a lot of time.
+
+Other way is to find distance to all rooms at the same time.
+
+%Dijkstra vs. A*.
+
+%Alle rum på en gang vs. et rum ad gangen.
+
+\subsection{Future work}
+
+Variable room sizes

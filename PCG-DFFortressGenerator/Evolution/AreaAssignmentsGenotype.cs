@@ -4,8 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using PCG_DFFortressGenerator.Classes;
-
     /// <summary>
     /// The genotype of an area assignment used in mutation.
     /// </summary>

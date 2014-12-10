@@ -16,14 +16,14 @@
     /// <summary>
     /// The window for the GUI.
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <summary>
@@ -92,6 +92,7 @@
 
             var evolver = new Evolver();
             evolver.EvolveMaps(x, y, z, this.FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
+            //evolver.GenerateEvolutionTestData(x, y, z, this.FindChosenAreas(), Convert.ToInt32(cbNumberOfDwarves.Text));
 
             this.Maps = evolver.GeneratedMaps;
             this.Map = this.Maps[0];
@@ -122,7 +123,7 @@
         /// <returns>A list containing one of each of the areas the user wants in their fortress.</returns>
         private List<Area> FindChosenAreas()
         {
-            var chosenRooms = new List<Area> {new Entrance()};
+            var chosenRooms = new List<Area> { new Entrance() };
 
             if (chkBarracks.IsChecked != null && chkBarracks.IsChecked.Value)
                 chosenRooms.Add(new Barracks());
@@ -204,9 +205,9 @@
                 || !this.MapGenerated)
                 return;
 
-            this.Map = this.Maps[Convert.ToInt32(this.cbGeneratedMaps.SelectedItem)];
+            this.Map = this.Maps[Convert.ToInt32(this.cbGeneratedMaps.SelectedItem) - 1];
             this.Map.CurrentZLevel = this.OriginalZLevel;
-            this.cbZLevel.SelectedIndex = this.OriginalZLevel;
+            this.cbZLevel.SelectedIndex = 0;
             this.tbMapDisplay.Text = Map.ToString();
         }
     }
