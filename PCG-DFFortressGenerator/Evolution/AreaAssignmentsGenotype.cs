@@ -224,6 +224,8 @@
                     }
                 }
 
+                //Console.WriteLine("Room fitness1 " + roomFitness);
+
                 // Increase occourance of this area
                 if (areaOccourances.ContainsKey(a.Name))
                     areaOccourances[a.Name]++;
@@ -239,7 +241,7 @@
 
                     if (requiredAreas.TryGetValue(a.Name, out requiredAreaValue))
                     {
-                        if (occouranceValue > requiredAreaValue)
+                        if (occouranceValue >= requiredAreaValue)
                             roomFitness = roomFitness / Math.Pow(2, occouranceValue - requiredAreaValue);
                     }
                     else
@@ -249,8 +251,15 @@
                     }
                 }
 
+                //Console.WriteLine("Room fitness2: " + roomFitness);
+                //Console.WriteLine();
+                //Console.WriteLine("----------------");
+                //Console.WriteLine();
+
                 fitness += roomFitness;
             }
+
+            //Console.WriteLine("Total fitness: " + fitness);
 
             return fitness;
         }

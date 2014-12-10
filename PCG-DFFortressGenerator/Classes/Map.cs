@@ -62,6 +62,8 @@
         /// </summary>
         public int CurrentZLevel { get; set; }
 
+        public double Fitness { get; set; }
+
         /// <summary>
         /// Changes the layers of this map.
         /// </summary>
@@ -80,8 +82,10 @@
         {
             var tempList = new List<Area>();
 
-            for (var z = Z - 1; z >= 0; z--)
-                tempList.AddRange(MapLayers[z].LayerAreas);
+            tempList.Add(this.MapLayers[this.Z - 1].Entrance);
+
+            for (var z = this.Z - 1; z >= 0; z--)
+                tempList.AddRange(this.MapLayers[z].LayerAreas);
 
             return tempList;
         }

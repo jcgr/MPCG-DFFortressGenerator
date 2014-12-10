@@ -123,7 +123,7 @@
         /// <returns>A list containing one of each of the areas the user wants in their fortress.</returns>
         private List<Area> FindChosenAreas()
         {
-            var chosenRooms = new List<Area> { new Entrance() };
+            var chosenRooms = new List<Area>();
 
             if (chkBarracks.IsChecked != null && chkBarracks.IsChecked.Value)
                 chosenRooms.Add(new Barracks());

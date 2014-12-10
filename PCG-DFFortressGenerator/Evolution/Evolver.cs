@@ -24,7 +24,7 @@
             MissingRoomPenaltyScalingFactor = 10;
             this.MutationChance = 0.3;
             this.ChildrenToSpawn = 100;
-            this.NumberOfGenerations = 1000;
+            this.NumberOfGenerations = 100;
         }
 
         /// <summary>
@@ -123,7 +123,6 @@
 
             updateString += "\n Map " + this.NumberOfAssignmentsToGenerate + "/" + this.NumberOfAssignmentsToGenerate + " generated. \n\n";
 
-            this.GeneratedAssignments.Clear();
             this.CurrentGeneration = 0;
 
             for (var i = 0; i < this.NumberOfAssignmentsToGenerate; i++)
@@ -137,6 +136,8 @@
 
                 this.GeneratedAssignments.Add(new AreaAssignmentsGenotype(this.CurrentGeneration, listOfAreas));
             }
+
+            this.CurrentGeneration++;
 
             // Mutate layouts
             updateString += "Evolving maps.";
@@ -165,6 +166,7 @@
                     MainWindow.UpdateProgressBlock(updateString + "\n Generation " + this.CurrentGeneration + "/" + this.NumberOfGenerations);
             }
 
+            // Copy assignments to actual rooms.
             for (var i = 0; i < this.GeneratedMaps.Count; i++)
             {
                 for (var j = 0; j < this.GeneratedAssignments[i].Areas.Count; j++)
@@ -174,7 +176,11 @@
                     var mapLayer = this.GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
                     mapLayer.ReplaceArea(oldArea, oldArea.CopyWithNewAreaName(newName));
                 }
+
+                this.GeneratedMaps[i].Fitness = this.GeneratedAssignments[i].FitnessValue;
             }
+
+            this.GeneratedMaps.Sort((m, k) => k.Fitness.CompareTo(m.Fitness));
         }
 
         /// <summary>
@@ -305,6 +311,7 @@
                         var mapLayer = this.GeneratedMaps[i].MapLayers[oldArea.AreaTiles[0].Position.Z];
                         mapLayer.ReplaceArea(oldArea, oldArea.CopyWithNewAreaName(newName));
                     }
+                    Console.WriteLine(this.GeneratedAssignments[i].FitnessValue);
                 }
 
                 // -----------------
@@ -394,11 +401,11 @@
             finalDict.Add("r", barrackDict);
 
             // Bedroom
-            var bedroomDict = new Dictionary<string, double> { { "@", Far } };
+            var bedroomDict = new Dictionary<string, double> { { "@", Far }, { "b", Close } };
             finalDict.Add("b", bedroomDict);
 
             // Dining Room
-            var diningroomDict = new Dictionary<string, double> { { "@", Far } };
+            var diningroomDict = new Dictionary<string, double> { { "@", Far }, { "d", Close } };
             finalDict.Add("d", diningroomDict);
 
             // Entrance
