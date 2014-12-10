@@ -8,7 +8,7 @@
 
 \subsubsection{Dijkstra vs. A*}
 
-As mentioned in \ref{04_Evolution} we use Dijkstra's algorithm for our distance- and path-finding. We started out using Dijkstra during map generation for creating the path from a room to the entrance of the layer, as we did not know the position of the entrance in the first iterations. This was changed in later iterations, but we did not notice anything that was slower than we expected and therefore did not feel a need to change Dijkstra into A*.
+As mentioned in \ref{04_Evolution} we use Dijkstra's algorithm for our distance- and path-finding. We started out using Dijkstra during map generation for creating the path from a room to the entrance of the layer, as we did not know the position of the entrance in the first iterations. This was changed in later iterations, but we did not notice anything that was slower than we expected and therefore did not feel a need to change Dijkstra into A*\cite{AStar}\cite{AStarOriginal}.
 
 That being said, A* would have improved the speed of the algorithm to some degree, as A* is never worse than Dijkstra as long as the heuristic for A* is admissible.
 
@@ -24,7 +24,7 @@ The first method would only work for finding the distance between rooms on diffe
 
 This method is not useful for small fortresses, as they typically are not generated on multiple layers, but for larger fortresses that do span multiple layers, it has the potential to save a lot of time.
 
-Other way is to find distance to all rooms at the same time.
+Other way is to find the distance to all rooms at the same time.
 
 %Dijkstra vs. A*.
 
@@ -33,3 +33,5 @@ Other way is to find distance to all rooms at the same time.
 \subsection{Future work}
 
 Variable room sizes
+
+\textbf{REMEMBER TO REMOVE NOCITE FROM REFERENCES}

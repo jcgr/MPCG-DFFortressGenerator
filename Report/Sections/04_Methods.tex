@@ -1,9 +1,12 @@
 \section{Methods}
 \label{04}
 
-There are various different ways to generate dungeons, some are discussed in \cite[Chapter 3]{PCGBook}. Depending on the type of dungeon one wants
+There are various different ways to generate dungeons, some are discussed in \cite[Chapter 3]{PCGBook}. Depending on the type of dungeon one wants \textbf{needs more stuff}
 
 For our dungeon generation, we use two different algorithms: A map generation algorithm to generate the basic layout of the map (\ref{04_MapGeneration}) and evolutionary algorithms\cite[Chapter 2]{IoEC} to determine how the map layout can be used in the best way (\ref{04_Evolution}).
+
+\subsection{Taxonomy}
+\label{04_Taxonomy}
 
 \subsection{Interface}
 \label{04_Interface}
@@ -11,6 +14,11 @@ For our dungeon generation, we use two different algorithms: A map generation al
 The interface for our tool is simple, as we want to avoid confusing the user. On the right is has the options for what the map should include and the dimensions of the map. On the left, the generated maps are shown.
 
 \textbf{insert UI picture(s) here}
+
+\insertPicture{0.5}{ToolLeft_02}{}
+
+\insertPicture{0.3}{ToolRight_02}{}
+
 
 % Map generation algorithm
 \subsection{Map generation}
@@ -52,9 +60,9 @@ While evolutionary algorithms often work in the same way, there are some points 
 \subsubsection{Initialization of maps}
 \label{04_Evolution_Initialization}
 
-In order to evolve maps we first need the maps. At the beginning of the run, we generate 10 maps using the map generation algorithm described in section \ref{04_MapGeneration}. For every map we generate, we also find, and save, the distance from every room to every other room, as we need the distance for our objective function. Saving the distances ahead of time allows us to save time when we need the distances as we can simply look them up.
+In order to evolve maps we need maps. At the beginning of the run, we generate 10 maps using the map generation algorithm described in section \ref{04_MapGeneration}. For every map we generate, we also find and save the distance from every room to every other room, as we need the distance for our objective function. Saving the distances ahead of time allows us to save time when we need the distances as we can simply look them up. 
 
-During our testing, calculating distances between rooms was the slowest part of the entire process by far. This is due to two things: We use Dijkstra's algorithm\cite{Dijkstra} instead of the A* algorithm\cite{AStar}, which in many cases is slower. The other thing is that for each room we want to find distances from, we look for another specific room. When that room is found, we save the distances (for both rooms, as the distance is the same the other way). When looking for such a specific target, A* would have been a better choice and is discussed in detail in section \ref{06_Distances}.
+We find the distances between rooms by using Dijkstra's algorithm\cite{Dijkstra}\cite{DijkstraOriginal}. Every room finds and saves the distance it has to every other room. In order to save time during this step, we save the direction in directions when a distance is found (the start room knows the distance to the target room and the target room knows the distance to the start room). Other ways of finding the distances are discussed in \ref{06_Distances}.
 
 \subsubsection{Candidates for evolution}
 

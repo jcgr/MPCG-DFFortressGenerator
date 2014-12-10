@@ -327,10 +327,10 @@
 
                 using (var file = new StreamWriter(testDataFileName))
                 {
-                    // Find top 10 map indicies
-                    file.WriteLine("Top 10 maps are:");
+                    // Find top map indicies
+                    file.WriteLine("Top maps are:");
                     var topMaps = new List<int>();
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < this.NumberOfAssignmentsToGenerate; i++)
                     {
                         var topValue = -1000000d;
                         var topIndex = -1;
@@ -347,8 +347,13 @@
                             topIndex = mapIndex;
                         }
 
+                        if (i < 10
+                            || i == (int)(this.NumberOfAssignmentsToGenerate / 2d)
+                            || i == (this.NumberOfAssignmentsToGenerate - 2)
+                            || i == (this.NumberOfAssignmentsToGenerate - 1))
+                                file.WriteLine(i + ": Map " + topIndex + " with fitness: " + topValue);
+
                         topMaps.Add(topIndex);
-                        file.WriteLine(i + ": Map " + topIndex + " with fitness: " + topValue);
                     }
 
                     file.WriteLine();
