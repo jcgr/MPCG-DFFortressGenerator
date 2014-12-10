@@ -78,6 +78,8 @@ When the user starts the generation, they can select which rooms they want in th
 
 After the penalizing of missing rooms, the objective function iterates over every room and checks its distance to rooms that it has a relation to (a barracks should be close to the entrance, for example). Depending on the distance, the room is either penalized or rewarded. This is where calculating the distanced ahead of time (see \ref{04_Evolution_Initialization}) saves a lot of time, as we have all the values already. All we need to do is figure out which rooms are related.
 
+\textbf{Penalize more than the required number of rooms}
+
 \textbf{Need something about the relationships between rooms}
 
 \subsubsection{Maps, room assignments and generations}
