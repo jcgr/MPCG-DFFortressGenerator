@@ -7,6 +7,8 @@ Background - Grooss
 Method - Grooss
 Section on work done - Friday
 Upload test data - Friday
+Link github + test data
+
 
 Proofreading + Citations + Dijkstra thing
 
