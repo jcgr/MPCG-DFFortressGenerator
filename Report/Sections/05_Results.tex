@@ -1,10 +1,69 @@
 \section{Results}
 \label{05}
 
-Did it work? How well? Provide some figures, and a table or two. How much time does it take? Remember to include significance values (remember the t-test?), variance bars… Reread some of the papers from class and compare how they report their results.
+In our tool, there are five parameters that can be adjusted in order to influence the evolution: The chance that a room is mutated; the number of room assignments that should be generated for a map during evolution; how many generations the evolution contains; how much a room assignment is penalized for not having the chosen rooms; and how much higher this penalty is the further the evolution progresses.
 
-PCG Book 2.4: Evaluation functions
+There were two things we wanted to test in regards to the maps our tool generates:
 
-PCG Book 12: Evaluating Generators
+\begin{enumerate}
+
+	\item Are the better rated maps actually better than the others? (I.e. does our fitness function work as we would expect it it?)
+
+	\item What influence, if any, does changing the parameters have on the quality of the generated maps?
+
+\end{enumerate}
+
+In order to answer both questions, we set up the tool so it could run evolutions with different values for the parameters. We created a combination of each of the following values for the parameters, where the number of generations was equal to $\frac{10.000}{numberOfRoomAssignments}$:
+
+\begin{center}
+	\begin{tabular}{| l | c | c | c | }
+		\hline
+	  	Mutation chance 			& 0.1 & 0.2 & 0.3 \\ \hline
+	  	\# of room assignments 		& 10 & 100 & 1000 \\ \hline
+	 	Missing room penalty 		& 10 & 100 & 200 \\ \hline
+	  	Missing room scaling factor 	& 10 & 100 & 200 \\ \hline
+	\end{tabular}
+\end{center}
+
+With the number of generations being either 1000, 100 or 10, we had a total of 81 different parameter value combination. 
+
+In order to test all combinations equally, we generated 50 maps at the beginning. For each combination, we cleared all 50 maps of their content (meaning that all rooms were empty), loaded the values from the combination and then ran the evolution on every one of the maps. At the end of each combination, we saved the generated maps - along with their fitness values - to a unique text file, which we could then examine.
+
+The tests were run on a map with the dimensions 40x40x4 with room for 30 dwarves. We felt that 30 dwarves was a good number, as it is a manageable amount for most players once they have grasped the basics of the game.
+
+The rooms chosen as required rooms were bedrooms, dining rooms, barracks, farms and officies. From workshops we chose the carpenter's, the craftdwarf's, the kitchen and the mason's workshop. From the stockpiles we chose finished goods, food, furniture, stone and wood. All of these are what we feel make up the very essential of any basic fortress.
+
+\subsection{Results}
+
+\textit{Question 1} required us to look through some of the samples and manually compare the best rooms to the other rooms. We compared the best room to the worst room and to the room that was evaluated to be in the middle of the maps. Comparing to more maps would provide more precise results, but we felt the trade-off in time was not worth it.
+
+We looked at 10 of the 81 datasets, all randomly chosen. For all 10, the room that was rated as the best was better than the two we compared it to. Had it not been the case for one or more, we would have looked at more datasets. We believe, as we did not find any proof saying otherwise, that the batter rated maps are actually better than the other maps in most cases. It is possible that some maps are not rated precisely enough, but it is few enough cases that it should not be an inconvenience to the user.
+
+In order to answer \textit{Question 2}, ran an iterative process where we selected a certain parameters they should have in common (for example evolution chance) and compared them to other datasets where the other parameters varied. Whenever the maps in most of a dataset had changed in a notable way (more/less of the required rooms, more scattered rooms and so on), we would figure out why the had happened.
+
+What we learned was surprising. The mutation chance did not have any notable influence on the generated maps. We believe this is due to the fact that we can create so room assignments in total during evolution that even the low mutation chance has a chance to "catch up" to the higher one's assignment variety.
+
+The number of room assignments and number of generations did not have any notable influence either, which is due to the fact that we chose numbers for each where $numberOfRoomAssignments \times numberOfGenerations = 10.000$. Had both numbers been significantly lower, the quality of the maps may have been decreased.
+
+Only missing room penalty and the missing room penalty scaling factor had any real influence. With the values $missingRoomPenalty = 100$ and $missingRoomPenaltyScalingFactor = 10$, most of the required rooms were present in any map. At 200/100 all rooms were present.
+
+\subsection{Speed}
+
+During testing, we noticed that the program ran slower the more dwarves we wanted to generate maps for. To figure out if it was a specific part of the program that was the problem, or if the entire program simply was slow, we timed the different parts of the evolution algorithm.
+
+While we do not have any specific timings (due to the fact that different machines run faster/slower than each other), it was clear that the distance finding between rooms was the slowest. It took approximately 90\% of the total run time, even when we ran 1000 generation with 100 room assignments per map.
+
+The reason for this is that we find the distances in a very non-efficient manner. Every room is told to find the distance to every other room, which has a cost of $N^2$ where N is the number of rooms. While we cut that down to $N(N+1)/2$ by saving the distance both ways when a target was found, it is still $O(N^2)$.
+
+The problem is that we use Breadth-First Search every time we find the distance between rooms. With the way our map works, BFS has a worst case cost of $O(4V + V)$ where V is the number of tiles on the map. $4V$ comes from the fact that every tile will check its 4 neighbour tiles to see if they have been visited or not and worst case every tile will have to do so. This leads to a total cost of $O(N^2 \times (4V + V))$, which is an immense cost investment compared to our other functions.
+
+The subject of how to speed up the distance finding is discussed in section \ref{06_Distances}.
+
+
+%Did it work? How well? Provide some figures, and a table or two. How much time does it take? Remember to include significance values (remember the t-test?), variance bars… Reread some of the papers from class and compare how they report their results.
+
+%PCG Book 2.4: Evaluation functions
+
+%PCG Book 12: Evaluating Generators
 
 %Time taken (discuss number of evaluations and refer to method chapter)
