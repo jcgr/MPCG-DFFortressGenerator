@@ -1,39 +1,43 @@
 \section{Discussion}
 \label{06}
+There are three main points of discussion on the choices we made with regards to our method: choice of algorithm and method for calculating distances, our objective function, and our mutation method. It is also of interest how the method could potentially be used in generating layouts for fortresses and similar buildings in other game genres.
 
-%What are the strengths and shortcomings of your method? Why did you choose method X instead of Y? How well would it generalize to other game genres? How would you develop it further, if you had time?
-
-\subsection{Finding distances}
+\subsection{Distance Calculations}
 \label{06_Distances}
+As discussed in section \ref{05}, the dominating factor on time spent when evolving maps is the calculation of distances between rooms. Because the objective function requires that the distance from every room to every other room is known, these distances must be calculated at some point during the generation of the maps. Our use of breadth-first search in the method described in section \ref{04} is quite ineffective and has potential for vast improvements.
 
-\subsubsection{Dijkstra vs. A*}
+\subsubsection{Choice of Algorithm}
+Because we currently calculate distances individually, the use of a heuristic in our search would highly beneficial. As straight line distance (SLD) would be clearly admissible (no path can be shorter than SLD), we could benefit from the use of A*\cite{AStar, AStarOriginal} using SLD as the heuristic. Since A*'s performance is O(E)\cite{russell3rd}\footnote{Assuming optimal heuristic.} where E is the number of edges, this would reduce the time complexity of the distance calculations to O($N^2(4V)$).
 
-As mentioned in \ref{04_Evolution} we use Dijkstra's algorithm for our distance- and path-finding. We started out using Dijkstra during map generation for creating the path from a room to the entrance of the layer, as we did not know the position of the entrance in the first iterations. This was changed in later iterations, but we did not notice anything that was slower than we expected and therefore did not feel a need to change Dijkstra into A*\cite{AStar}\cite{AStarOriginal}.
+\subsubsection{Calculation of Distances}
+While A* would certainly be more effective with our current approach, a different optimization would be to continue using breadth-first search. If we searched for the distance to all other rooms at once instead of individually, we could reduce the current O($N^2(4V+V)$) time complexity to O($N(4V+V)$), which is clearly desirable. 
 
-That being said, A* would have improved the speed of the algorithm to some degree, as A* is never worse than Dijkstra as long as the heuristic for A* is admissible.
+\subsubsection{Separate Layers}
+A further improvement would be to only calculate the distance to the entrance and exits of a layer. Whenever distance calculation requires finding the distance to a room on a different layer, it is simple to find the distance to the entrance/exit and add the distance from that tile to the target tile. This would mean that N will be equal to the number of rooms on the layer instead of the total number of rooms in the entire map (significantly speeding up the process when a large number of rooms is required).
 
-The point where A* would have made a huge impact is at the beginning of our evolution where we find the distances between all rooms for a given map. We find the distances by iterating over every room and finding its distance to each other room (assuming the distance is not known already) by using Dijkstra. When a room is found, the distance is updated both ways (from the start room to the target and from the target to the start room), which saves us some time.
+\subsection{Alternative Objective Function}
+\label{06_AlternateObjective}
+An alternative to our current objective function would be to reward novelty. With the current objective function, we encourage sameness as we are unlikely to have a high fitness value if an area contains many areas with no correlation. Adding a bonus to the fitness score of a layout dependent on the number of unique rooms it contains would encourage novelty in area assignments.
 
-We still have to run $rooms^2$\textbf{check math} pathfindings where we know exactly where our target is. In such cases, A* is generally faster than Dijkstra or, in the worst case, as slow as Dijkstra. We have not been able to find any tradeoffs from using A* instead of Dijkstra.
+\subsection{Alternative Mutation Method}
+\label{06_AlternateMutation}
+Our current mutation method is not very vulnerable to local optima until later on in the generation due to the missing room penalty increasing with each generation. In order to speed up map generation, however, it might be desirable to hit a local optimum earlier. This could be done by mutating area assignments as we do currently, but in addition creating a copy of the assignment with a random ordering, then comparing the two and using the one with the better fitness value when comparing to the parent. This would test two area assignments per mutation, which would then allow for a reduction in the number of generations done in evolution. However, fewer generations would means fewer alternatives being tested, which could potentially result in the evolution getting stuck in a local optimum.
 
-\subsubsection{Other ways of finding distances}
-
-Apart from using A*, there are two other methods we believe would have increased the speed of calculating distances.
-
-The first method would only work for finding the distance between rooms on different layers. Assuming every room knows the distance to the entrance of their layer (stairs leading up) and the distance to the exit of their layer (stairs leading down), we can find the distance rooms on different layers like this: Start with the distance from the start room to the stairs that lead to the next layer. If we are still not on the correct layer, add the distance from the entrance to the current layer to the exit of the layer. When the correct layer is found, add the distance from the end room to the entrance of the layer.
-
-This method is not useful for small fortresses, as they typically are not generated on multiple layers, but for larger fortresses that do span multiple layers, it has the potential to save a lot of time.
-
-Other way is to find the distance to all rooms at the same time.
-
-%Dijkstra vs. A*.
-
-%Alle rum på en gang vs. et rum ad gangen.
+\subsection{Generalization To Other Game Genres}
+\label{06_Generalization}
+While the method is not likely to be useful in an online context, as it is simple too slow (online PCG must be fast\cite{togelius2011search}), it could be useful for suggesting a layout of a castle, fortress or other similar structure to a level designer looking for inspiration. Such a change would require a different interface that could take into account the needs for specific types of rooms (and the weights of their relation), but the method itself would still be fully functional.
 
 \subsection{Future work}
+Besides the improvements mentioned in the discussion above, there are a number of smaller things we would consider improving should we do any future development on the tool.
 
-Variable room sizes
+We currently assume that all rooms will be four by four tiles in size. This is rarely the case in actual play, so changing the size of a generated room depending on the room type would be improve how well the output of the tool represents the actual game. It does, however, introduce the problem of how to generate the map layouts with a variable room size. This could potentially be solved using a lower and an upper-bound on room sizes.
 
-Other ways to generate rooms (generate rooms with close relation to entrance first), distribute rooms equally on all layers (worse pathfinding)
+The method for placing rooms described in section \ref{04} concentrates the placed rooms on the upper layers of the map. This is not always desirable, as the lower levels of the map will be unused. It also leaves little room for expansion on the upper layers. A potential solution to this problem would be to place an equal percentage of rooms on each layer selected by the user. This would ensure a somewhat even distribution of rooms on all layers and would reduce concentration of rooms. This could lead to longer paths in general, but this should not result in worse performance if the distance calculations is separated into layers as suggested in section \ref{06_Distances}.
+
+Because the tool is currently not able to show more than 50 tiles on the vertical axis, some of the map is cut out when generating large maps. This is impractical for the user, so adding a scroll function (or similar) to the map window would be a definite improvement to the tool.
+
+In addition, the map is currently displayed in ASCII characters. This is, at best, not very readable as the characters are taller than they are wide. Changing the ASCII characters into the characters used by the real game or to another graphical representation would improve the usability of the tool.
+
+Adding a save function to the layout generation tool could be beneficial to a user, as it is currently necessary to record the maps, if they must be saved for later use, e.g. by taking a screenshot of each layer.
 
 \textbf{REMEMBER TO REMOVE NOCITE FROM REFERENCES}
