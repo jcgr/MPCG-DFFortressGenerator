@@ -1,19 +1,18 @@
 \section{Methods}
 \label{04}
 
-There are various different ways to generate dungeons, some are discussed in \cite[Chapter 3]{PCGBook}. Depending on the type of dungeon one wants \textbf{needs more stuff}
+There are many ways ways to generate dungeons, some are discussed in \cite[Chapter 3]{PCGBook}. We did not feel that these methods were applicable to our project, as Dwarf Fortress is such a different game from most other dungeon-based games. Instead, we wrote our own map generation algorithm with a user interface to go with it.
 
-For our dungeon generation, we use two different algorithms: A map generation algorithm to generate the basic layout of the map (\ref{04_MapGeneration}) and evolutionary algorithms\cite[Chapter 2]{IoEC} to determine how the map layout can be used in the best way (\ref{04_Evolution}).
-
-\subsection{Taxonomy}
-\label{04_Taxonomy}
+For our map generation algorithm, we use two different algorithms: A map generation algorithm to generate the basic layout of the map (see section \ref{04_MapGeneration}) and evolutionary algorithms\cite[Chapter 2]{IoEC} to determine how the map layout can be used in the best way (see section \ref{04_Evolution}).
 
 \subsection{Interface}
 \label{04_Interface}
 
-The interface for our tool is simple, as we want to avoid confusing the user. On the right is has the options for what the map should include and the dimensions of the map. On the left, the generated maps are shown.
+The interface was created for two purposes: To let the user select options for the map generation easily and to let the user browse the generated maps. 
 
-\textbf{insert UI picture(s) here}
+We accomplished this by splitting the interface in two parts. The right part (see figure \ref{fig:ToolRight_02}) contains all the options for the map generation. The user can select the dimensions of the fortress he wants generated, the number of dwarves that should inhabit the fortress and which rooms that are required to have in the fortress.
+
+The left part (see figure \ref{fig:ToolRight_02}) shows an empty box until maps have been generated, at which point it shows the map the user has selected. There are two dropdown menus which allows the user to select which of the generated maps they want to see and what layer of the map they are shown.
 
 \insertPicture{0.5}{ToolLeft_02}{}
 
@@ -66,7 +65,7 @@ We find the distances between rooms by using Dijkstra's algorithm\cite{Dijkstra}
 
 \subsubsection{Candidates for evolution}
 
-We decided that our genotype (the thing that is evolved) should not the maps that are generated, but rather what is in each room in the map. We do not want to risk throwing a map out due its fitness being low, as it is possible that another genotype (which we will refer to as 'room assignment') for a map could be good.
+The genotype (the thing that is evolved) for evolution is not the maps that are generated, but rather what is in each room in the map. We do not want to risk throwing a map out due its fitness being low, as it is possible that another genotype (which we will refer to as 'room assignment') for a map could be good.
 
 This means that each map has its own set of room assignments that are not mixed between maps. For each generation in the evolution, a number of children are spawned from the currently best room assignment. For every new child, every room had a 30\% chance to be changed into a random room. After the mutation is finished, the best child will become the parent for the next generation assuming it is better than the parent it was spawned from.
 
@@ -74,21 +73,17 @@ This way of doing the evolution let us keep all the map layouts we generated at 
 
 \subsubsection{Objective function}
 
-When the user starts the generation, they can select which rooms they want in their fortress (see section \ref{04_Interface}). If a room assignment that does not contain the chosen type of room, or enough of certain rooms (there are some the user will need more than one of, for example bedrooms and dining rooms), the room assignment will be penalized based on how many that are missing.
+Our objective function works in two steps. It first checks if the room assignment that is being evaluated has all the rooms the user requested. If not, it is penalized for every missing room.
 
-After the penalizing of missing rooms, the objective function iterates over every room and checks its distance to rooms that it has a relation to (a barracks should be close to the entrance, for example). Depending on the distance, the room is either penalized or rewarded. This is where calculating the distanced ahead of time (see \ref{04_Evolution_Initialization}) saves a lot of time, as we have all the values already. All we need to do is figure out which rooms are related.
+After that, it calculates the the fitness value of each individual room. This calculation is based on the distance between the room and other rooms it has a relation to. Depending on whether it should be far from, or close to, the other rooms, its fitness is changed. 
 
-\textbf{Penalize more than the required number of rooms}
+When relations to other rooms have finished, the function also checks how many we have of that type of room already. If we have more than we expect we will need (varies from room type to room type), the room's fitness is lowered to a factor of $1 / 2^numberOfExcessRooms$. After this is done, the value of the room is added to the room assignment's total fitness value and the the process starts over with the next room.
 
 \textbf{Need something about the relationships between rooms}
 
 \subsubsection{Maps, room assignments and generations}
 
-We decided to generate 10 different maps for the evolution. We kept the number fairly low, as \textbf{needs ending}.
-
-For each generation, we decided to create 100 room assignments for every map. This gave us a huge variety of room assignments, which made it likely that at least one was better than its parent.
-
-On top of that, we decided to evolve our maps over 1000 generations, as that guaranteed that we got to explore a lot of different layouts. 
+The evolution generated 10 different rooms. Each of these rooms generate 100 new room assignments every generation and there are 100 generations to evolve over. With these numbers, we are able to preset the user with enough maps for them to be able to find at least one that suits their purposes and each map has been evolved to the point where it should be useful.
 
 \subsubsection{The algorithm as pseudocode}
 
@@ -115,6 +110,25 @@ On top of that, we decided to evolve our maps over 1000 generations, as that gua
 	\item At the end, for every map, copy its best room assignment into the actual map.
 
 \end{enumerate}
+
+\subsection{Taxonomy}
+\label{04_Taxonomy}
+
+Following the taxonomy in \cite{togelius2010search}, we have attempted to classify our algorithm.
+
+\begin{itemize}
+
+	\item \textbf{Offline} - Our algorithm is run as part of a tool that does not integrate into Dwarf Fortress.
+
+	\item \textbf{Optional Content} - It is up to the user whether they want to use the tool (and thereby the algorithm) or not.
+
+	\item \textbf{Parameter Vectors} - The algorithm takes some parameters from the user (fortress dimensions, number of dwarves and which rooms the user wants).
+
+	\item \textbf{Stochastic Generation} - Most of the generation uses randomness in order to determine what to do.
+
+	\item \textbf{Generate-and-test} - We use evolutionary programming as part of the algorithm, which, by definition, tests everything it generates.
+
+\end{itemize}
 
 %Evolution algorithm
 
