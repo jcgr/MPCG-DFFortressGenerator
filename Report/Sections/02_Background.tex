@@ -1,9 +1,9 @@
 \section{Background and Game Design}
 \label{02}
 
-Procedual content generation has been around for a long time, but it continues to evolve and become better. It is used to create content for a game through algorithms and is often used to create content for a game faster and cheaper than if a human should do it.
+Procedual content generation (PCG) has been around for a long time, but it continues to evolve and become better as more people focus on it. It is used to create content for a game through algorithms and is often used to create content for a game faster and cheaper than if a human should do it.
 
-\textbf{Stuff about pcg/evolution}
+PCG can also be used to help players. For example, a PCG tool for Minecraft would be able to suggest different ways of building a base to the player, either from the ground or based on something the player had already. PCG tools for players is not something that is looked much into (most games are fine without), but there are a few games where such tools would be an immense help to the player.
 
 \subsection{Dwarf Fortress}
 \label{02_DF}
@@ -12,34 +12,24 @@ In Dwarf Fortress the player leads an expedition of dwarves in order to create a
 
 Dwarf Fortress is often described as having a very steep learning curve, as it tells the player nothing about how to play or what they are supposed to do. All of it is something the player has to figure out by them self. This often means that a player's first fortresses will be of very low quality, as they discover more and more things they have to add to it that they did not plan for.
 
-\insertPicture{0.5}{DFScreenshot_01}{A screenshot of a very basic fortress, which is confusing for anyone who does not know how DF works.}
+\insertPicture{0.5}{DFScreenshot_01}{A screenshot of a very basic fortress.}
 
-In order to help the novice player out, we created a fortress generator that can give them some basic layouts from which they can choose which one they like the most. These layouts also give the player an idea of how many different things they need to play for in any future fortresses they may want to make.
+%In order to help the novice player out, we created a fortress generator that can give them some basic layouts from which they can choose which one they like the most. These layouts also give the player an idea of how many different things they need to play for in any future fortresses they may want to make.
 
 \subsubsection{Reducing the problem}
 \label{02_DF_Reducing}
 
-Dwarf Fortress contains an immense amount of possibilities. There are 31 workshops from which dwarves can craft different objects, 12 different types of rooms each with their own function and 16 different stockpiles which are used for storing specific types of items. These are all connected in different ways and even with just the mentioned things, it is already overwhelming for any new player. That is without mentioning special types of constructions, mechanics and the militaristic area of the game.
+Dwarf Fortress contains an immense amount of possibilities. There are 31 workshops\cite{dfwiki:Workshops} from which dwarves can craft different objects, 12 different types of rooms\cite{dfwiki:Rooms} each with their own function and 16 different stockpiles\cite{dfwiki:Stockpiles} which are used for storing specific types of items. These are all connected in different ways and even with just the mentioned things, it is already overwhelming for any new player. That is without mentioning special types of constructions, mechanics and the militaristic area of the game.
 
-In order to preserve clarity in the tool, we reduced the amount of possibilities we include. Instead of including all types of rooms, workshops and stockpiles, we cut it down to the ones we felt were the most essential ones to any fortress. This reduced the total number from 59 to 23 different rooms, workshops and stockpiles, a much more manageable number.
+In order to preserve clarity in the tool, we reduced the amount of possibilities we include. Instead of including all types of rooms, workshops and stockpiles (from now on referred to simply as "rooms"), we cut it down to the ones we felt were the most essential ones to any fortress. This reduced the total number from 59 to 23, a much more manageable number.
 
-It should be noted that adding some of the things that we left out, would only have a minimal influence on the time it takes to generate our maps.
-
-% Could add more rooms, but didn't due to (overskuelighed).
+It is possible to add these leftout rooms back without any significant impact on the runtime of the map generation. It would simply take up more room in the interface for little gain.
 
 \subsection{Evolutionary programming}
 \label{02_Evolution}
 
 Evolutionary programming\cite[Chapter 2]{IoEC} is based on biological evolution. It works on the principle that if the program knows how to evaluate if an object is good and it knows how to change this object in order to affect how good/bad it is, then it should be able to create a good result given enough time.
 
-Evolutionary programming (EP) is often used for optimization problems, as they are quite solid in what results they produce. Assuming that the evaluation function is well written, the evolution should keep moving towards better results, without the need for humans to constantly change things.
+Evolutionary programming is often used for optimization problems, as they are quite solid in what results they produce. Assuming that the evaluation function is well written, the evolution should keep moving towards better results, without the need for humans to constantly change things.
 
-This also applies to fortresses in Dwarf Fortress. As creating a good fortress layout is, in essence, an optimization problem, evolutionary computing is a very suitable technique to use, as it is able to explore a lot of possible fortress layouts that would not be feasible by "hand".
-
-\textbf{Need some sort of ending}
-
-%Has this been done before? How? If not, what’s the closest related research? (Both using similar approaches and other algorithms.) What’s novel with your research?
-
-%Dungeon generators have been made before, but not for this specific game. Minecraft? Generation of 3d maps
-
-%Novelty? /shrug
+This also applies to fortresses in Dwarf Fortress. As creating a good fortress layout is, in essence, an optimization problem, evolutionary programming is a very suitable technique to use. Compared to doing it "by hand", evolutionary programming is able to explore way more possibilities in a shorter time frame and still arrive at a decent result in the end.

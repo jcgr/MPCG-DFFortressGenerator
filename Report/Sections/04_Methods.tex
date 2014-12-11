@@ -16,7 +16,7 @@ The left part (see figure \ref{fig:ToolRight_02}) shows an empty box until maps 
 
 \insertPicture{0.5}{ToolLeft_02}{}
 
-\insertPicture{0.3}{ToolRight_02}{}
+\insertPicture{0.2}{ToolRight_02}{}
 
 
 % Map generation algorithm
@@ -41,7 +41,7 @@ For the map generation algorithm, we decided to write our own algorithm, as we c
 
 		\item If they are open, build an empty room in the middle 4x4 square, set the tiles around that square to room walls, and remove the positions now occupied by the room from the list of open positions.
 
-		\item Create a path from the room to the nearest entrance using Dijkstra (stairs on the lower levels count as entrances to that level).
+		\item Create a path from the room to the nearest entrance using Breadth-first search\cite{missingCitation}(stairs on the lower levels count as entrances to that level).
 
 		\item Once enough rooms have been created, or only 10\% of the layer is open, create stairs to the next layer, and connect these stairs to the entrance of the current layer.
 
@@ -54,14 +54,14 @@ For the map generation algorithm, we decided to write our own algorithm, as we c
 \subsection{Evolution}
 \label{04_Evolution}
 
-While evolutionary algorithms often work in the same way, there are some points we feel are important to discuss in our implementation.
+While evolutionary algorithms work on the same principles, there are some points we feel are important to discuss in our implementation.
 
 \subsubsection{Initialization of maps}
 \label{04_Evolution_Initialization}
 
 In order to evolve maps we need maps. At the beginning of the run, we generate 10 maps using the map generation algorithm described in section \ref{04_MapGeneration}. For every map we generate, we also find and save the distance from every room to every other room, as we need the distance for our objective function. Saving the distances ahead of time allows us to save time when we need the distances as we can simply look them up. 
 
-We find the distances between rooms by using Dijkstra's algorithm\cite{Dijkstra}\cite{DijkstraOriginal}. Every room finds and saves the distance it has to every other room. In order to save time during this step, we save the direction in directions when a distance is found (the start room knows the distance to the target room and the target room knows the distance to the start room). Other ways of finding the distances are discussed in \ref{06_Distances}.
+We find the distances between rooms by using breadth-first search\cite{Dijkstra}\cite{DijkstraOriginal}. Every room finds and saves the distance it has to every other room. In order to save time during this step, we save the direction in both directions when a distance is found (the start room knows the distance to the target room and the target room knows the distance to the start room). Other ways of finding the distances are discussed in \ref{06_Distances}.
 
 \subsubsection{Candidates for evolution}
 
@@ -77,9 +77,9 @@ Our objective function works in two steps. It first checks if the room assignmen
 
 After that, it calculates the the fitness value of each individual room. This calculation is based on the distance between the room and other rooms it has a relation to. Depending on whether it should be far from, or close to, the other rooms, its fitness is changed. 
 
-When relations to other rooms have finished, the function also checks how many we have of that type of room already. If we have more than we expect we will need (varies from room type to room type), the room's fitness is lowered to a factor of $1 / 2^numberOfExcessRooms$. After this is done, the value of the room is added to the room assignment's total fitness value and the the process starts over with the next room.
+The relation between rooms is something we have defined based on how we felt rooms related to each other in the game. As an example, it makes sense for a barracks to be near the entrance, as it allows the military to respond to any threat quickly, while the bedrooms should be far from the entrance for exact opposite reason; having monsters was right in on sleeping dwarves is never a good thing.
 
-\textbf{Need something about the relationships between rooms}
+When relations to other rooms have finished, the function also checks how many we have of that type of room already. If we have more than we expect we will need (varies from room type to room type), the room's fitness is lowered to a factor of $1 / 2^{numberOfExcessRooms}$. After this is done, the value of the room is added to the room assignment's total fitness value and the the process starts over with the next room.
 
 \subsubsection{Maps, room assignments and generations}
 

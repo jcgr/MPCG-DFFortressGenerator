@@ -78,8 +78,10 @@ Ankh.NoLoad
 
 *.aux
 *.bbl
+*.bib
 *.blg
 *.log
 *.out
 #*.pdf
 *.synctex.gz
+*.synctex.gz(Busy)
