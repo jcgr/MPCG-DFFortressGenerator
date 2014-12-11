@@ -33,7 +33,7 @@ The tests were run on a map with the dimensions 40x40x4 with room for 30 dwarves
 
 The rooms chosen as required rooms were bedrooms, dining rooms, barracks, farms and officies. From workshops we chose the carpenter's, the craftdwarf's, the kitchen and the mason's workshop. From the stockpiles we chose finished goods, food, furniture, stone and wood. All of these are what we feel make up the very essential of any basic fortress.
 
-\subsection{Results}
+\subsection{Quality of Maps}
 
 \textit{Question 1} required us to look through some of the samples and manually compare the best rooms to the other rooms. We compared the best room to the worst room and to the room that was evaluated to be in the middle of the maps. Comparing to more maps would provide more precise results, but we felt the trade-off in time was not worth it.
 
@@ -41,7 +41,7 @@ We looked at 10 of the 81 datasets, all randomly chosen. For all 10, the room th
 
 In order to answer \textit{Question 2}, ran an iterative process where we selected a certain parameters they should have in common (for example evolution chance) and compared them to other datasets where the other parameters varied. Whenever the maps in most of a dataset had changed in a notable way (more/less of the required rooms, more scattered rooms and so on), we would figure out why the had happened.
 
-What we learned was surprising. The mutation chance did not have any notable influence on the generated maps. We believe this is due to the fact that we can create so room assignments in total during evolution that even the low mutation chance has a chance to "catch up" to the higher one's assignment variety.
+What we learned was surprising. The mutation chance did not have any notable influence on the generated maps. We believe this is due to the fact that we can create so many room assignments in total during evolution that even the low mutation chance has a chance to "catch up" to the higher one's assignment variety.
 
 The number of room assignments and number of generations did not have any notable influence either, which is due to the fact that we chose numbers for each where $numberOfRoomAssignments \times numberOfGenerations = 10.000$. Had both numbers been significantly lower, the quality of the maps may have been decreased.
 
