@@ -1,7 +1,7 @@
 \section{Results}
 \label{05}
 
-In our tool, there are five parameters that can be adjusted in order to influence the evolution: 
+In our tool, there are five parameters that can be adjusted (internally, with no interface to the user) in order to influence the evolution: 
 
 \begin{itemize}
 
@@ -41,37 +41,38 @@ In order to answer both questions, we set up the tool so it could run evolutions
 
 With the number of generations being either 1000, 100 or 10, we had a total of 81 different parameter value combination. 
 
-In order to test all combinations equally, we generated 50 maps at the beginning. For each combination, we cleared all 50 maps of their content (meaning that all rooms were empty), loaded the values from the combination and then ran the evolution on every one of the maps. At the end of each combination, we saved the generated maps - along with their fitness values - to a unique text file, which we could then examine.
+In order to test all combinations equally, we generated 50 maps at the beginning. For each combination, we cleared all 50 maps of their content (meaning that all rooms were empty), loaded the values for the parameters from the combination and then ran the evolution on every one of the maps. At the end of each combination, we saved the generated maps - along with their fitness values - to a unique text file, which we could then examine.
 
-The tests were run on a map with the dimensions 40x40x4 with room for 30 dwarves. We felt that 30 dwarves was a good number, as it is a manageable amount for most players once they have grasped the basics of the game.
+The tests were run on a map with the dimensions 40x40x4 with room for 30 dwarves. We felt that 30 dwarves was a good number, as it is a manageable amount for most players once they have grasped the basics of the game and was within a reasonable time frame for us to test.
 
 The rooms chosen as required rooms were bedrooms, dining rooms, barracks, farms and officies. From workshops we chose the carpenter's, the craftdwarf's, the kitchen and the mason's workshop. From the stockpiles we chose finished goods, food, furniture, stone and wood. All of these are what we feel make up the very essential of any basic fortress.
 
 \subsection{Quality of Maps}
 
-\textit{Question 1} required us to look through some of the samples and manually compare the best rooms to the other rooms. We compared the best room to the worst room and to the room that was evaluated to be in the middle of the maps. Comparing to more maps would provide more precise results, but we felt the trade-off in time was not worth it.
+\textit{Question 1} required us to look through some of the samples and manually compare the best rooms to the other rooms. We compared the best map to the worst map and to the map that was evaluated to be average. Comparing to more maps could provide more precise results, but we felt the trade-off in time was not worth it. This is particular relevant as our manual evaluation metric is subjective, even if this subjectivity is influenced by experience from playing the game.
 
-We looked at 10 of the 81 datasets, all randomly chosen. For all 10, the room that was rated as the best was better than the two we compared it to. Had it not been the case for one or more, we would have looked at more datasets. We believe, as we did not find any proof saying otherwise, that the better rated maps are actually better than the other maps in most cases. It is possible that some maps are not rated precisely enough, but it is few enough cases that it should not be an inconvenience to the user.
+We looked at 10 of the 81 datasets, all randomly chosen. For all 10, the map that was rated as the best was better than the two we compared it to. Had it not been the case for one or more, we would have looked at more datasets. As we looked at more than 10\% of the different datasets and the data confirmed that better maps had higher fitness than worse maps, we believe our fitness function to be effective. Due to the subjective nature of our evaluation (and our objective function), it is possible that the evaluation of maps is not extremely precise. This potential lack of precision is not too big a worry, however, as most users of this type of tool are not likely to use it with the intent for perfection; instead it is a guideline to a layout that can be expanded through gameplay.
 
-In order to answer \textit{Question 2}, we we selected a certain parameter that datasets should have in common (for example evolution chance) in order to parameter as a possible influence on the results. Then we chose datasets with the same parameter but where the rest of the parameters varied and compared the maps in these datasets. Whenever the maps in most of a dataset had changed in a notable way (more/less of the required rooms, more scattered rooms and so on), we would figure out why the had happened.
+In order to answer \textit{Question 2}, we compared the different parameters by keeping them static and comparing the best maps generated where that parameter was the same. For map layouts we used the map layouts for all tests, such that the randomly selected subset of room placements did not influence the change in parameters.
 
-What we learned was surprising. The mutation chance did not have any notable influence on the generated maps. We believe this is due to the fact that we can spawn so many children during evolution (10.000 in total), that even with a low mutation chance there is enough time to "catch up" to the variety in children that the higher mutation chances have.
+What we learned was surprising. The mutation chance did not have any notable influence on the generated maps. We believe this is due to the fact that we can spawn so many children during evolution (10.000 in total for each room placement), that even with a low mutation chance there is enough time to "catch up" to the variety in children that the higher mutation chances have.
 
-The number of children and number of generations also did not have any notable influence, which is due to the fact that we chose numbers for each where $numberOfChildren \times numberOfGenerations = 10.000$. Had both numbers been significantly lower, the quality of the maps would likely have decreased, as there would not enough variety in the children spawned.
+The number of children and number of generations also did not have any notable influence, which is due to the fact that we chose numbers where $numberOfChildren \times numberOfGenerations = 10.000$. Had we chosen test set-ups where the multiplicative of these two parameters did not equal 10.000, it is likely that we would have seen a difference in the quality of the maps.
 
-Only missing room penalty and the missing room penalty scaling factor had any real influence. With the values $missingRoomPenalty = 100$ and $missingRoomPenaltyScalingFactor = 10$, most of the required rooms were present in any map. At 200/100 all rooms were present.
+Only the missing room penalty and its scaling factor had any real influence on the quality of the generated maps. With the values $missingRoomPenalty = 100$ and $missingRoomPenaltyScalingFactor = 10$, most of the required rooms were present in any map. At 200 and 100, respectively, all rooms were present in all of the best maps.
 
 \subsection{Speed}
+During testing, it became clear that we experienced significant slowdown in generation of map layouts when we added more dwarves.Testing revealed that approximately 90\% of the total run time of our algorithm was spent calculating the distances between rooms.
+
+
 
 During testing, we noticed that the program ran slower the more dwarves we wanted to generate maps for. To figure out if it was a specific part of the program that was the problem, or if the entire program simply was slow, we timed the different parts of the evolution algorithm.
 
-While we do not have any specific timings (due to the fact that different machines run faster/slower than each other), it was clear that the distance finding between rooms was the slowest. It took approximately 90\% of the total run time, even when we ran 1000 generation with 100 children per map.
+The reason for this is that we find the distances in a very non-efficient manner. Every room finds the distance to every other room, which has a cost of $N^2$ where N is the number of rooms. While we cut that down to $N(N+1)/2$ by saving the distance both ways when a target was found, it is still $O(N^2)$.
 
-The reason for this is that we find the distances in a very non-efficient manner. Every room is told to find the distance to every other room, which has a cost of $N^2$ where N is the number of rooms. While we cut that down to $N(N+1)/2$ by saving the distance both ways when a target was found, it is still $O(N^2)$.
+The problem is that we use Breadth-First Search\cite{sedgewick4th}\cite{ucibfs} every time we find the distance between rooms. With the way our map works, BFS has a worst case time complexity of $O(4V + V)$ where V is the number of tiles on the map. $4V$ comes from the fact that every tile will check its 4 neighbour tiles to see if they have been visited or not and worst case every tile will have to do so. This leads to a total cost of $O(N^2 (4V+V))$, which is an immense cost investment compared to our other functions.
 
-The problem is that we use Breadth-First Search\cite{sedgewick4th}\cite{ucibfs} every time we find the distance between rooms. With the way our map works, BFS has a worst case cost of $O(4V + V)$ where V is the number of tiles on the map. $4V$ comes from the fact that every tile will check its 4 neighbour tiles to see if they have been visited or not and worst case every tile will have to do so. This leads to a total cost of $O(N^2 \times (4V + V))$, which is an immense cost investment compared to our other functions.
-
-The subject of how to speed up the distance finding is discussed in section \ref{06_Distances}.
+The subject of how to speed up the algorithm is discussed in section \ref{06_Distances}.
 
 
 %Did it work? How well? Provide some figures, and a table or two. How much time does it take? Remember to include significance values (remember the t-test?), variance bars… Reread some of the papers from class and compare how they report their results.

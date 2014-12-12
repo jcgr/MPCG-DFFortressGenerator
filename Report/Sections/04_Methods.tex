@@ -1,30 +1,25 @@
 \section{Methods}
 \label{04}
+There are many different algorithms for dungeon generation\cite[Chapter 3]{PCGBook}, but none that fit our needs specifically. Because we want to generate map layouts where all rooms are connected to the entrance, but not necessarily each other, agent-based dungeon growing did not feel like the right choice. Instead we made the tool using our own map generation algorithm.
 
-There are many ways ways to generate dungeons, some are discussed in \cite[Chapter 3]{PCGBook}. We did not feel that these methods were applicable to our project, as Dwarf Fortress is such a different game from most other dungeon-based games. Instead, we wrote our own map generation algorithm with a user interface to go with it.
-
-For our map generation algorithm, we use two different algorithms: A map generation algorithm to generate the basic layout of the map (see section \ref{04_MapGeneration}) and evolutionary algorithms\cite[Chapter 2]{IoEC} to determine how the map layout can be used in the best way (see section \ref{04_Evolution}).
+The map generation algorithm consists of two different parts: A layout generation algorithm to generate the basic layout of the map (see section \ref{04_MapGeneration}) and evolutionary algorithms\cite[Chapter 2]{IoEC} to determine how the map layout can be used in the best way (see section \ref{04_Evolution}).
 
 \subsection{Interface}
 \label{04_Interface}
-
 The interface was created for two purposes: To let the user select options for the map generation easily and to let the user browse the generated maps. 
 
-We accomplished this by splitting the interface in two parts. The right part (see figure \ref{fig:ToolRight_02}) contains all the options for the map generation. The user can select the dimensions of the fortress he wants generated, the number of dwarves that should inhabit the fortress and which rooms that are required to have in the fortress.
+We accomplished this by splitting the interface in two parts. The right part (see figure \ref{fig:ToolRight_02}) contains all the options for the map generation. The user can select the dimensions of the map surrounding the fortress to be generated, the number of dwarves that should inhabit the fortress and which rooms that are required to have in the fortress.
 
-The left part (see figure \ref{fig:ToolRight_02}) shows an empty box until maps have been generated, at which point it shows the map the user has selected. There are two dropdown menus which allows the user to select which of the generated maps they want to see and what layer of the map they are shown.
+The left part (see figure \ref{fig:ToolLeft_02}) shows an empty box until maps have been generated, at which point it shows the map the user has selected (by default it selects the map with highest fitness). There are two drop-down menus which allows the user to select which of the generated maps they want to see (ordered by descending fitness values) and what layer of the map they are shown.
 
 \insertPicture{0.5}{ToolLeft_02}{}
 
 \insertPicture{0.2}{ToolRight_02}{}
 
-
 % Map generation algorithm
 \subsection{Map generation}
 \label{04_MapGeneration}
-
-For the map generation algorithm, we decided to write our own algorithm, as we could not find any other algorithm that could do specifically what we wanted. Our map generation algorithm works as follows:
-
+Our layout generation algorithm is as follows:
 \begin{enumerate}
 
 	\item Create a map of the user-specified dimensions and calculate the number of rooms we want, based on how many dwarves the user expects to have in their fortress.
@@ -48,45 +43,37 @@ For the map generation algorithm, we decided to write our own algorithm, as we c
 		\item Repeat steps a) to e) for each layer until enough rooms have been built.
 
 	\end{enumerate}
-
 \end{enumerate}
+
+If the algorithm fails to generate a staircase (this is most common when selecting small maps with many dwarves), it will stop generating more rooms and begin doing evolution.
 
 \subsection{Evolution}
 \label{04_Evolution}
-
 While evolutionary algorithms work on the same principles, there are some points we feel are important to discuss in our implementation.
 
 \subsubsection{Initialization of maps}
 \label{04_Evolution_Initialization}
+In order to evolve maps we need maps. Prior to the evolution, we generate 10 maps using the map layout algorithm described in section \ref{04_MapGeneration}. For every map we generate, we also find and save the distance from every room to every other room, as we need the distance for our objective function. Saving the distances ahead of time allows us to save time when we need the distances as we can simply look them up.
 
-In order to evolve maps we need maps. At the beginning of the run, we generate 10 maps using the map generation algorithm described in section \ref{04_MapGeneration}. For every map we generate, we also find and save the distance from every room to every other room, as we need the distance for our objective function. Saving the distances ahead of time allows us to save time when we need the distances as we can simply look them up. 
-
-We find the distances between rooms by using breadth-first search\cite{Dijkstra}\cite{DijkstraOriginal}. Every room finds and saves the distance it has to every other room. In order to save time during this step, we save the direction in both directions when a distance is found (the start room knows the distance to the target room and the target room knows the distance to the start room). Other ways of finding the distances are discussed in \ref{06_Distances}.
+We find the distances between rooms by using breadth-first search\cite{sedgewick4th}\cite{ucibfs}. Every room finds and saves the distance it has to every other room. In order to save time during this step, we save the direction in both directions when a distance is found (the start room knows the distance to the target room and the target room knows the distance to the start room). Other ways of finding the distances are discussed in \ref{06_Distances}.
 
 \subsubsection{Candidates for evolution}
+The genotypes (the representations used for evolution) are not the maps that are generated, but rather what is in each room in the map. The problem of evolving optimal map layouts is two-fold: one search space is the placement of each room, e.g. room 01 is located at location (22,13), and the other search space is the combination of room types ("room assignments") in the layout, e.g. room 01 is a barracks. Our algorithm only mutates room assignments and not room placement, as optimizing in both search space is very expensive. 
 
-The genotype (the thing that is evolved) for evolution is not the maps that are generated, but rather what is in each room in the map. We do not want to risk throwing a map out due its fitness being low, as it is possible that another genotype (which we will refer to as 'room assignment') for a map could be good.
+This means that each map has its own set of room assignments that are not mixed between maps. The evolution runs for 100 generations. Every generation of the evolution the current best room assignment (parent) of each map spawns 100 room assignments (children) that are mutations of the parent. Every room in a child has a 30\% chance to be changed into a random room. The child with the best fitness value of these 100 children is then compared to its parent. If the fitness value of the child is better than or equal to the fitness value of the parent, the child replaces the parent as the current best room assignment for that particular map.  
 
-This means that each map has its own set of room assignments that are not mixed between maps. For each generation in the evolution, a number of children are spawned from the currently best room assignment. For every new child, every room had a 30\% chance to be changed into a random room. After the mutation is finished, the best child will become the parent for the next generation assuming it is better than the parent it was spawned from.
-
-This way of doing the evolution let us keep all the map layouts we generated at the beginning, while still being able to evolve them in order to reach better ways of building the fortress.
+Using this method of evolution, we essentially select a random subset of the "room placement" search space and search the "room assignment" search space of each element in the subset of "room placement". By never changing the original random select of room placements, we ensure that we do not converge towards a local optima too quickly.
 
 \subsubsection{Objective function}
-
-Our objective function works in two steps. It first checks if the room assignment that is being evaluated has all the rooms the user requested. If not, it is penalized for every missing room.
+Our objective function works in two steps. First we check if the room assignment being evaluated has all the different types of rooms that the user requested. For each missing room, the fitness is penalized depending on how many generations have already passed (later generations are penalized more heavily).
 
 After that, it calculates the the fitness value of each individual room. This calculation is based on the distance between the room and other rooms it has a relation to. Depending on whether it should be far from, or close to, the other rooms, its fitness is changed. 
 
-The relation between rooms is something we have defined based on how we felt rooms related to each other in the game. As an example, it makes sense for a barracks to be near the entrance, as it allows the military to respond to any threat quickly, while the bedrooms should be far from the entrance for exact opposite reason; having monsters was right in on sleeping dwarves is never a good thing.
+The relation between rooms is something we have defined based on how we felt rooms related to each other in the game. As an example, it makes sense for a barracks to be near the entrance, as it allows the military to respond to any threat quickly, while the bedrooms should be far from the entrance for exact opposite reason; having monsters was barge in on sleeping dwarves is never a good thing.
 
-When relations to other rooms have finished, the function also checks how many we have of that type of room already. If we have more than we expect we will need (varies from room type to room type), the room's fitness is lowered to a factor of $1 / 2^{numberOfExcessRooms}$. After this is done, the value of the room is added to the room assignment's total fitness value and the the process starts over with the next room.
+When relations to other rooms have finished, the function also checks how many we have of that type of room already. If we have more than we expect we will need (varies depending on room type), the room's fitness is lowered to a factor of $1 / 2^{numberOfExcessRooms}$. After this is done, the value of the room is added to the room assignment's total fitness value and the the process starts over with the next room.
 
-\subsubsection{Maps, room assignments and generations}
-
-The evolution generated 10 different rooms. Each of these rooms generate 100 new room assignments every generation and there are 100 generations to evolve over. With these numbers, we are able to preset the user with enough maps for them to be able to find at least one that suits their purposes and each map has been evolved to the point where it should be useful.
-
-\subsubsection{The algorithm as pseudocode}
-
+\subsubsection{The algorithm as pseudo-code}
 \begin{enumerate}
 
 	\item Create 10 different maps layout (using the map generation algorithm, see below) with empty rooms. When a map has been generated, find the distance from any room to all other rooms (see \ref{04_Evolution_Initialization}).
