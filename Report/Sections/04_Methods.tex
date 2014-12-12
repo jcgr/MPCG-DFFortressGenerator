@@ -69,7 +69,7 @@ Our objective function works in two steps. First we check if the room assignment
 
 After that, it calculates the the fitness value of each individual room. This calculation is based on the distance between the room and other rooms it has a relation to. Depending on whether it should be far from, or close to, the other rooms, its fitness is changed. 
 
-The relation between rooms is something we have defined based on how we felt rooms related to each other in the game. As an example, it makes sense for a barracks to be near the entrance, as it allows the military to respond to any threat quickly, while the bedrooms should be far from the entrance for exact opposite reason; having monsters was barge in on sleeping dwarves is never a good thing.
+The relation between rooms is something we have defined based on how we felt rooms related to each other in the game. As an example, it makes sense for a barracks to be near the entrance, as it allows the military to respond to any threat quickly, while the bedrooms should be far from the entrance for exact opposite reason; having monsters barge in on sleeping dwarves is never a good thing.
 
 When relations to other rooms have finished, the function also checks how many we have of that type of room already. If we have more than we expect we will need (varies depending on room type), the room's fitness is lowered to a factor of $1 / 2^{numberOfExcessRooms}$. After this is done, the value of the room is added to the room assignment's total fitness value and the the process starts over with the next room.
 
