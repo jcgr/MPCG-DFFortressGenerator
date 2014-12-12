@@ -69,7 +69,7 @@ While we do not have any specific timings (due to the fact that different machin
 
 The reason for this is that we find the distances in a very non-efficient manner. Every room is told to find the distance to every other room, which has a cost of $N^2$ where N is the number of rooms. While we cut that down to $N(N+1)/2$ by saving the distance both ways when a target was found, it is still $O(N^2)$.
 
-The problem is that we use Breadth-First Search every time we find the distance between rooms. With the way our map works, BFS has a worst case cost of $O(4V + V)$ where V is the number of tiles on the map. $4V$ comes from the fact that every tile will check its 4 neighbour tiles to see if they have been visited or not and worst case every tile will have to do so. This leads to a total cost of $O(N^2 \times (4V + V))$, which is an immense cost investment compared to our other functions.
+The problem is that we use Breadth-First Search\cite{sedgewick4th}\cite{ucibfs} every time we find the distance between rooms. With the way our map works, BFS has a worst case cost of $O(4V + V)$ where V is the number of tiles on the map. $4V$ comes from the fact that every tile will check its 4 neighbour tiles to see if they have been visited or not and worst case every tile will have to do so. This leads to a total cost of $O(N^2 \times (4V + V))$, which is an immense cost investment compared to our other functions.
 
 The subject of how to speed up the distance finding is discussed in section \ref{06_Distances}.
 

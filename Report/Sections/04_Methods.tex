@@ -41,7 +41,7 @@ For the map generation algorithm, we decided to write our own algorithm, as we c
 
 		\item If they are open, build an empty room in the middle 4x4 square, set the tiles around that square to room walls, and remove the positions now occupied by the room from the list of open positions.
 
-		\item Create a path from the room to the nearest entrance using Breadth-first search\cite{missingCitation}(stairs on the lower levels count as entrances to that level).
+		\item Create a path from the room to the nearest entrance using Breadth-first search\cite{sedgewick4th}\cite{ucibfs}(stairs on the lower levels count as entrances to that level).
 
 		\item Once enough rooms have been created, or only 10\% of the layer is open, create stairs to the next layer, and connect these stairs to the entrance of the current layer.
 
