@@ -218,7 +218,7 @@
                         var tiles = area.AreaTiles;
                         var start = tiles[Random.Next(tiles.Count)];
                         var targetTiles = target.AreaTiles;
-                        var dist = Pathfinding.DijkstraFindDistanceTo(this, start, targetTiles);
+                        var dist = Pathfinding.BFSFindDistanceTo(this, start, targetTiles);
                         area.Distances[i] = dist;
                         target.Distances[j] = dist;
                     }

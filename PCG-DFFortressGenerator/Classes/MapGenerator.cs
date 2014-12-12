@@ -308,7 +308,7 @@
 
                         if (tileLayer.Entrance == null)
                             Console.WriteLine("Much error, such wow, many paths " + this.CurrentNumberOfRooms);
-                        var path = Pathfinding.DijkstraFindPathToOpenArea(
+                        var path = Pathfinding.BFSFindPathToOpenArea(
                             Map,
                             chosenWallTile,
                             tileLayer.Entrance.AreaTiles[Random.Next(tileLayer.Entrance.AreaTiles.Count)]);
@@ -402,7 +402,7 @@
                         var chosenWallTile = possibleTiles[randomWallTileIndex];
                         possibleTiles.RemoveAt(randomWallTileIndex);
 
-                        var path = Pathfinding.DijkstraFindPathToOpenArea(
+                        var path = Pathfinding.BFSFindPathToOpenArea(
                             Map,
                             chosenWallTile,
                             tileLayer.Entrance.AreaTiles[Random.Next(tileLayer.Entrance.AreaTiles.Count)]);

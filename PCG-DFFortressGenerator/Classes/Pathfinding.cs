@@ -9,30 +9,30 @@
     public static class Pathfinding
     {
         /// <summary>
-        /// Finds the distance from the start til to the end tile.
+        /// Finds the distance from the start tile to the end tile.
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="start">The tile to start at.</param>
         /// <param name="end">The tile to end at.</param>
         /// <returns>The distance of the path. Returns -1 if there is no path.</returns>
-        public static int DijkstraFindDistanceTo(Map map, Tile start, Tile end)
+        public static int BFSFindDistanceTo(Map map, Tile start, Tile end)
         {
-            var path = DijkstraFindPathTo(map, start, end);
+            var path = BFSFindPathTo(map, start, end);
             if (path == null)
                 return -1;
             return path.Count;
         }
 
         /// <summary>
-        /// Finds the distance from the start til to one of the end tiles.
+        /// Finds the distance from the start tile to one of the end tiles.
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="start">The tile to start at.</param>
         /// <param name="endLocations">The set of tiles to use as end tiles.</param>
         /// <returns>The distance of the path. Returns -1 if there is no path.</returns>
-        public static int DijkstraFindDistanceTo(Map map, Tile start, List<Tile> endLocations)
+        public static int BFSFindDistanceTo(Map map, Tile start, List<Tile> endLocations)
         {
-            var path = DijkstraFindPathTo(map, start, endLocations);
+            var path = BFSFindPathTo(map, start, endLocations);
             if (path == null)
             {
                 return -1;
@@ -42,27 +42,27 @@
         }
 
         /// <summary>
-        /// Finds the distance from the start til to the end tile.
+        /// Finds the distance from the start tile to the end tile.
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="start">The tile to start at.</param>
         /// <param name="tt">The tiletype to look for.</param>
         /// <returns>The distance of the path. Returns -1 if there is no path.</returns>
-        public static int DijkstraFindDistanceTo(Map map, Tile start, Tile.TileType tt)
+        public static int BFSFindDistanceTo(Map map, Tile start, Tile.TileType tt)
         {
-            var path = DijkstraFindPathTo(map, start, tt);
+            var path = BFSFindPathTo(map, start, tt);
             if (path == null) return -1;
             return path.Count;
         }
 
         /// <summary>
-        /// Finds the shortest path from the start til to the end tile (uses Dijkstra's algorithm)
+        /// Finds the shortest path from the start tile to the end tile (uses breadth-first search)
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="start">The tile to start at.</param>
         /// <param name="tt">The tiletype to look fort.</param>
         /// <returns>A linked list with the tiles that make up the path. Returns null if there is no path.</returns>
-        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile.TileType tt)
+        public static LinkedList<Tile> BFSFindPathTo(Map map, Tile start, Tile.TileType tt)
         {
             TileNode endTile = null;
 
@@ -115,13 +115,13 @@
         }
 
         /// <summary>
-        /// Finds the shortest path from the start til to the end tile (uses Dijkstra's algorithm)
+        /// Finds the shortest path from the start tile to the end tile (uses breadth-first search)
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="start">The tile to start at.</param>
         /// <param name="end">The tile to end at.</param>
         /// <returns>A linked list with the tiles that make up the path. Returns null if there is no path.</returns>
-        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, Tile end)
+        public static LinkedList<Tile> BFSFindPathTo(Map map, Tile start, Tile end)
         {
             TileNode endTile = null;
 
@@ -174,13 +174,13 @@
         }
 
         /// <summary>
-        /// Finds the shortest path from the start til to the end tile (uses Dijkstra's algorithm)
+        /// Finds the shortest path from the start tile to the end tile (uses breadth-first search)
         /// </summary>
         /// <param name="map">The map in use.</param>
         /// <param name="start">The tile to start at.</param>
         /// <param name="endLocations">The set of tiles to look for.</param>
         /// <returns>A linked list with the tiles that make up the path. Returns null if there is no path.</returns>
-        public static LinkedList<Tile> DijkstraFindPathTo(Map map, Tile start, List<Tile> endLocations)
+        public static LinkedList<Tile> BFSFindPathTo(Map map, Tile start, List<Tile> endLocations)
         {
             TileNode endTile = null;
 
@@ -244,7 +244,7 @@
         /// <param name="start"> The tile to start at. </param>
         /// <param name="end"> The tile to end at. </param>
         /// <returns> The list containing the path. </returns>
-        public static LinkedList<Tile> DijkstraFindPathToOpenArea(Map map, Tile start, Tile end)
+        public static LinkedList<Tile> BFSFindPathToOpenArea(Map map, Tile start, Tile end)
         {
             TileNode endTile = null;
 
