@@ -1,14 +1,9 @@
 PCG-Report:
 Proofreading + Citations + Dijkstra thing
 
-Abstract - Melnyk
-Introduction - Melnyk
-
-
 Section on work done - Friday
 Upload test data - Friday
 Link github + test data
-
 
 Proofreading + Citations + Dijkstra thing
 
